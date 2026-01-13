@@ -30,6 +30,7 @@ from dotenv import load_dotenv
 
 from sqlmodel import Field, SQLModel, Session, select
 
+
 class QuestionId(SQLModel, table=True):
     question_id: str = Field(primary_key=True)  # Explicitly mark as primary key
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -39,14 +40,29 @@ class QuestionId(SQLModel, table=True):
 class Question(SQLModel, table=True):
     question_id: str = Field(primary_key=True)  # Explicitly mark as primary key
     content: str = Field(max_length=1024)  # Optional description
-    choice_a: str = Field(min_length=1,nullable=False)
-    choice_b: str = Field(min_length=1,nullable=False)
-    choice_c: str = Field(min_length=1,nullable=False)
-    choice_d: str = Field(min_length=1,nullable=False)
-    answer: int = Field(min_length=1, max_length=1,nullable=False)  # 0, 1, 2, 3
+    choice_a: str = Field(min_length=1, nullable=False)
+    choice_b: str = Field(min_length=1, nullable=False)
+    choice_c: str = Field(min_length=1, nullable=False)
+    choice_d: str = Field(min_length=1, nullable=False)
+    answer: int = Field(min_length=1, max_length=1, nullable=False)  # 0, 1, 2, 3
     date_added: date
-    chapter: str = Field(min_length=1,max_length=8,nullable=False)
+    chapter: str = Field(min_length=1, max_length=8, nullable=False)
     attachment_link: Optional[str] = Field(default=None, max_length=256)
     mixed_choices: bool
+
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+class AnnaleQuestion(SQLModel, table=True):
+    question_id: str = Field(primary_key=True)  # year-questionNumber
+    year: int = Field()
+    question_number: int = Field()
+    content: str = Field(max_length=1024)  # Optional description
+    choice_a: str = Field(min_length=1, nullable=False)
+    choice_b: str = Field(min_length=1, nullable=False)
+    choice_c: str = Field(min_length=1, nullable=False)
+    choice_d: str = Field(min_length=1, nullable=False)
+    answer: int = Field(min_length=1, max_length=1, nullable=False)  # 0, 1, 2, 3
+    attachment_link: Optional[str] = Field(default=None, max_length=256)
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

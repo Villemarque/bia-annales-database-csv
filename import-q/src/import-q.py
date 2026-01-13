@@ -28,12 +28,13 @@ from typing import Any, Callable, Dict, Optional, List, Union, Tuple
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
+from selenium.webdriver.common.by import By  # type: ignore
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from sqlmodel import Field, SQLModel, Session, select
 
 from models import QuestionId, Question
+from log import log
 
 #############
 # Constants #
@@ -43,9 +44,9 @@ load_dotenv()
 
 BIA_AF_EMAIL = os.getenv("BIA_AF_EMAIL", "")
 BIA_AF_PASSWORD = os.getenv("BIA_AF_PASSWORD", "")
-assert (
-    BIA_AF_EMAIL and BIA_AF_PASSWORD
-), "BIA_AF_EMAIL and BIA_AF_PASSWORD environment variables must be set"
+assert BIA_AF_EMAIL and BIA_AF_PASSWORD, (
+    "BIA_AF_EMAIL and BIA_AF_PASSWORD environment variables must be set"
+)
 
 DOMAIN = "https://bia-af.web.app"
 
@@ -143,44 +144,52 @@ def click_next(driver: webdriver.Chrome) -> None:
     next_button.click()
 
 
-def find_by_css(driver: webdriver.Chrome, css_selector: str, timeout: int = 10) -> selenium.webdriver.remote.webelement.WebElement:
+def find_by_css(
+    driver: webdriver.Chrome, css_selector: str, timeout: float = 10
+) -> selenium.webdriver.remote.webelement.WebElement:  # type: ignore
     return WebDriverWait(driver, timeout).until(
         EC.presence_of_element_located((By.CSS_SELECTOR, css_selector))
     )
 
-def find_by_css_multiples(driver: webdriver.Chrome, css_selector: str, timeout: int = 10) -> selenium.webdriver.remote.webelement.WebElement:
+
+def find_by_css_multiples(
+    driver: webdriver.Chrome, css_selector: str, timeout: int = 10
+) -> selenium.webdriver.remote.webelement.WebElement:  # type: ignore
     return WebDriverWait(driver, timeout).until(
         EC.presence_of_all_elements_located((By.CSS_SELECTOR, css_selector))
     )
+
 
 def parse_question(driver: webdriver.Chrome, q: QuestionId) -> Question:
     driver.get(f"{DOMAIN}/questions/{q.question_id}")
 
     question_id_elm = find_by_css(driver, "input[name='id']")
     question_id = question_id_elm.get_attribute("value")
-    assert (
-        question_id == q.question_id
-    ), f"Question ID mismatch: expected {q.question_id}, got {question_id}"
+    assert question_id == q.question_id, (
+        f"Question ID mismatch: expected {q.question_id}, got {question_id}"
+    )
 
-    date_input = find_by_css(driver,"input[name='timestamp']")
+    date_input = find_by_css(driver, "input[name='timestamp']")
 
     date_string = date_input.get_attribute("value")
     date_added = datetime.strptime(date_string, "%d/%m/%Y").date()
 
     # Extract Content (Question Text)
-    content = find_by_css(driver, "input[name='text']").get_attribute(
-        "value"
-    )
+    content = find_by_css(driver, "input[name='text']").get_attribute("value")
 
     # Extract Choices (A, B, C, D)
-    choices = find_by_css_multiples(driver,".form-group.answers .form-group.answer input[type='text']")
+    choices = find_by_css_multiples(
+        driver, ".form-group.answers .form-group.answer input[type='text']"
+    )
     choice_a = choices[0].get_attribute("value")
     choice_b = choices[1].get_attribute("value")
     choice_c = choices[2].get_attribute("value")
     choice_d = choices[3].get_attribute("value")
 
     # Extract Answer (Which choice is selected)
-    answer_radio_buttons = find_by_css_multiples(driver, ".form-group.answers .form-group.answer input[type='radio']")
+    answer_radio_buttons = find_by_css_multiples(
+        driver, ".form-group.answers .form-group.answer input[type='radio']"
+    )
     answer_index = next(
         (i for i, btn in enumerate(answer_radio_buttons) if btn.is_selected()), None
     )
@@ -189,14 +198,21 @@ def parse_question(driver: webdriver.Chrome, q: QuestionId) -> Question:
     # Extract Chapter
     chapter = find_by_css(driver, "nb-select button.select-button").text.split(" ")[0]
     try:
-        img_element = find_by_css(driver,"div.file_display.ng-star-inserted img",timeout=.4)
+        img_element = find_by_css(
+            driver, "div.file_display.ng-star-inserted img", timeout=0.4
+        )
         print("Found attachment image", img_element)
         attachment_link = img_element.get_attribute("src")
         print("Attachment link:", attachment_link)
-    except (selenium.common.exceptions.NoSuchElementException, selenium.common.exceptions.TimeoutException):
+    except (
+        selenium.common.exceptions.NoSuchElementException,
+        selenium.common.exceptions.TimeoutException,
+    ):  # type: ignore
         attachment_link = None
 
-    mixed_choices_checkbox = find_by_css(driver,".form-group.checkbox input[type='checkbox']")
+    mixed_choices_checkbox = find_by_css(
+        driver, ".form-group.checkbox input[type='checkbox']"
+    )
 
     mixed_choices = mixed_choices_checkbox.is_selected()
     return Question(
@@ -220,7 +236,7 @@ def populate_questions(
     with sqlmodel.Session(engine) as session:
         # find all qids from qids_opt
         if qids_opt is not None:
-            stmt = select(QuestionId).where(QuestionId.question_id.in_(qids_opt))
+            stmt = select(QuestionId).where(QuestionId.question_id.in_(qids_opt))  # type: ignore
         else:
             stmt = select(QuestionId).where(QuestionId.checked_at == None)
         qids = session.exec(stmt).all()
