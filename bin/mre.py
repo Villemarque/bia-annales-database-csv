@@ -1,0 +1,27 @@
+class Question(SQLModel, table=True):
+    question_id: str = Field(primary_key=True)  # Explicitly mark as primary key
+    content: str = Field(max_length=1024)  # Optional description
+    choice_a: str
+    choice_b: str
+    choice_c: str
+    choice_d: str
+    answer: int = Field(max_length=1)  # 0, 1, 2, 3
+    date_added: date
+    chapter: str = Field(max_length=8)
+    attachement_link: Optional[str] = Field(default=None, max_length=256)
+    mixed_choices: bool
+
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+Question(question_id="111",
+         content="222",
+         choice_a="a",
+         choice_b="b",
+         choice_c="c",
+         choice_d="d",
+         answer=1,
+         date_added=date.today(),
+         chapter="ch1",
+         mixed_choices=True,
+         attachment_link="path/to/foo")
