@@ -1,4 +1,6 @@
 #!/usr/bin/env -S uv run --script
+# coding: utf-8
+# Licence: GNU AGPLv3
 
 """"""
 
