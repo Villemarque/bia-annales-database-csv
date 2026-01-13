@@ -1,17 +1,4 @@
 #!/usr/bin/env -S uv run --script
-#
-# /// script
-# requires-python = ">=3.13"
-# dependencies = [
-#     "python-dotenv",
-#     "requests",
-#     "selenium",
-#     "sqlmodel==0.0.31",
-# ]
-# ///
-#
-# coding: utf-8
-# Licence: GNU AGPLv3
 
 """"""
 
@@ -43,6 +30,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from sqlmodel import Field, SQLModel, Session, select
+
+from models import QuestionId, Question
 
 #############
 # Constants #
@@ -87,28 +76,6 @@ log.addHandler(handler_2)
 ###########
 # Classes #
 ###########
-
-
-class QuestionId(SQLModel, table=True):
-    question_id: str = Field(primary_key=True)  # Explicitly mark as primary key
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    checked_at: Optional[datetime] = None  # When the question was populated
-
-
-class Question(SQLModel, table=True):
-    question_id: str = Field(primary_key=True)  # Explicitly mark as primary key
-    content: str = Field(max_length=1024)  # Optional description
-    choice_a: str = Field(min_length=1,nullable=False)
-    choice_b: str = Field(min_length=1,nullable=False)
-    choice_c: str = Field(min_length=1,nullable=False)
-    choice_d: str = Field(min_length=1,nullable=False)
-    answer: int = Field(min_length=1, max_length=1,nullable=False)  # 0, 1, 2, 3
-    date_added: date
-    chapter: str = Field(min_length=1,max_length=8,nullable=False)
-    attachment_link: Optional[str] = Field(default=None, max_length=256)
-    mixed_choices: bool
-
-    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 def login(driver: webdriver.Chrome, email: str, password: str) -> None:
