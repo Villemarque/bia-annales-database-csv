@@ -31,13 +31,13 @@ from requests.adapters import HTTPAdapter
 import diskcache
 
 from models import AnnaleQuestion
-from log import log
+from log import log, SCRIPT_DIR
 
 #############
 # Constants #
 #############
 
-CACHE = diskcache.Cache("cache")
+CACHE = diskcache.Cache(SCRIPT_DIR.parent / "cache")
 
 RETRY_STRAT = Retry(
     total=5,
@@ -113,7 +113,11 @@ def get_answers(style_txt: str) -> list[ZeroToThree]:
 
 
 def parse_questions(
-    y: Year, sub: Subject, soup: BeautifulSoup, answers: list[ZeroToThree], no_past_questions: int
+    y: Year,
+    sub: Subject,
+    soup: BeautifulSoup,
+    answers: list[ZeroToThree],
+    no_past_questions: int,
 ) -> list[AnnaleQuestion]:
     questions: list[AnnaleQuestion] = []
     i = 1
@@ -139,7 +143,7 @@ def parse_questions(
             f"Could not find answers div for question {i} of {sub} {y}"
         )
         # remove "1- ", "2- ", etc
-        q_txt = re.sub(r"^\d+ -\s*", "", q_div.text).strip()
+        q_txt = re.sub(r"^\d+ -\s*", "", q_div.text).replace("⚠️", "").strip()
         options = r_div.find_all("p")
         q_answers = []
         for option in options:
@@ -151,8 +155,8 @@ def parse_questions(
         questions.append(
             AnnaleQuestion(
                 year=y,
-                question_number=no_past_questions+i,
-                question_id=f"{y}-{no_past_questions+i}",
+                question_number=no_past_questions + i,
+                question_id=f"{y}-{no_past_questions + i}",
                 content=q_txt,
                 choice_a=q_answers[0],
                 choice_b=q_answers[1],
@@ -174,25 +178,31 @@ class Req:
         http.mount("http://", ADAPTER)
         self.http = http
 
-    @CACHE.memoize()
-    def get_correction_page(self, y: Year, sub: Subject) -> BeautifulSoup:
+    @CACHE.memoize(ignore=(0,))
+    def get_correction_page_str(self, y: Year, sub: Subject) -> str:
         url = f"{ANNALES_DOMAIN}/back/correction.php?annee={y}&theme={sub}"
         response = self.http.get(url)
-        time.sleep(0.3) # to avoid spamming, but skipping delay if cached
-        print(response.text)
-        return BeautifulSoup(response.text.replace('&nbsp;', ' '), "html.parser")
+        time.sleep(0.3)  # to avoid spamming, but skipping delay if cached
+        return response.text.replace("&nbsp;", " ")
+
+    def get_correction_page(self, y: Year, sub: Subject) -> BeautifulSoup:
+        page_str = self.get_correction_page_str(y, sub)
+        return BeautifulSoup(page_str, "html.parser")
 
 
 def main():
     req = Req()
     all_questions: list[AnnaleQuestion] = []
     for y in YEARS:
+        no_past_questions = 1
         for sub in SUBJECTS:
             print(f"Processing year {y}, subject {sub}...")
             soup = req.get_correction_page(y, sub)
             style_txt = get_style(soup)
             answers = get_answers(style_txt)
-            questions = parse_questions(y, sub, soup, answers,no_past_questions=len(all_questions))
+            questions = parse_questions(
+                y, sub, soup, answers, no_past_questions=no_past_questions
+            )
             all_questions.extend(questions)
     print(f"Total questions parsed: {len(all_questions)}")
     for q in all_questions:
