@@ -31,14 +31,13 @@ from requests.adapters import HTTPAdapter
 import diskcache
 from sqlmodel import Session, select
 
+from cache import CACHE
 from models import AnnaleQuestion, create_engine
 from log import log, SCRIPT_DIR
 
 #############
 # Constants #
 #############
-
-CACHE = diskcache.Cache(SCRIPT_DIR.parent / "cache")
 
 RETRY_STRAT = Retry(
     total=5,

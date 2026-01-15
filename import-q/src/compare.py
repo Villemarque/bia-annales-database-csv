@@ -34,6 +34,7 @@ from sqlmodel import Session, select
 
 from models import Question, AnnaleQuestion, create_engine
 from log import log, SCRIPT_DIR
+from cache import CACHE
 
 #############
 # Constants #
@@ -57,6 +58,10 @@ ADAPTER = HTTPAdapter(max_retries=RETRY_STRAT)
 # Classes #
 ###########
 
+@CACHE.memoize()
+def compute_levenstein(a: str, b: str) -> int:
+    return Levenshtein.distance(a, b)
+
 @dataclass(frozen=True)
 class Diff:
     ids: Tuple[Question, AnnaleQuestion]
@@ -69,8 +74,8 @@ class Diff:
             leven_dist=Levenshtein.distance(annale.content.strip().lower(), af.content.strip().lower())
             )
 
-
-def check_identicals(engine) -> None:
+@CACHE.memoize(ignore=(0,))
+def compute_diffs(engine) -> dict[int, list[Diff]]:
     with Session(engine) as session: 
         annales = session.exec(select(AnnaleQuestion)).all()
         afs = session.exec(select(Question)).all()
@@ -86,9 +91,12 @@ def check_identicals(engine) -> None:
             previous = res.get(min_diff.leven_dist, [])
             previous.append(min_diff)
             res[min_diff.leven_dist] = previous # in case it was not previously set
-        
-        for k in sorted(res.keys()):
-            print(f"levenshtein distance: {k}, number of questions {len(res[k])}")
+    return res
+
+def check_identicals(engine) -> None:
+    res = compute_diffs(engine)
+    for k in sorted(res.keys()):
+        print(f"levenshtein distance: {k}, number of questions {len(res[k])}")
 
 def main() -> None:
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
@@ -96,6 +104,7 @@ def main() -> None:
         "check_identicals": check_identicals,
     }
     parser.add_argument("command", choices=commands.keys())
+    # sub parser
     engine = create_engine()
     args = parser.parse_args()
     commands[args.command](engine)
