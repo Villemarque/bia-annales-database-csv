@@ -29,8 +29,9 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
 import diskcache
+from sqlmodel import Session, select
 
-from models import AnnaleQuestion
+from models import AnnaleQuestion, create_engine
 from log import log, SCRIPT_DIR
 
 #############
@@ -196,7 +197,7 @@ def main():
     for y in YEARS:
         no_past_questions = 1
         for sub in SUBJECTS:
-            print(f"Processing year {y}, subject {sub}...")
+            #print(f"\rProcessing year {y}, subject {sub}...")
             soup = req.get_correction_page(y, sub)
             style_txt = get_style(soup)
             answers = get_answers(style_txt)
@@ -204,10 +205,15 @@ def main():
                 y, sub, soup, answers, no_past_questions=no_past_questions
             )
             all_questions.extend(questions)
+            no_past_questions += len(questions)
     print(f"Total questions parsed: {len(all_questions)}")
-    for q in all_questions:
-        print(q)
-        print()
+    engine = create_engine()
+    with Session(engine) as session:
+        # print(f"Existing questions in database: {len(existing_qids)}")
+        # print("all_questions", all_questions)
+        for q in all_questions:
+            session.add(q)
+        session.commit()
 
 
 ########

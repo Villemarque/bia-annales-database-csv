@@ -34,7 +34,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from sqlmodel import Field, SQLModel, Session, select
 
-from models import QuestionId, Question
+from models import QuestionId, Question, create_engine
 from log import log
 
 #############
@@ -284,8 +284,7 @@ def main() -> None:
     driver = webdriver.Chrome(options=chrome_options)
     login(driver, BIA_AF_EMAIL, BIA_AF_PASSWORD)
     time.sleep(1)
-    engine = sqlmodel.create_engine("sqlite:///questions.db")
-    SQLModel.metadata.create_all(engine)
+    engine = create_engine()
     commands[args.command](driver, engine, args.qids)
 
 

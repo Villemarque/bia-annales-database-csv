@@ -27,7 +27,7 @@ from typing import Any, Callable, Dict, Optional, List, Union, Tuple
 
 from dotenv import load_dotenv
 
-
+from log import SCRIPT_DIR, log
 from sqlmodel import Field, SQLModel, Session, select
 
 
@@ -66,3 +66,13 @@ class AnnaleQuestion(SQLModel, table=True):
     attachment_link: Optional[str] = Field(default=None, max_length=256)
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
+def create_engine():
+    engine = sqlmodel.create_engine(f"sqlite:///{SCRIPT_DIR.parent}/questions.db")
+    SQLModel.metadata.create_all(engine)
+    if engine.url.database:
+        log.info(f"Connected to database at {engine.url.database}")
+    return engine
+
+
