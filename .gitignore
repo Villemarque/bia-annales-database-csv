@@ -1,2 +1,4 @@
 # TODO, remove once officials PDF format settled
 *.pdf
+
+*.db
