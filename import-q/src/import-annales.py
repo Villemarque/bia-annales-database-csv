@@ -28,6 +28,7 @@ from urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
+import diskcache
 
 from models import AnnaleQuestion
 from log import log
@@ -35,6 +36,8 @@ from log import log
 #############
 # Constants #
 #############
+
+CACHE = diskcache.Cache("cache")
 
 RETRY_STRAT = Retry(
     total=5,
@@ -64,20 +67,20 @@ SUBJECTS: list[Subject] = ["cda", "amv", "mto", "nrs", "his", "ang"]
 
 
 # question number in the exam of that year
-def question_number(sub: Subject, no: int) -> int:
-    if sub == "cda":
-        return no
-    elif sub == "amv":
-        return no + 20
-    elif sub == "mto":
-        return no + 40
-    elif sub == "nrs":
-        return no + 60
-    elif sub == "his":
-        return no + 80
-    # arbitrary place english at last
-    elif sub == "ang":
-        return no + 100
+# def question_number(sub: Subject, no: int) -> int:
+#     if sub == "cda":
+#         return no
+#     elif sub == "amv":
+#         return no + 20
+#     elif sub == "mto":
+#         return no + 40
+#     elif sub == "nrs":
+#         return no + 60
+#     elif sub == "his":
+#         return no + 80
+#     # arbitrary place english at last
+#     elif sub == "ang":
+#         return no + 100
 
 
 # text between <style> and </style>
@@ -89,10 +92,10 @@ ZeroToThree = Literal[0, 1, 2, 3]
 
 
 def get_answers(style_txt: str) -> list[ZeroToThree]:
-    # all answer are elements of type rep1a rep2b, etc, so we can search for rep followed by a number and a letter
+    # all answer are elements of type repa1 repb2, etc, so we can search for rep followed by a number and a letter
     # get all from regex in text
     matches = re.findall(r"rep([a-d])\d+", style_txt)
-    assert len(matches) == 20, f"Expected 20 matches, got {len(matches)}"
+    assert len(matches) >= 20, f"Not enough answers, got {len(matches)}"
     indexes: dict[str, ZeroToThree] = {"a": 0, "b": 1, "c": 2, "d": 3}
     return [indexes[match] for match in matches]
 
@@ -110,11 +113,12 @@ def get_answers(style_txt: str) -> list[ZeroToThree]:
 
 
 def parse_questions(
-    y: Year, sub: Subject, soup: BeautifulSoup, answers: list[ZeroToThree]
+    y: Year, sub: Subject, soup: BeautifulSoup, answers: list[ZeroToThree], no_past_questions: int
 ) -> list[AnnaleQuestion]:
     questions: list[AnnaleQuestion] = []
-    for i in range(1, 21):
-        q_div = soup.find("div", id=f"q{i}")
+    i = 1
+    while (outer_q_div := soup.find("div", id=f"q{i}")) is not None:
+        q_div = outer_q_div.find("div", class_="q")
         assert q_div is not None, (
             f"Could not find question div for question {i} of {sub} {y}"
         )
@@ -135,7 +139,7 @@ def parse_questions(
             f"Could not find answers div for question {i} of {sub} {y}"
         )
         # remove "1- ", "2- ", etc
-        q_txt = re.sub(r"^[\d+] -\s*", "", q_div.text).strip()
+        q_txt = re.sub(r"^\d+ -\s*", "", q_div.text).strip()
         options = r_div.find_all("p")
         q_answers = []
         for option in options:
@@ -144,21 +148,11 @@ def parse_questions(
             answer_text = re.sub(r"^[A-D]-\s*", "", label).strip()
             q_answers.append(answer_text)
 
-        #         question_id: str = Field(primary_key=True)  # year-questionNumber
-        # year: int = Field()
-        # question_number: int = Field()
-        # content: str = Field(max_length=1024)  # Optional description
-        # choice_a: str = Field(min_length=1,nullable=False)
-        # choice_b: str = Field(min_length=1,nullable=False)
-        # choice_c: str = Field(min_length=1,nullable=False)
-        # choice_d: str = Field(min_length=1,nullable=False)
-        # answer: int = Field(min_length=1, max_length=1,nullable=False)  # 0, 1, 2, 3
-        # attachment_link: Optional[str] = Field(default=None, max_length=256)
         questions.append(
             AnnaleQuestion(
                 year=y,
-                question_number=question_number(sub, i),
-                question_id=f"{y}-{question_number(sub, i)}",
+                question_number=no_past_questions+i,
+                question_id=f"{y}-{no_past_questions+i}",
                 content=q_txt,
                 choice_a=q_answers[0],
                 choice_b=q_answers[1],
@@ -168,6 +162,7 @@ def parse_questions(
                 attachment_link=attachment_link,
             )
         )
+        i += 1
     return questions
 
 
@@ -179,10 +174,13 @@ class Req:
         http.mount("http://", ADAPTER)
         self.http = http
 
+    @CACHE.memoize()
     def get_correction_page(self, y: Year, sub: Subject) -> BeautifulSoup:
-        url = f"{ANNALES_DOMAIN}/back/correction.php?annee=2015&theme=mto"
+        url = f"{ANNALES_DOMAIN}/back/correction.php?annee={y}&theme={sub}"
         response = self.http.get(url)
-        return BeautifulSoup(response.text)
+        time.sleep(0.3) # to avoid spamming, but skipping delay if cached
+        print(response.text)
+        return BeautifulSoup(response.text.replace('&nbsp;', ' '), "html.parser")
 
 
 def main():
@@ -194,11 +192,8 @@ def main():
             soup = req.get_correction_page(y, sub)
             style_txt = get_style(soup)
             answers = get_answers(style_txt)
-            questions = parse_questions(y, sub, soup, answers)
+            questions = parse_questions(y, sub, soup, answers,no_past_questions=len(all_questions))
             all_questions.extend(questions)
-            time.sleep(0.3)
-            break  # DEBUG
-        break  # DEBUG
     print(f"Total questions parsed: {len(all_questions)}")
     for q in all_questions:
         print(q)

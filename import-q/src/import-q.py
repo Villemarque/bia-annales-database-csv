@@ -28,6 +28,7 @@ from typing import Any, Callable, Dict, Optional, List, Union, Tuple
 from dotenv import load_dotenv
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By  # type: ignore
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -205,8 +206,8 @@ def parse_question(driver: webdriver.Chrome, q: QuestionId) -> Question:
         attachment_link = img_element.get_attribute("src")
         print("Attachment link:", attachment_link)
     except (
-        selenium.common.exceptions.NoSuchElementException,
-        selenium.common.exceptions.TimeoutException,
+        NoSuchElementException,
+        TimeoutException,
     ):  # type: ignore
         attachment_link = None
 
