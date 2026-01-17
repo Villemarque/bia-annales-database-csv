@@ -33,6 +33,7 @@ from requests.adapters import HTTPAdapter
 import diskcache
 from sqlmodel import Session, select
 from pypdf import PdfWriter
+logging.getLogger("pypdf").setLevel(logging.ERROR)
 from google import genai
 from google.genai import types
 from dotenv import load_dotenv
@@ -63,6 +64,7 @@ Year = Literal[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
 YEARS: list[Year] = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
 
 ANNALES_PDF_DIR = SCRIPT_DIR.parent.parent / f"annales-pdf"
+print("ANNALES_PDF_DIR", ANNALES_PDF_DIR)
 
 PROMPT = """Extrait sous format JSON chaque question contenu dans ce document PDF.
 
@@ -105,18 +107,17 @@ def years_as_20mb_files(years: list[Year]) -> List[ConcatenatedYears]:
         pdf_bytes = concatenate_pdfs([p for p, _ in files])
         years_concatenated: list[Year] = [y for _, y in files]
         output_pdfs.append(ConcatenatedYears(pdf=pdf_bytes, years=years_concatenated))
-        files = []
+        files.clear()
 
     for year in years:
-        filepath = Path(
-            ANNALES_PDF_DIR / f"/sujets/{year}-examen-bia+anglais.pdf"
-        )
+        filepath = ANNALES_PDF_DIR / f"sujets/{year}-examen-bia+anglais.pdf"
+        print("filepath", filepath, "size", filepath.stat().st_size)
         # slower but safer than two lists than can go out of sync
         current_file_questions.append((filepath, year))
-
         # sum
         if sum((p.stat().st_size for p, _ in current_file_questions)) > MAX_SIZE:
             concatenate(current_file_questions)
+            assert len(current_file_questions) == 0
 
     if current_file_questions:
         concatenate(current_file_questions)
@@ -186,4 +187,4 @@ def main():
 
 if __name__ == "__main__":
     print("#" * 80)
-    main()
+    print([f.years for f in years_as_20mb_files(YEARS)])
