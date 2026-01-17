@@ -107,7 +107,7 @@ def years_as_20mb_files(years: list[Year]) -> List[ConcatenatedYears]:
         pdf_bytes = concatenate_pdfs([p for p, _ in files])
         years_concatenated: list[Year] = [y for _, y in files]
         output_pdfs.append(ConcatenatedYears(pdf=pdf_bytes, years=years_concatenated))
-        files.clear()
+        files.clear() # CANNOT use files = [] since it would rebind the local name only
 
     for year in years:
         filepath = ANNALES_PDF_DIR / f"sujets/{year}-examen-bia+anglais.pdf"
