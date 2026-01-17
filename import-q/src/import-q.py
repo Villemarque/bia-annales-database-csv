@@ -7,23 +7,15 @@
 from __future__ import annotations
 
 import argparse
-import json
-import logging
-import datetime as dt
-import logging.handlers
 import os
-import sys
 import time
 
 import selenium
 import sqlmodel
 
 from argparse import RawTextHelpFormatter
-from collections import deque
-from dataclasses import dataclass
-from datetime import datetime, date, timezone
-from pathlib import Path
-from typing import Any, Callable, Dict, Optional, List, Union, Tuple
+from datetime import datetime, timezone
+from typing import List
 
 from dotenv import load_dotenv
 from selenium import webdriver
@@ -32,7 +24,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By  # type: ignore
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from sqlmodel import Field, SQLModel, Session, select
+from sqlmodel import Session, select
 
 from models import QuestionId, AfQuestion, create_engine
 from log import log
@@ -259,7 +251,7 @@ def driver_get_question_ids(driver: webdriver.Chrome, engine, *args) -> None:
         insert_questions_bulk(ids, engine)
         try:
             click_next(driver)
-        except Exception as e:
+        except Exception:
             log.info("No more next button, exiting loop.")
             break
 

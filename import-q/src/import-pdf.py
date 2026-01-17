@@ -6,38 +6,20 @@
 
 from __future__ import annotations
 
-import argparse
-import json
 import logging
 import logging.handlers
 import os
-import csv
-import sys
-import re
-import time
 
-import requests
 
-from io import BytesIO
-from argparse import RawTextHelpFormatter
-from collections import deque
-from dataclasses import dataclass
-from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional, List, Union, Tuple, Literal
-from urllib3.util.retry import Retry
+from typing import List, Literal
 
 from rapidjson import Decoder, PM_COMMENTS, PM_TRAILING_COMMAS  # more lenient
-from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from requests.adapters import HTTPAdapter
-import diskcache
-from sqlmodel import Session, select
-from pypdf import PdfWriter
+from sqlmodel import Session
 logging.getLogger("pypdf").setLevel(logging.ERROR)
 from google import genai
 from google.genai import types
-from dotenv import load_dotenv
 
 from cache import CACHE
 from models import PdfQuestion, create_engine
@@ -64,7 +46,7 @@ assert GEMINI_API_KEY is not None, "GEMINI_API_KEY environment variable must be 
 Year = Literal[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
 YEARS: list[Year] = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
 
-ANNALES_PDF_DIR = SCRIPT_DIR.parent.parent / f"annales-pdf"
+ANNALES_PDF_DIR = SCRIPT_DIR.parent.parent / "annales-pdf"
 print("ANNALES_PDF_DIR", ANNALES_PDF_DIR)
 
 Q_PROMPT = """Extrait sous format JSON chaque question contenu dans ce document PDF.

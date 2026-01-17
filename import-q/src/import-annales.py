@@ -6,34 +6,20 @@
 
 from __future__ import annotations
 
-import argparse
-import json
-import logging
-import logging.handlers
-import os
-import sys
 import re
 import time
 
 import requests
 
-from argparse import RawTextHelpFormatter
-from collections import deque
-from dataclasses import dataclass
-from datetime import datetime
-from pathlib import Path
-from typing import Any, Callable, Dict, Optional, List, Union, Tuple, Literal
+from typing import Literal
 from urllib3.util.retry import Retry
 
 from bs4 import BeautifulSoup
-from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
-import diskcache
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 from cache import CACHE
 from models import AnnaleQuestion, create_engine
-from log import log, SCRIPT_DIR
 
 #############
 # Constants #

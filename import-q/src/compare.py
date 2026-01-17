@@ -7,32 +7,14 @@
 from __future__ import annotations
 
 import argparse
-import json
-import logging
-import logging.handlers
-import os
-import sys
-import re
-import time
 
-import requests
 import Levenshtein
 
 from difflib import ndiff
 from argparse import RawTextHelpFormatter
-from collections import deque
 from dataclasses import dataclass
-from datetime import datetime
-from pathlib import Path
 from typing import (
-    Any,
-    Callable,
-    Dict,
-    Optional,
-    List,
-    Union,
     Tuple,
-    Literal,
     Protocol,
     Type,
     TypeVar,
@@ -41,14 +23,12 @@ from typing import (
 )
 from urllib3.util.retry import Retry
 
-from bs4 import BeautifulSoup
-from dotenv import load_dotenv
 from requests.adapters import HTTPAdapter
 import diskcache
 from sqlmodel import Session, select
 
 from models import AfQuestion, AnnaleQuestion, create_engine, PdfQuestion
-from log import log, SCRIPT_DIR
+from log import SCRIPT_DIR
 from cache import CACHE
 
 #############
@@ -180,7 +160,7 @@ def sub_show_diffs(engine, min_leven_dist: int) -> None:
 
 def show_diffs_22(engine) -> None:
     res = compute_diffs_annale_pdf_22(engine)
-    print(f"\nShowing diffs between PDF and Annale for 2022:\n")
+    print("\nShowing diffs between PDF and Annale for 2022:\n")
     for k in sorted(res.keys()):
         print(
             f"\n\n=== Levenshtein distance: {k}, number of questions {len(res[k])} ==="

@@ -6,27 +6,14 @@
 
 from __future__ import annotations
 
-import argparse
-import json
-import logging
-import datetime as dt
-import logging.handlers
-import os
-import sys
-import time
 
-import selenium
 import sqlmodel
 
-from argparse import RawTextHelpFormatter
-from collections import deque
-from dataclasses import dataclass
 from datetime import datetime, date, timezone
-from pathlib import Path
-from typing import Any, Callable, Dict, Optional, List, Union, Tuple
+from typing import Optional
 
 from log import SCRIPT_DIR, log
-from sqlmodel import Field, SQLModel, Session, select
+from sqlmodel import Field, SQLModel
 
 
 class QuestionId(SQLModel, table=True):
