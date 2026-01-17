@@ -72,7 +72,14 @@ Exemple de format de sortie JSON :
 [
   {
     year: 2017,
-    question_number: "1.1", # "F.1", "F.2", ... pour les questions de l'épreuve facultative d'anglais
+    question_number: "1.1",
+    # Si numéro de chapitre non présent, préfixer par :
+    # 1 pour les question de Météo ex: "1.1", "1.2", ...
+    # 2 pour les question d'aérodynamique ex: "2.1", "2.2", ...
+    # 3 pour les question d'étude des aéronefs et engins spatiaux ex: "3.1", "3.2", ...
+    # 4 pour les question de navigation ex: "4.1", "4.2", ...
+    5 pour les question d'histoire ex: "5.1", "5.2", ...
+    # F pour les questions de l'épreuve facultative d'anglais ex: "F.1", "F.2", ... 
     content: "Les deux principaux composants de l’air sec sont :",
     attachment: false, # if there is an image or diagram associated with the question
     choice_a: "l’azote et l’oxygène.",
@@ -98,7 +105,7 @@ def concatenate_pdfs(paths: list[Path]) -> bytes:
     output_io.seek(0)
     return output_io.getvalue()
 
-def years_as_20mb_files(years: list[Year]) -> List[ConcatenatedYears]:
+def years_as_20mb_files(years: list[Year]) -> list[ConcatenatedYears]:
     """Concatenate PDFs into files of maximum 20MB each."""
     MAX_SIZE = 20 * 1024 * 1024  # 20MB
     output_pdfs: list[ConcatenatedYears] = []
@@ -113,11 +120,12 @@ def years_as_20mb_files(years: list[Year]) -> List[ConcatenatedYears]:
         filepath = ANNALES_PDF_DIR / f"sujets/{year}-examen-bia+anglais.pdf"
         print("filepath", filepath, "size", filepath.stat().st_size)
         # slower but safer than two lists than can go out of sync
-        current_file_questions.append((filepath, year))
+        t = (filepath, year)
         # sum
-        if sum((p.stat().st_size for p, _ in current_file_questions)) > MAX_SIZE:
+        if sum((p.stat().st_size for p, _ in (current_file_questions + [t]))) > MAX_SIZE:
             concatenate(current_file_questions)
             assert len(current_file_questions) == 0
+        current_file_questions.append(t)
 
     if current_file_questions:
         concatenate(current_file_questions)
@@ -146,12 +154,14 @@ def parse_pdf_raw(pdf_as_bytes: bytes) -> str:
 def parse_pdf(pdf_as_bytes: bytes) -> List[PdfQuestion]:
     raw_output = f"[{parse_pdf_raw(pdf_as_bytes).partition('[')[2].rpartition(']')[0]}]"
     print(raw_output[:])
+    raw_output = raw_output.replace("choice__d", "choice_d") # joy of non-determinism...
     decoder = Decoder(parse_mode=PM_COMMENTS | PM_TRAILING_COMMAS)
     parsed_output = decoder(raw_output)
     res = []
     for q in parsed_output:
         # assert y == q["year"], f"Year mismatch: expected {y}, got {q['year']}"
         question_id = f"{q["year"]}-{q['question_number']}"
+        print("\rquestion_id", question_id,end="")
         res.append(
             PdfQuestion(
                 question_id=question_id,
@@ -170,15 +180,15 @@ def parse_pdf(pdf_as_bytes: bytes) -> List[PdfQuestion]:
 
 def main():
     engine = create_engine()
-    with Session(engine) as session:
-        years: list[Year] = [2022]
-        for concatenated_pdf in years_as_20mb_files(years):
-            log.info(f"Processing years {concatenated_pdf.years}...")
-            questions = parse_pdf(concatenated_pdf.pdf)
+    for concatenated_pdf in years_as_20mb_files([2015]):
+        log.info(f"Processing years {concatenated_pdf.years}...")
+        questions = parse_pdf(concatenated_pdf.pdf)
+        with Session(engine) as session:
             for q in questions:
-                session.add(q)
-            session.commit()
-            log.info(f"Inserted questions from year {concatenated_pdf.years} into database.")
+                pass
+                #session.add(q)
+            #session.commit()
+        log.info(f"Inserted questions from year {concatenated_pdf.years} into database.")
 
 
 ########
@@ -187,4 +197,4 @@ def main():
 
 if __name__ == "__main__":
     print("#" * 80)
-    print([f.years for f in years_as_20mb_files(YEARS)])
+    main()
