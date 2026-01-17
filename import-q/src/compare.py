@@ -37,6 +37,7 @@ from typing import (
     Type,
     TypeVar,
     Generic,
+    Sequence
 )
 from urllib3.util.retry import Retry
 
@@ -119,13 +120,13 @@ class Diff(Generic[A, B]):
         )
 
 
-def compute_diffs_annale_af(engine) -> dict[int, list[Diff]]:
+def compute_diffs_annale_af(engine) -> dict[int, list[Diff[AfQuestion, AnnaleQuestion]]]:
     with Session(engine) as session:
         a_s = session.exec(select(AfQuestion)).all()
         b_s = session.exec(select(AnnaleQuestion)).all()
         return compute_diffs(a_s, b_s)
 
-def compute_diffs_annale_pdf_22(engine) -> dict[int, list[Diff]]:
+def compute_diffs_annale_pdf_22(engine) -> dict[int, list[Diff[AnnaleQuestion, PdfQuestion]]]:
     with Session(engine) as session:
         a_s = session.exec(select(AnnaleQuestion).where(AnnaleQuestion.year == 2022)).all()
         b_s = session.exec(select(PdfQuestion)).all()
@@ -134,8 +135,8 @@ def compute_diffs_annale_pdf_22(engine) -> dict[int, list[Diff]]:
 
 @CACHE.memoize(name="compute_diffs_v2")
 def compute_diffs(
-    a_s: list[A],
-    b_s: list[B],
+    a_s: Sequence[A],
+    b_s: Sequence[B],
 ) -> dict[int, list[Diff]]:
     res: dict[int, list[Diff]] = {}
     assert len(a_s) <= len(b_s)
@@ -178,21 +179,23 @@ def sub_show_diffs(engine, min_leven_dist: int) -> None:
 
 
 def show_diffs_22(engine) -> None:
-    res = compute_diffs(engine, AnnaleQuestion, AfQuestion)
-    print(f"\nShowing diffs with minimum Levenshtein distance of {min_leven_dist}:\n")
+    res = compute_diffs_annale_pdf_22(engine)
+    print(f"\nShowing diffs between PDF and Annale for 2022:\n")
     for k in sorted(res.keys()):
-        if k >= min_leven_dist:
+        print(
+            f"\n\n=== Levenshtein distance: {k}, number of questions {len(res[k])} ==="
+        )
+        for diff in res[k]:
+            t: Tuple[AnnaleQuestion, PdfQuestion] = diff.ids
+            a, b = t
             print(
-                f"\n\n=== Levenshtein distance: {k}, number of questions {len(res[k])} ==="
+                f"\n--- AnnaleQuestion ID: {a.question_id} | PdfQuestion ID: {b.question_id} ---"
             )
-            for diff in res[k]:
-                af, annale = diff.ids
-                print(
-                    f"\n--- AfQuestion ID: {af.question_id} | AnnaleQuestion ID: {annale.question_id} ---"
-                )
-                af_diff, annale_diff = colored_diff_lines(af.content, annale.content)
-                print("af:     |", af_diff)
-                print("annale  |", annale_diff)
+            a_diff, b_diff = colored_diff_lines(a.content, b.content)
+            print("annale:     |", a_diff)
+            print("pdf:    |", b_diff)
+            print("annale: ", a)
+            print("pdf:    ", b)
 
 
 def main() -> None:
@@ -202,6 +205,7 @@ def main() -> None:
 
     commands = {
         "check_identicals": check_identicals,
+        "show_diffs_22": show_diffs_22,
     }
     run_subparser = subparsers.add_parser("run", help="Run a command")
     run_subparser.add_argument(
