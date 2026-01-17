@@ -196,7 +196,7 @@ def main():
     for y in YEARS:
         no_past_questions = 1
         for sub in SUBJECTS:
-            #print(f"\rProcessing year {y}, subject {sub}...")
+            # print(f"\rProcessing year {y}, subject {sub}...")
             soup = req.get_correction_page(y, sub)
             style_txt = get_style(soup)
             answers = get_answers(style_txt)

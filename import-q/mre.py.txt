@@ -1,4 +1,4 @@
-class Question(SQLModel, table=True):
+class AfQuestion(SQLModel, table=True):
     question_id: str = Field(primary_key=True)  # Explicitly mark as primary key
     content: str = Field(max_length=1024)  # Optional description
     choice_a: str
@@ -14,7 +14,7 @@ class Question(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
-Question(question_id="111",
+AfQuestion(question_id="111",
          content="222",
          choice_a="a",
          choice_b="b",

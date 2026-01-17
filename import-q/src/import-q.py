@@ -34,7 +34,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from sqlmodel import Field, SQLModel, Session, select
 
-from models import QuestionId, Question, create_engine
+from models import QuestionId, AfQuestion, create_engine
 from log import log
 
 #############
@@ -161,13 +161,13 @@ def find_by_css_multiples(
     )
 
 
-def parse_question(driver: webdriver.Chrome, q: QuestionId) -> Question:
+def parse_question(driver: webdriver.Chrome, q: QuestionId) -> AfQuestion:
     driver.get(f"{DOMAIN}/questions/{q.question_id}")
 
     question_id_elm = find_by_css(driver, "input[name='id']")
     question_id = question_id_elm.get_attribute("value")
     assert question_id == q.question_id, (
-        f"Question ID mismatch: expected {q.question_id}, got {question_id}"
+        f"AfQuestion ID mismatch: expected {q.question_id}, got {question_id}"
     )
 
     date_input = find_by_css(driver, "input[name='timestamp']")
@@ -175,7 +175,7 @@ def parse_question(driver: webdriver.Chrome, q: QuestionId) -> Question:
     date_string = date_input.get_attribute("value")
     date_added = datetime.strptime(date_string, "%d/%m/%Y").date()
 
-    # Extract Content (Question Text)
+    # Extract Content (AfQuestion Text)
     content = find_by_css(driver, "input[name='text']").get_attribute("value")
 
     # Extract Choices (A, B, C, D)
@@ -216,7 +216,7 @@ def parse_question(driver: webdriver.Chrome, q: QuestionId) -> Question:
     )
 
     mixed_choices = mixed_choices_checkbox.is_selected()
-    return Question(
+    return AfQuestion(
         question_id=q.question_id,
         content=content,
         choice_a=choice_a,
