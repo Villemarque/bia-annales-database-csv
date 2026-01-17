@@ -90,57 +90,16 @@ Exemple de format de sortie JSON :
   ...
 ]"""
 
-@dataclass(frozen=True)
-class ConcatenatedYears:
-    pdf: bytes
-    years: list[Year]
-
-def concatenate_pdfs(paths: list[Path]) -> bytes:
-    output_io = BytesIO()
-    merger = PdfWriter()
-    for path in paths:
-        merger.append(path)
-    merger.write(output_io)
-    merger.close()
-    output_io.seek(0)
-    return output_io.getvalue()
-
-def years_as_20mb_files(years: list[Year]) -> list[ConcatenatedYears]:
-    """Concatenate PDFs into files of maximum 20MB each."""
-    MAX_SIZE = 20 * 1024 * 1024  # 20MB
-    output_pdfs: list[ConcatenatedYears] = []
-    current_file_questions: list[Tuple[Path, Year]] = []
-    def concatenate(files: list[Tuple[Path, Year]]): # only working by side-effect, ok since list is shared
-        pdf_bytes = concatenate_pdfs([p for p, _ in files])
-        years_concatenated: list[Year] = [y for _, y in files]
-        output_pdfs.append(ConcatenatedYears(pdf=pdf_bytes, years=years_concatenated))
-        files.clear() # CANNOT use files = [] since it would rebind the local name only
-
-    for year in years:
-        filepath = ANNALES_PDF_DIR / f"sujets/{year}-examen-bia+anglais.pdf"
-        print("filepath", filepath, "size", filepath.stat().st_size)
-        # slower but safer than two lists than can go out of sync
-        t = (filepath, year)
-        # sum
-        if sum((p.stat().st_size for p, _ in (current_file_questions + [t]))) > MAX_SIZE:
-            concatenate(current_file_questions)
-            assert len(current_file_questions) == 0
-        current_file_questions.append(t)
-
-    if current_file_questions:
-        concatenate(current_file_questions)
-
-    return output_pdfs
-
 # as bytes and not bytesIO to be cacheable
-@CACHE.memoize()
-def parse_pdf_raw(pdf_as_bytes: bytes) -> str:
+@CACHE.memoize(name="parse_pdf_raw_v3")
+def parse_pdf_raw(year: Year) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
+    filepath = ANNALES_PDF_DIR / f"sujets/{year}-examen-bia+anglais.pdf"
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
         contents=[
             types.Part.from_bytes(
-                data=pdf_as_bytes,
+                data=filepath.read_bytes(),
                 mime_type="application/pdf",
             ),
             PROMPT,
@@ -151,15 +110,15 @@ def parse_pdf_raw(pdf_as_bytes: bytes) -> str:
     return txt
 
 
-def parse_pdf(pdf_as_bytes: bytes) -> List[PdfQuestion]:
-    raw_output = f"[{parse_pdf_raw(pdf_as_bytes).partition('[')[2].rpartition(']')[0]}]"
+def parse_pdf(y: Year) -> List[PdfQuestion]:
+    raw_output = f"[{parse_pdf_raw(y).partition('[')[2].rpartition(']')[0]}]"
     print(raw_output[:])
     raw_output = raw_output.replace("choice__d", "choice_d") # joy of non-determinism...
     decoder = Decoder(parse_mode=PM_COMMENTS | PM_TRAILING_COMMAS)
     parsed_output = decoder(raw_output)
     res = []
     for q in parsed_output:
-        # assert y == q["year"], f"Year mismatch: expected {y}, got {q['year']}"
+        assert y == q["year"], f"Year mismatch: expected {y}, got {q['year']}"
         question_id = f"{q["year"]}-{q['question_number']}"
         print("\rquestion_id", question_id,end="")
         res.append(
@@ -180,15 +139,15 @@ def parse_pdf(pdf_as_bytes: bytes) -> List[PdfQuestion]:
 
 def main():
     engine = create_engine()
-    for concatenated_pdf in years_as_20mb_files([2015]):
-        log.info(f"Processing years {concatenated_pdf.years}...")
-        questions = parse_pdf(concatenated_pdf.pdf)
+    for y in YEARS:
+        log.info(f"Processing years {y}...")
+        questions = parse_pdf(y)
         with Session(engine) as session:
             for q in questions:
                 pass
                 #session.add(q)
             #session.commit()
-        log.info(f"Inserted questions from year {concatenated_pdf.years} into database.")
+        log.info(f"Inserted questions from year {y} into database.")
 
 
 ########
