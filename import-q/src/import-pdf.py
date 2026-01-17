@@ -11,6 +11,7 @@ import json
 import logging
 import logging.handlers
 import os
+import csv
 import sys
 import re
 import time
@@ -66,7 +67,7 @@ YEARS: list[Year] = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
 ANNALES_PDF_DIR = SCRIPT_DIR.parent.parent / f"annales-pdf"
 print("ANNALES_PDF_DIR", ANNALES_PDF_DIR)
 
-PROMPT = """Extrait sous format JSON chaque question contenu dans ce document PDF.
+Q_PROMPT = """Extrait sous format JSON chaque question contenu dans ce document PDF.
 
 Exemple de format de sortie JSON :
 [
@@ -90,11 +91,20 @@ Exemple de format de sortie JSON :
   ...
 ]"""
 
+A_PROMPT = """Extrait sous format CSV chaque réponse contenue dans ce document PDF.
+
+Exemple de format de sortie CSV:
+question_id,answer,issue
+2015-1.1,a,,
+1015-1.2,b,true,
+...
+
+"""
+
 # as bytes and not bytesIO to be cacheable
 @CACHE.memoize(name="parse_pdf_raw_v3")
-def parse_pdf_raw(year: Year) -> str:
+def parse_pdf_raw(filepath: Path, prompt: str) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
-    filepath = ANNALES_PDF_DIR / f"sujets/{year}-examen-bia+anglais.pdf"
     response = client.models.generate_content(
         model="gemini-3-flash-preview",
         contents=[
@@ -102,16 +112,22 @@ def parse_pdf_raw(year: Year) -> str:
                 data=filepath.read_bytes(),
                 mime_type="application/pdf",
             ),
-            PROMPT,
+            prompt,
         ],
     )
     txt = response.text
     assert txt is not None, "No text returned from Gemini API"
     return txt
 
+def parse_answer() -> str:
+    filepath = ANNALES_PDF_DIR / f"corrections/{y}-correction-bia+anglais.pdf"
+    raw_output = parse_pdf_raw(filepath, A_PROMPT)
+    print(raw_output[:])
 
-def parse_pdf(y: Year) -> List[PdfQuestion]:
-    raw_output = f"[{parse_pdf_raw(y).partition('[')[2].rpartition(']')[0]}]"
+
+def parse_questions(y: Year) -> List[PdfQuestion]:
+    filepath = ANNALES_PDF_DIR / f"sujets/{y}-examen-bia+anglais.pdf"
+    raw_output = f"[{parse_pdf_raw(filepath, Q_PROMPT).partition('[')[2].rpartition(']')[0]}]"
     print(raw_output[:])
     raw_output = raw_output.replace("choice__d", "choice_d") # joy of non-determinism...
     decoder = Decoder(parse_mode=PM_COMMENTS | PM_TRAILING_COMMAS)
@@ -141,7 +157,7 @@ def main():
     engine = create_engine()
     for y in YEARS:
         log.info(f"Processing years {y}...")
-        questions = parse_pdf(y)
+        questions = parse_questions(y)
         with Session(engine) as session:
             for q in questions:
                 pass
