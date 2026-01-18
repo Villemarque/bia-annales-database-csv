@@ -12,6 +12,7 @@ import time
 
 import selenium
 import sqlmodel
+import Levenshtein
 
 from argparse import RawTextHelpFormatter
 from datetime import datetime, timezone
@@ -24,7 +25,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By  # type: ignore
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from sqlmodel import Session, select
+from sqlmodel import Session, select, col
 
 from models import QuestionId, AfQuestion, create_engine
 from log import log
@@ -153,13 +154,13 @@ def find_by_css_multiples(
     )
 
 
-def parse_question(driver: webdriver.Chrome, q: QuestionId) -> AfQuestion:
-    driver.get(f"{DOMAIN}/questions/{q.question_id}")
+def parse_question(driver: webdriver.Chrome, qid: str) -> AfQuestion:
+    driver.get(f"{DOMAIN}/questions/{qid}")
 
     question_id_elm = find_by_css(driver, "input[name='id']")
     question_id = question_id_elm.get_attribute("value")
-    assert question_id == q.question_id, (
-        f"AfQuestion ID mismatch: expected {q.question_id}, got {question_id}"
+    assert question_id == qid, (
+        f"AfQuestion ID mismatch: expected {qid}, got {question_id}"
     )
 
     date_input = find_by_css(driver, "input[name='timestamp']")
@@ -189,7 +190,14 @@ def parse_question(driver: webdriver.Chrome, q: QuestionId) -> AfQuestion:
     assert answer_index is not None, "No answer selected"
 
     # Extract Chapter
-    chapter = find_by_css(driver, "nb-select button.select-button").text.split(" ")[0]
+    chapter_elm = find_by_css(driver, "nb-select button.select-button")
+    # for some reason `chapter_elm.text` sometimes return empty text, so need to use `.textContent`
+    chapter = (
+        driver.execute_script("return arguments[0].textContent;", chapter_elm)
+        .split(" ")[0]
+        .strip()
+    )
+    assert len(chapter) >= 1, f"Unexpected chapter format: {chapter}"
     try:
         img_element = find_by_css(
             driver, "div.file_display.ng-star-inserted img", timeout=0.4
@@ -209,7 +217,7 @@ def parse_question(driver: webdriver.Chrome, q: QuestionId) -> AfQuestion:
 
     mixed_choices = mixed_choices_checkbox.is_selected()
     return AfQuestion(
-        question_id=q.question_id,
+        question_id=qid,
         content=content,
         choice_a=choice_a,
         choice_b=choice_b,
@@ -224,19 +232,38 @@ def parse_question(driver: webdriver.Chrome, q: QuestionId) -> AfQuestion:
 
 
 def populate_questions(
-    driver: webdriver.Chrome, engine, qids_opt: list[str] | None = None
+    driver: webdriver.Chrome,
+    engine,
+    qids_opt: list[str] | None = None,
+    only_no_chapter: bool = False,
 ) -> None:
     with sqlmodel.Session(engine) as session:
         # find all qids from qids_opt
         if qids_opt is not None:
-            stmt = select(QuestionId).where(QuestionId.question_id.in_(qids_opt))  # type: ignore
+            qids_ = session.exec(
+                select(QuestionId).where(col(QuestionId.question_id).in_(qids_opt))
+            ).all()  # type: ignore
+        elif only_no_chapter:
+            print("Finding questions with no chapter...")
+            qids_ = session.exec(
+                select(AfQuestion).where(AfQuestion.chapter == "")
+            ).all()
+            print(f"Found {len(qids_)} questions with no chapter.")
         else:
-            stmt = select(QuestionId).where(QuestionId.checked_at == None)
-        qids = session.exec(stmt).all()
-        for qid in qids:
-            populated = parse_question(driver, qid)
+            qids_ = session.exec(
+                select(QuestionId).where(QuestionId.checked_at == None)
+            ).all()
+    qids = [qid.question_id for qid in qids_]
+    with sqlmodel.Session(engine) as session:
+        for _id in qids:
+            populated = parse_question(driver, _id)
             print(f"Populated question {populated}")
+            if (old := session.get(AfQuestion, _id)) is not None:
+                old.merge_chapter(populated)
+                populated = old
             session.add(populated)
+            qid = session.get(QuestionId, _id)
+            assert qid is not None
             qid.checked_at = datetime.now(timezone.utc)
             session.add(qid)
             session.commit()
@@ -270,6 +297,12 @@ def main() -> None:
         help="List of question IDs to populate (only for populate_questions command)",
         default=None,
     )
+    parser.add_argument(
+        "-c",
+        "--chapter",
+        action="store_true",
+        help="Update chapters of questions with no chapter",
+    )
     args = parser.parse_args()
     chrome_options = Options()
     chrome_options.add_experimental_option("detach", True)
@@ -277,7 +310,8 @@ def main() -> None:
     login(driver, BIA_AF_EMAIL, BIA_AF_PASSWORD)
     time.sleep(1)
     engine = create_engine()
-    commands[args.command](driver, engine, args.qids)
+    print("chapter", args.chapter)
+    commands[args.command](driver, engine, args.qids, args.chapter)
 
 
 ########

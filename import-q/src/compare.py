@@ -18,7 +18,7 @@ from urllib3.util.retry import Retry
 
 from requests.adapters import HTTPAdapter
 import diskcache
-from sqlmodel import Session, select
+from sqlmodel import Session, select, col
 
 from models import (
     AfQuestion,
@@ -94,9 +94,11 @@ def compute_diffs_annale_af(
 ) -> dict[int, list[Diff[AfQuestion, AnnaleQuestion]]]:
     with Session(engine) as session:
         # sorting needed for diskcache to work
-        a_s = session.exec(select(AfQuestion).order_by(AfQuestion.created_at)).all()
+        a_s = session.exec(
+            select(AfQuestion).order_by(col(AfQuestion.created_at))
+        ).all()
         b_s = session.exec(
-            select(AnnaleQuestion).order_by(AnnaleQuestion.created_at)
+            select(AnnaleQuestion).order_by(col(AnnaleQuestion.created_at))
         ).all()
         return compute_diffs(a_s, b_s)
 
@@ -107,9 +109,11 @@ def compute_diffs_annale_pdf(
     with Session(engine) as session:
         # sorting needed for diskcache to work
         a_s = session.exec(
-            select(AnnaleQuestion).order_by(AnnaleQuestion.created_at)
+            select(AnnaleQuestion).order_by(col(AnnaleQuestion.created_at))
         ).all()
-        b_s = session.exec(select(PdfQuestion).order_by(PdfQuestion.created_at)).all()
+        b_s = session.exec(
+            select(PdfQuestion).order_by(col(PdfQuestion.created_at))
+        ).all()
         return compute_diffs(a_s, b_s)
 
 

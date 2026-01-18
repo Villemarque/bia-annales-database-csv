@@ -65,27 +65,29 @@ class AfQuestion(SQLModel, table=True):
     def clean_content(self) -> str:
         return cleaned_str(self.content)
 
+    def merge_chapter(self, other: AfQuestion) -> None:
+        """Merge fields from other into self if they are None in self."""
+        if self.chapter is None or len(other.chapter) > len(self.chapter):
+            self.chapter = other.chapter
 
-class ConsolidatedfQuestion(SQLModel, table=True):
-    question_id: str = Field(primary_key=True)
-    year: int = Field()
-    question_number_str: str = Field()  # 1.1, 2.3, etc F.XX for English
-    question_number: int = Field()  # 0-based in the year
-    content_verbatim: str = Field(max_length=1024)
-    content_dense: Optional[str] = Field(max_length=1024)
+
+class ConsolidatedQuestion(SQLModel, table=True):
+    qid: str = Field(primary_key=True)
+    year: int = Field(nullable=False)
+    label: str = Field(nullable=False)  # 1.1, 2.3, etc F.XX for English
+    no: int = Field(nullable=False)  # 0-based in the year
+    content_verbatim: str = Field(max_length=1024, nullable=False)
+    content_fixed: Optional[str] = Field(max_length=1024)
     choice_a: str = Field(min_length=1, nullable=False)
     choice_b: str = Field(min_length=1, nullable=False)
     choice_c: str = Field(min_length=1, nullable=False)
     choice_d: str = Field(min_length=1, nullable=False)
     answer: int = Field(min_length=1, max_length=1, nullable=False)  # 0, 1, 2, 3
-    chapter: str = Field(min_length=1, max_length=8, nullable=False)
+    chapter: Optional[str] = Field(min_length=1, max_length=8)
     attachment_link: Optional[str] = Field(default=None, max_length=256)
-    mixed_choices: bool
+    mixed_choices: Optional[bool] = Field(default=None)
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-    def clean_content(self) -> str:
-        return cleaned_str(self.content)
 
 
 class AnnaleQuestion(SQLModel, table=True):
