@@ -41,6 +41,7 @@
 		--text-dark: #0b1320;
 		--text-muted: rgba(0, 0, 0, 0.6);
 		--radius-xl: 22px;
+		font-family: "Open Sans", sans-serif;
 	}
 	body {
 		margin: 0;
