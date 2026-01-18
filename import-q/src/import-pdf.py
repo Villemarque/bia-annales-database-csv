@@ -151,7 +151,7 @@ def parse_pdf_pro_raw(filepath: Path, prompt: str) -> str:
 
 
 # here the answers in JSON are cached
-@CACHE.memoize(name="parse_pdf_pro_raw_json_v1", ignore=(1,))
+@CACHE.memoize(name="parse_pdf_pro_raw_json_v2", ignore=(1,))
 def parse_pdf_pro_raw_json(filepath: Path, prompt: str) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
     response = client.models.generate_content(
@@ -172,7 +172,7 @@ def parse_pdf_pro_raw_json(filepath: Path, prompt: str) -> str:
 
 def parse_json_llm(txt: str):
     raw_output = f"[{txt.partition('[')[2].rpartition(']')[0]}]"
-    print(raw_output[:])
+    # print(raw_output[:])
     raw_output = raw_output.replace(
         "choice__d", "choice_d"
     )  # joy of non-determinism...
@@ -182,9 +182,8 @@ def parse_json_llm(txt: str):
 
 def parse_answers_json(y: Year) -> dict[str, tuple[str, bool]]:
     filepath = ANNALES_PDF_DIR / f"corrections/{y}-correction-bia+anglais.pdf"
-    raw_output = parse_pdf_pro_raw_json(filepath, A_PROMPT_CSV)
+    raw_output = parse_pdf_pro_raw_json(filepath, A_PROMPT_JSON)
     parsed_output = parse_json_llm(raw_output)
-    # print(raw_output[:])
     res = {}
     # read json from parsed_output
     for row in parsed_output:
@@ -247,7 +246,7 @@ def process_questions_answer(add_db: bool, answer_json: bool):
     for y in YEARS:
         log.info(f"Processing year {y} (Q)...")
         questions = parse_questions(y)
-        log.info(f"Processing year {y} (A)...")
+        log.info(f"Processing year {y} (A) (json: {answer_json})...")
         if answer_json:
             answers = parse_answers_json(y)
         else:
@@ -258,22 +257,23 @@ def process_questions_answer(add_db: bool, answer_json: bool):
                 # if session.get(PdfQuestion, q.question_id) is not None:
                 #   continue
                 answer = answers.get(q.question_id, None)
-                if answer is None:
-                    log.warning(f"No answer found for question_id {q.question_id}")
-                    continue
-                elif answer[1]:  # if there are some issues with the question
+                assert answer is not None, (
+                    f"No answer found for question_id {q.question_id}"
+                )
+                if answer[1]:  # if there are some issues with the question
                     q.has_issue = True
                 else:
-                    print("setting answer for", q.question_id, "to", answer[0])
                     try:
                         q.answer = answer_to_int(answer[0])
                     except Exception as _:
-                        pass
+                        log.warning(
+                            f"No/bad answer found for question_id {q.question_id}, answer: {answer[0]}"
+                        )
                 if add_db:
                     session.add(q)
             if add_db:
                 session.commit()
-            log.info(f"Inserted questions from year {y} into database.")
+                log.info(f"Inserted questions from year {y} into database.")
 
 
 def main():
