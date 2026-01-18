@@ -24,7 +24,26 @@ class QuestionId(SQLModel, table=True):
 
 def cleaned_str(s: str) -> str:
     """Return the string with normalized whitespace."""
-    return " ".join(s.split()).lower()
+    no_multi_space_lowered = " ".join(s.split()).lower()
+    no_special = no_multi_space_lowered.translate(str.maketrans("", "", "'‘’«»“”„"))
+    return no_special
+
+
+# should be plenty of space for a ~1k question
+def gen_unique_id() -> str:
+    import secrets
+    import string
+
+    key_length = 8
+    alphabet = string.ascii_letters + string.digits  # e.g., A-Z, a-z, 0-9
+    return "".join(secrets.choice(alphabet) for _ in range(key_length))
+
+
+class AnnaleToAfMapping(SQLModel, table=True):
+    annale_question_id: str = Field(primary_key=True)
+    af_question_id: str = Field(index=True)
+    is_same: Optional[bool] = None  # None = unchecked, True = same, False = different
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class AfQuestion(SQLModel, table=True):
@@ -37,6 +56,28 @@ class AfQuestion(SQLModel, table=True):
     choice_d: str = Field(min_length=1, nullable=False)
     answer: int = Field(min_length=1, max_length=1, nullable=False)  # 0, 1, 2, 3
     date_added: date
+    chapter: str = Field(min_length=1, max_length=8, nullable=False)
+    attachment_link: Optional[str] = Field(default=None, max_length=256)
+    mixed_choices: bool
+
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+    def clean_content(self) -> str:
+        return cleaned_str(self.content)
+
+
+class ConsolidatedfQuestion(SQLModel, table=True):
+    question_id: str = Field(primary_key=True)
+    year: int = Field()
+    question_number_str: str = Field()  # 1.1, 2.3, etc F.XX for English
+    question_number: int = Field()  # 0-based in the year
+    content_verbatim: str = Field(max_length=1024)
+    content_dense: Optional[str] = Field(max_length=1024)
+    choice_a: str = Field(min_length=1, nullable=False)
+    choice_b: str = Field(min_length=1, nullable=False)
+    choice_c: str = Field(min_length=1, nullable=False)
+    choice_d: str = Field(min_length=1, nullable=False)
+    answer: int = Field(min_length=1, max_length=1, nullable=False)  # 0, 1, 2, 3
     chapter: str = Field(min_length=1, max_length=8, nullable=False)
     attachment_link: Optional[str] = Field(default=None, max_length=256)
     mixed_choices: bool

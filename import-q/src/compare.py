@@ -20,21 +20,19 @@ from requests.adapters import HTTPAdapter
 import diskcache
 from sqlmodel import Session, select
 
-from models import AfQuestion, AnnaleQuestion, create_engine, PdfQuestion
+from models import (
+    AfQuestion,
+    AnnaleQuestion,
+    create_engine,
+    PdfQuestion,
+    AnnaleToAfMapping,
+)
 from log import SCRIPT_DIR
 from cache import CACHE
 
 #############
 # Constants #
 #############
-
-RETRY_STRAT = Retry(
-    total=5,
-    backoff_factor=1,
-    status_forcelist=[429, 500, 502, 503, 504],
-    allowed_methods=["GET"],
-)
-ADAPTER = HTTPAdapter(max_retries=RETRY_STRAT)
 
 ########
 # Logs #
@@ -95,8 +93,11 @@ def compute_diffs_annale_af(
     engine,
 ) -> dict[int, list[Diff[AfQuestion, AnnaleQuestion]]]:
     with Session(engine) as session:
-        a_s = session.exec(select(AfQuestion)).all()
-        b_s = session.exec(select(AnnaleQuestion)).all()
+        # sorting needed for diskcache to work
+        a_s = session.exec(select(AfQuestion).order_by(AfQuestion.created_at)).all()
+        b_s = session.exec(
+            select(AnnaleQuestion).order_by(AnnaleQuestion.created_at)
+        ).all()
         return compute_diffs(a_s, b_s)
 
 
@@ -104,8 +105,11 @@ def compute_diffs_annale_pdf(
     engine,
 ) -> dict[int, list[Diff[AnnaleQuestion, PdfQuestion]]]:
     with Session(engine) as session:
-        a_s = session.exec(select(AnnaleQuestion)).all()
-        b_s = session.exec(select(PdfQuestion)).all()
+        # sorting needed for diskcache to work
+        a_s = session.exec(
+            select(AnnaleQuestion).order_by(AnnaleQuestion.created_at)
+        ).all()
+        b_s = session.exec(select(PdfQuestion).order_by(PdfQuestion.created_at)).all()
         return compute_diffs(a_s, b_s)
 
 
@@ -134,6 +138,46 @@ def check_identicals(engine) -> None:
         print(f"levenshtein distance: {k}, number of questions {len(res[k])}")
 
 
+def do_link(
+    session: Session, af: AfQuestion, annale: AnnaleQuestion, is_same: bool
+) -> None:
+    mapping = AnnaleToAfMapping(
+        annale_question_id=annale.question_id,
+        af_question_id=af.question_id,
+        is_same=is_same,
+    )
+    session.add(mapping)
+
+
+def link_af_to_annale(engine) -> None:
+    res = compute_diffs_annale_af(engine)
+    for k in sorted(res.keys()):
+        print(
+            f"\n\n=== Levenshtein distance: {k}, number of questions {len(res[k])} ==="
+        )
+        for diff in res[k]:
+            af, annale = diff.ids
+            with Session(engine) as session:
+                if session.get(AnnaleToAfMapping, annale.question_id) is not None:
+                    continue
+            if k < 3:
+                link = True
+            else:
+                print(
+                    f"\n--- AfQuestion ID: {af.question_id} | AnnaleQuestion ID: {annale.question_id} ---"
+                )
+                af_diff, annale_diff = colored_diff_lines(
+                    af.clean_content(), annale.clean_content()
+                )
+                print("af:     |", af_diff)
+                print("annale  |", annale_diff)
+                ans = input("Link these questions? (y/n) ")
+                link = ans.lower() == "y"
+            with Session(engine) as session:
+                do_link(session, af, annale, is_same=link)
+                session.commit()
+
+
 def sub_show_diffs(engine, min_leven_dist: int) -> None:
     res = compute_diffs_annale_af(engine)
     print(f"\nShowing diffs with minimum Levenshtein distance of {min_leven_dist}:\n")
@@ -147,7 +191,9 @@ def sub_show_diffs(engine, min_leven_dist: int) -> None:
                 print(
                     f"\n--- AfQuestion ID: {af.question_id} | AnnaleQuestion ID: {annale.question_id} ---"
                 )
-                af_diff, annale_diff = colored_diff_lines(af.content, annale.content)
+                af_diff, annale_diff = colored_diff_lines(
+                    af.clean_content(), annale.clean_content()
+                )
                 print("af:     |", af_diff)
                 print("annale  |", annale_diff)
 
@@ -167,7 +213,7 @@ def show_diffs_pdf(engine) -> None:
             print(
                 f"\n--- AnnaleQuestion ID: {a.question_id} | PdfQuestion ID: {b.question_id} ---"
             )
-            a_diff, b_diff = colored_diff_lines(a.content, b.content)
+            a_diff, b_diff = colored_diff_lines(a.clean_content(), b.clean_content())
             print("annale:     |", a_diff)
             print("pdf:    |", b_diff)
             print("annale: ", a)
@@ -206,6 +252,7 @@ def main() -> None:
     commands = {
         "check_identicals": check_identicals,
         "show_diffs_pdf": show_diffs_pdf,
+        "link_af_to_annale": link_af_to_annale,
     }
     run_subparser = subparsers.add_parser("run", help="Run a command")
     run_subparser.add_argument(
