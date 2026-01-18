@@ -28,7 +28,7 @@ def cleaned_str(s: str) -> str:
 
 
 class AfQuestion(SQLModel, table=True):
-    __tablename__ = "question" # type: ignore[assignment]
+    __tablename__ = "question"  # type: ignore[assignment]
     question_id: str = Field(primary_key=True)  # Explicitly mark as primary key
     content: str = Field(max_length=1024)  # Optional description
     choice_a: str = Field(min_length=1, nullable=False)
@@ -50,7 +50,7 @@ class AfQuestion(SQLModel, table=True):
 class AnnaleQuestion(SQLModel, table=True):
     question_id: str = Field(primary_key=True)  # year-question_number
     year: int = Field()
-    question_number: int = Field()
+    question_number: str = Field()
     content: str = Field(max_length=1024)  # Optional description
     choice_a: str = Field(min_length=1, nullable=False)
     choice_b: str = Field(min_length=1, nullable=False)
@@ -75,6 +75,8 @@ class PdfQuestion(SQLModel, table=True):
     choice_c: str = Field(min_length=1, nullable=False)
     choice_d: str = Field(min_length=1, nullable=False)
     attachment: bool = Field(default=False)
+    answer: Optional[int] = Field(min_length=1, max_length=1)  # 0, 1, 2, 3
+    has_issue: bool = Field(default=False)
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

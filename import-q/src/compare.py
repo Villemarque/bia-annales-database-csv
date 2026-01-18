@@ -13,14 +13,7 @@ import Levenshtein
 from difflib import ndiff
 from argparse import RawTextHelpFormatter
 from dataclasses import dataclass
-from typing import (
-    Tuple,
-    Protocol,
-    Type,
-    TypeVar,
-    Generic,
-    Sequence
-)
+from typing import Tuple, Protocol, Type, TypeVar, Generic, Sequence
 from urllib3.util.retry import Retry
 
 from requests.adapters import HTTPAdapter
@@ -34,8 +27,6 @@ from cache import CACHE
 #############
 # Constants #
 #############
-
-CACHE = diskcache.Cache(SCRIPT_DIR.parent / "cache")
 
 RETRY_STRAT = Retry(
     total=5,
@@ -100,15 +91,20 @@ class Diff(Generic[A, B]):
         )
 
 
-def compute_diffs_annale_af(engine) -> dict[int, list[Diff[AfQuestion, AnnaleQuestion]]]:
+def compute_diffs_annale_af(
+    engine,
+) -> dict[int, list[Diff[AfQuestion, AnnaleQuestion]]]:
     with Session(engine) as session:
         a_s = session.exec(select(AfQuestion)).all()
         b_s = session.exec(select(AnnaleQuestion)).all()
         return compute_diffs(a_s, b_s)
 
-def compute_diffs_annale_pdf_22(engine) -> dict[int, list[Diff[AnnaleQuestion, PdfQuestion]]]:
+
+def compute_diffs_annale_pdf(
+    engine,
+) -> dict[int, list[Diff[AnnaleQuestion, PdfQuestion]]]:
     with Session(engine) as session:
-        a_s = session.exec(select(AnnaleQuestion).where(AnnaleQuestion.year == 2022)).all()
+        a_s = session.exec(select(AnnaleQuestion)).all()
         b_s = session.exec(select(PdfQuestion)).all()
         return compute_diffs(a_s, b_s)
 
@@ -120,9 +116,7 @@ def compute_diffs(
 ) -> dict[int, list[Diff]]:
     res: dict[int, list[Diff]] = {}
     assert len(a_s) <= len(b_s)
-    for (
-        a
-    ) in a_s:  # it's important to have af in outer loop as they're fewer of them
+    for a in a_s:  # it's important to have af in outer loop as they're fewer of them
         min_diff: Diff | None = None
         for b in b_s:
             diff = Diff.new(a, b)
@@ -158,10 +152,12 @@ def sub_show_diffs(engine, min_leven_dist: int) -> None:
                 print("annale  |", annale_diff)
 
 
-def show_diffs_22(engine) -> None:
-    res = compute_diffs_annale_pdf_22(engine)
-    print("\nShowing diffs between PDF and Annale for 2022:\n")
+def show_diffs_pdf(engine) -> None:
+    res = compute_diffs_annale_pdf(engine)
+    print("\nShowing diffs between PDF and Annale:\n")
     for k in sorted(res.keys()):
+        if k <= 3:
+            continue
         print(
             f"\n\n=== Levenshtein distance: {k}, number of questions {len(res[k])} ==="
         )
@@ -177,6 +173,30 @@ def show_diffs_22(engine) -> None:
             print("annale: ", a)
             print("pdf:    ", b)
 
+    with Session(engine) as session:
+        a_s = session.exec(select(AnnaleQuestion)).all()
+        b_s = session.exec(select(PdfQuestion)).all()
+    a_dict = {a.question_id: a for a in a_s}
+    b_dict = {b.question_id: b for b in b_s}
+    i = 0
+    for a_id, a in a_dict.items():
+        if b_dict[a_id].answer != a.answer:
+            i += 1
+            print(
+                f"Answer mismatch for question ID {a_id}: Annale answer {a.answer}, PDF answer {b_dict[a_id].answer}"
+            )
+            print(a.content)
+            print()
+            print(a.choice_a)
+            print(a.choice_b)
+            print(a.choice_c)
+            print(a.choice_d)
+            print()
+
+    # 440 missmtach with gemini-3-flash-preview
+    # 336 missmtach with gemini-3-pro-preview
+    print(f"\nTotal answer mismatches between Annale and PDF: {i}")
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
@@ -185,7 +205,7 @@ def main() -> None:
 
     commands = {
         "check_identicals": check_identicals,
-        "show_diffs_22": show_diffs_22,
+        "show_diffs_pdf": show_diffs_pdf,
     }
     run_subparser = subparsers.add_parser("run", help="Run a command")
     run_subparser.add_argument(

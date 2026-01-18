@@ -49,24 +49,23 @@ Year = Literal[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
 YEARS: list[Year] = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
 
 Subject = Literal["mto", "amv", "cda", "nrs", "his", "ang"]
-SUBJECTS: list[Subject] = ["cda", "amv", "mto", "nrs", "his", "ang"]
+# order of subjects in which they appear
+SUBJECTS: list[Subject] = ["mto", "amv", "cda", "nrs", "his", "ang"]
 
 
-# question number in the exam of that year
-# def question_number(sub: Subject, no: int) -> int:
-#     if sub == "cda":
-#         return no
-#     elif sub == "amv":
-#         return no + 20
-#     elif sub == "mto":
-#         return no + 40
-#     elif sub == "nrs":
-#         return no + 60
-#     elif sub == "his":
-#         return no + 80
-#     # arbitrary place english at last
-#     elif sub == "ang":
-#         return no + 100
+def subject_symbol(sub: Subject) -> str:
+    if sub == "mto":
+        return "1"
+    elif sub == "amv":
+        return "2"
+    elif sub == "cda":
+        return "3"
+    elif sub == "nrs":
+        return "4"
+    elif sub == "his":
+        return "5"
+    elif sub == "ang":
+        return "F"
 
 
 # text between <style> and </style>
@@ -138,11 +137,12 @@ def parse_questions(
             answer_text = re.sub(r"^[A-D]-\s*", "", label).strip()
             q_answers.append(answer_text)
 
+        q_number = f"{subject_symbol(sub)}.{i}"
         questions.append(
             AnnaleQuestion(
                 year=y,
-                question_number=no_past_questions + i,
-                question_id=f"{y}-{no_past_questions + i}",
+                question_number=q_number,
+                question_id=f"{y}-{q_number}",
                 content=q_txt,
                 choice_a=q_answers[0],
                 choice_b=q_answers[1],
