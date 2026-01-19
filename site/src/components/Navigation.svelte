@@ -1,49 +1,95 @@
 <script lang="ts">
-	import { fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
-	let isOpen = $state(false);
-	const toggle = () => (isOpen = !isOpen);
+	let isExpanded = $state(false);
+	const toggle = () => (isExpanded = !isExpanded);
+
+	const items = [
+		{ icon: '🏠', label: 'Accueil' },
+		{ icon: '✈︎', label: 'Programme' },
+		{ icon: '📚', label: 'Ressources' },
+		{ icon: '📊', label: 'Progression' },
+		{ icon: '⚙️', label: 'Paramètres' }
+	];
 </script>
 
-{#if isOpen}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="drawer" transition:fly={{ x: -320, duration: 450, opacity: 1 }} onclick={toggle}>
-		<ul>
-			<li>Accueil</li>
-			<li>Programme</li>
-			<li>Ressources</li>
-			<li>Progression</li>
-			<li>Paramètres</li>
-		</ul>
+<aside class="navigation" class:expanded={isExpanded}>
+	<div class="header-section">
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="dot hamburger" onclick={toggle}>☰</div>
 	</div>
-{/if}
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
-<!-- svelte-ignore a11y_no_static_element_interactions -->
-<aside class="sidebar" onclick={toggle}>
-	<div class="dot">☰</div>
-	<div class="dot">✈︎</div>
-	<div class="dot">🧭</div>
+	<nav class="menu">
+		<ul>
+			{#each items as item}
+				<li>
+					<div class="menu-item">
+						<div class="dot icon-container">{item.icon}</div>
+						{#if isExpanded}
+							<span class="label" transition:fade={{ duration: 200 }}>{item.label}</span>
+						{/if}
+					</div>
+				</li>
+			{/each}
+		</ul>
+	</nav>
 </aside>
 
 <style>
-	.sidebar {
-		position: relative;
+	.navigation {
+		width: 80px;
+		height: 100vh;
 		backdrop-filter: blur(28px) saturate(160%);
 		background: var(--glass-bg);
 		border-right: 1px solid var(--glass-border);
 		display: flex;
 		flex-direction: column;
-		align-items: center;
 		padding: 20px 0;
-		gap: 22px;
-		cursor: pointer;
-		z-index: 10;
+		gap: 30px;
+		transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+		overflow: hidden;
+		z-index: 20;
+		flex-shrink: 0;
 	}
+
+	.navigation.expanded {
+		width: 200px;
+	}
+
+	.header-section {
+		display: flex;
+		justify-content: flex-start;
+		padding: 0 18px;
+		width: 100%;
+	}
+
+	.menu {
+		width: 100%;
+	}
+
+	.menu ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+	}
+
+	.menu-item {
+		display: flex;
+		align-items: center;
+		padding: 0 18px;
+		gap: 15px;
+		cursor: pointer;
+		white-space: nowrap;
+	}
+
 	.dot {
 		width: 44px;
 		height: 44px;
+		min-width: 44px;
 		border-radius: 14px;
 		background: var(--glass-bg-strong);
 		backdrop-filter: blur(12px);
@@ -52,37 +98,24 @@
 		align-items: center;
 		justify-content: center;
 		font-weight: 600;
+		transition: transform 0.2s ease;
 	}
-	.drawer {
-		position: fixed;
-		top: 0;
-		left: 0;
-		height: 100vh;
-		width: 220px;
-		background: var(--glass-bg-strong);
-		backdrop-filter: blur(36px) saturate(180%);
-		border-right: 1px solid var(--glass-border);
-		box-shadow: var(--glass-shadow);
-		padding: 40px 28px;
-		z-index: 20;
-		cursor: default;
-	}
-	.drawer h2 {
-		margin-top: 0;
-		font-size: 22px;
-	}
-	.drawer ul {
-		list-style: none;
-		padding: 0;
-		margin: 30px 0 0;
-		display: grid;
-		gap: 18px;
-	}
-	.drawer li {
-		padding: 14px 18px;
-		border-radius: 16px;
-		background: rgba(255, 255, 255, 0.6);
-		border: 1px solid var(--glass-border);
+
+	.hamburger {
 		cursor: pointer;
+	}
+
+	.hamburger:hover {
+		transform: scale(1.05);
+	}
+
+	.label {
+		font-size: 16px;
+		font-weight: 500;
+		color: var(--text-dark);
+	}
+
+	.icon-container {
+		font-size: 18px;
 	}
 </style>

@@ -47,7 +47,7 @@
 	}
 	.app {
 		display: grid;
-		grid-template-columns: 80px 1fr;
+		grid-template-columns: auto 1fr;
 		min-height: 100vh;
 	}
 	.main {
