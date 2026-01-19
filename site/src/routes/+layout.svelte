@@ -34,6 +34,7 @@
 		--card-green: linear-gradient(135deg, #1fa971, #6ee7b7);
 		--card-orange: linear-gradient(135deg, #f2994a, #f2c94c);
 		--card-red: linear-gradient(135deg, #eb5757, #f29999);
+		--card-pink: linear-gradient(135deg, #d946ef, #f472b6);
 		--text-dark: #0b1320;
 		--text-muted: rgba(0, 0, 0, 0.6);
 		--radius-xl: 22px;

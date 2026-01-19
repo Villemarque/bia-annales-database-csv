@@ -4,14 +4,14 @@
 	const cards = [
 		{
 			icon: '✈︎',
-			color: 'var(--card-blue)',
+			color: 'var(--card-indigo)',
 			title: 'Connaissance des Aéronefs',
 			desc: 'Structure et systèmes avion.',
 			href: '/quiz'
 		},
 		{
 			icon: '〰︎',
-			color: 'var(--card-indigo)',
+			color: 'var(--card-blue)',
 			title: 'Aérodynamique',
 			desc: 'Forces et équilibres en vol.'
 		},
@@ -28,7 +28,12 @@
 			desc: 'Orientation et règles de l’air.'
 		},
 		{ icon: '⏳', color: 'var(--card-red)', title: 'Histoire', desc: 'Évolution de l’aviation.' },
-		{ icon: 'EN', color: 'var(--card-blue)', title: 'Anglais', desc: 'Communication aéronautique.' }
+		{
+			icon: 'EN',
+			color: 'var(--card-pink)',
+			title: 'Anglais',
+			desc: 'Communication aéronautique.'
+		}
 	];
 </script>
 
