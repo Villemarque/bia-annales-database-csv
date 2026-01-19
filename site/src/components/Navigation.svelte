@@ -39,7 +39,6 @@
 <style>
 	.navigation {
 		width: 80px;
-		height: 100vh;
 		backdrop-filter: blur(28px) saturate(160%);
 		background: var(--glass-bg);
 		border-right: 1px solid var(--glass-border);

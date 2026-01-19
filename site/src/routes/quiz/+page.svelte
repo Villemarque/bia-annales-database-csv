@@ -15,7 +15,7 @@
 	};
 
 	// Session progress mock (1 to 69 as per HTML example)
-	const sessionQuestions = Array.from({ length: 69 }, (_, i) => ({
+	const sessionQuestions = Array.from({ length: 30 }, (_, i) => ({
 		number: i + 1,
 		status: i === 0 ? 'current' : 'pending'
 	}));
