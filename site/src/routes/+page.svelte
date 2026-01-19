@@ -6,7 +6,8 @@
 			icon: '✈︎',
 			color: 'var(--card-blue)',
 			title: 'Connaissance des Aéronefs',
-			desc: 'Structure et systèmes avion.'
+			desc: 'Structure et systèmes avion.',
+			href: '/quiz'
 		},
 		{
 			icon: '〰︎',

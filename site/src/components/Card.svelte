@@ -3,20 +3,30 @@
 		icon = '',
 		color = '',
 		title = '',
-		desc = ''
+		desc = '',
+		href = ''
 	}: {
 		icon?: string;
 		color?: string;
 		title?: string;
 		desc?: string;
+		href?: string;
 	} = $props();
 </script>
 
-<div class="card" style="background: {color}">
-	<div class="icon">{icon}</div>
-	<h3>{title}</h3>
-	<p>{desc}</p>
-</div>
+{#if href}
+	<a {href} class="card" style="background: {color}; text-decoration: none;">
+		<div class="icon">{icon}</div>
+		<h3>{title}</h3>
+		<p>{desc}</p>
+	</a>
+{:else}
+	<div class="card" style="background: {color}">
+		<div class="icon">{icon}</div>
+		<h3>{title}</h3>
+		<p>{desc}</p>
+	</div>
+{/if}
 
 <style>
 	.card {
