@@ -1,28 +1,26 @@
 <script lang="ts">
 	import favicon from '$lib/assets/favicon.svg';
-	import Sidebar from '../components/Sidebar.svelte';
-	import Drawer from '../components/Drawer.svelte';
+	import Navigation from '../components/Navigation.svelte';
 	import Header from '../components/Header.svelte';
 	import CardGrid from '../components/CardGrid.svelte';
 	import Footer from '../components/Footer.svelte';
 
-	let drawerOpen = false;
-	function toggleDrawer() {
-		drawerOpen = !drawerOpen;
-	}
+	let { children } = $props();
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<Drawer open={drawerOpen} />
 <div class="app">
-	<Sidebar onToggleDrawer={toggleDrawer} />
+	<Navigation />
 	<main class="main">
 		<Header />
 		<CardGrid />
 		<Footer />
+		{#if children}
+			{@render children()}
+		{/if}
 	</main>
 </div>
 
@@ -41,9 +39,9 @@
 		--text-dark: #0b1320;
 		--text-muted: rgba(0, 0, 0, 0.6);
 		--radius-xl: 22px;
-		font-family: "Open Sans", sans-serif;
+		font-family: 'Open Sans', sans-serif;
 	}
-	body {
+	:global(body) {
 		margin: 0;
 		min-height: 100vh;
 		background: var(--bg-grey);

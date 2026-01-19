@@ -1,8 +1,15 @@
-<script>
-	export let icon = '';
-	export let color = '';
-	export let title = '';
-	export let desc = '';
+<script lang="ts">
+	let {
+		icon = '',
+		color = '',
+		title = '',
+		desc = ''
+	}: {
+		icon?: string;
+		color?: string;
+		title?: string;
+		desc?: string;
+	} = $props();
 </script>
 
 <div class="card" style="background: {color}">
