@@ -5,11 +5,11 @@
 	const toggle = () => (isExpanded = !isExpanded);
 
 	const items = [
-		{ icon: '🏠', label: 'Accueil' },
-		{ icon: '✈︎', label: 'Programme' },
-		{ icon: '📚', label: 'Ressources' },
-		{ icon: '📊', label: 'Progression' },
-		{ icon: '⚙️', label: 'Paramètres' }
+		{ icon: '🏠', label: 'Accueil', href: '/' },
+		{ icon: '✈︎', label: 'Programme', href: '/programme' },
+		{ icon: '📚', label: 'Ressources', href: '/ressources' },
+		{ icon: '📊', label: 'Progression', href: '/progression' },
+		{ icon: '⚙️', label: 'Paramètres', href: '/settings' }
 	];
 </script>
 
@@ -24,12 +24,12 @@
 		<ul>
 			{#each items as item}
 				<li>
-					<div class="menu-item">
+					<a href={item.href} class="menu-item" style="text-decoration: none;">
 						<div class="dot icon-container">{item.icon}</div>
 						{#if isExpanded}
 							<span class="label" transition:fade={{ duration: 200 }}>{item.label}</span>
 						{/if}
-					</div>
+					</a>
 				</li>
 			{/each}
 		</ul>
