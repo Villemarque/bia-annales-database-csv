@@ -9,7 +9,6 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div class="drawer" transition:fly={{ x: -320, duration: 450, opacity: 1 }} onclick={toggle}>
-		<h2>BIA Air France</h2>
 		<ul>
 			<li>Accueil</li>
 			<li>Programme</li>
