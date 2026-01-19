@@ -1,5 +1,6 @@
 <script lang="ts">
-	import Card from './Card.svelte';
+	import Card from '../components/Card.svelte';
+
 	const cards = [
 		{
 			icon: '✈︎',

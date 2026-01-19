@@ -2,7 +2,6 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import Navigation from '../components/Navigation.svelte';
 	import Header from '../components/Header.svelte';
-	import CardGrid from '../components/CardGrid.svelte';
 	import Footer from '../components/Footer.svelte';
 
 	let { children } = $props();
@@ -15,12 +14,11 @@
 <div class="app">
 	<Navigation />
 	<main class="main">
-		<Header />
-		<CardGrid />
-		<Footer />
-		{#if children}
+		<div class="content">
+			<Header />
 			{@render children()}
-		{/if}
+		</div>
+		<Footer />
 	</main>
 </div>
 
@@ -54,5 +52,10 @@
 	}
 	.main {
 		padding: 40px;
+		display: flex;
+		flex-direction: column;
+	}
+	.content {
+		flex: 1;
 	}
 </style>
