@@ -59,7 +59,7 @@
 		top: 0;
 		left: 0;
 		height: 100vh;
-		width: 320px;
+		width: 220px;
 		background: var(--glass-bg-strong);
 		backdrop-filter: blur(36px) saturate(180%);
 		border-right: 1px solid var(--glass-border);
