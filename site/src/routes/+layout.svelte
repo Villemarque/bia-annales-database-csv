@@ -63,7 +63,7 @@
 	}
 	.content {
 		flex: 1;
-		padding: 0 40px 40px;
+		padding: 15px 0px 15px;
 	}
 	@media (max-width: 900px) {
 		.app {

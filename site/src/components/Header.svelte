@@ -13,7 +13,6 @@
 		border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 		box-shadow: var(--glass-shadow);
 		padding: 32px;
-		margin-bottom: 40px;
 	}
 
 	.header-content {
@@ -30,21 +29,9 @@
 		line-height: 1.2;
 	}
 
-	.subtitle {
-		font-size: 16px;
-		font-weight: 500;
-		color: var(--text-muted);
-	}
-
 	@media (max-width: 600px) {
-		.header-card {
-			padding: 24px;
-		}
 		.title {
 			font-size: 22px;
-		}
-		.subtitle {
-			font-size: 14px;
 		}
 	}
 </style>

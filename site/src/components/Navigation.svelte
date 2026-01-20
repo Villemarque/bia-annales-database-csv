@@ -39,17 +39,15 @@
 <style>
 	.navigation {
 		width: 80px;
-		backdrop-filter: blur(28px) saturate(160%);
-		background: var(--glass-bg);
-		border-right: 1px solid var(--glass-border);
 		display: flex;
 		flex-direction: column;
 		padding: 26.8px 0 20px 0;
-		gap: 30px;
-		transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-		overflow: hidden;
+		gap: 20px;
+		transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 		z-index: 20;
 		flex-shrink: 0;
+		align-items: flex-start;
+		overflow: hidden;
 	}
 
 	@media (max-width: 600px) {
@@ -59,18 +57,27 @@
 	}
 
 	.navigation.expanded {
-		width: 200px;
+		width: 220px;
 	}
 
 	.header-section {
 		display: flex;
 		justify-content: flex-start;
-		padding: 0 18px;
 		width: 100%;
+		padding-left: 18px;
+		box-sizing: border-box;
 	}
 
 	.menu {
-		width: 100%;
+		width: calc(100% - 24px);
+		margin-left: 12px;
+		background: var(--glass-bg-strong);
+		backdrop-filter: blur(28px) saturate(160%);
+		border: 1px solid var(--glass-border);
+		border-radius: 32px;
+		padding: 12px 0;
+		transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		overflow: hidden;
 	}
 
 	.menu ul {
@@ -79,49 +86,64 @@
 		margin: 0;
 		display: flex;
 		flex-direction: column;
-		gap: 18px;
+		gap: 8px;
 	}
 
 	.menu-item {
 		display: flex;
 		align-items: center;
-		padding: 0 18px;
-		gap: 15px;
+		justify-content: flex-start;
+		height: 52px;
+		gap: 12px;
 		cursor: pointer;
 		white-space: nowrap;
+		border-radius: 22px;
+		margin: 0 8px;
+		transition: background 0.2s ease;
+		padding: 0;
+	}
+
+	.menu-item:hover {
+		background: rgba(0, 0, 0, 0.04);
 	}
 
 	.dot {
-		width: 44px;
-		height: 44px;
-		min-width: 44px;
-		border-radius: 14px;
-		background: var(--glass-bg-strong);
-		backdrop-filter: blur(12px);
-		border: 1px solid var(--glass-border);
+		width: 40px;
+		height: 40px;
+		min-width: 40px;
+		border-radius: 50%;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		font-weight: 600;
-		transition: transform 0.2s ease;
+		transition: all 0.2s ease;
 	}
 
 	.hamburger {
+		width: 44px;
+		height: 44px;
+		background: var(--glass-bg-strong);
+		backdrop-filter: blur(12px);
+		border: 1px solid var(--glass-border);
 		cursor: pointer;
+		border-radius: 50%;
 	}
 
 	.hamburger:hover {
 		transform: scale(1.05);
 	}
 
-	.label {
-		font-size: 16px;
-		font-weight: 500;
-		color: var(--text-dark);
+	.icon-container {
+		background: rgba(0, 0, 0, 0.05);
+		border: 1px solid rgba(0, 0, 0, 0.03);
+		font-size: 18px;
 	}
 
-	.icon-container {
-		font-size: 18px;
+	.label {
+		font-size: 15px;
+		font-weight: 600;
+		color: var(--text-dark);
+		letter-spacing: -0.01em;
 	}
 
 	@media (max-width: 900px) {
