@@ -16,9 +16,8 @@
 <div class="app">
 	<Navigation />
 	<main class="main">
+		<Header />
 		<div class="content">
-			<Header />
-
 			{@render children()}
 		</div>
 		<Footer />
@@ -55,7 +54,6 @@
 		min-height: 100vh;
 	}
 	.main {
-		padding: 40px;
 		display: flex;
 		flex-direction: column;
 		max-width: 1400px;
@@ -65,7 +63,7 @@
 	}
 	.content {
 		flex: 1;
-		width: 100%;
+		padding: 0 40px 40px;
 	}
 	@media (max-width: 900px) {
 		.app {

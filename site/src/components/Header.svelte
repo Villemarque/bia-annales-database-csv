@@ -1,7 +1,6 @@
 <div class="header-card">
 	<div class="header-content">
 		<div class="title">BIA Aérien Ambassadeurs Avenir</div>
-		<div class="subtitle">Plateforme d'entraînement au Brevet d'Initiation Aéronautique</div>
 	</div>
 </div>
 
@@ -10,7 +9,8 @@
 		background: var(--glass-bg-strong);
 		backdrop-filter: blur(20px) saturate(160%);
 		border: 1px solid var(--glass-border);
-		border-radius: var(--radius-xl);
+		border-top: none;
+		border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 		box-shadow: var(--glass-shadow);
 		padding: 32px;
 		margin-bottom: 40px;
