@@ -1,6 +1,8 @@
 <script lang="ts">
 	import Card from '../components/Card.svelte';
 
+	export const ssr = true; // for SEO, and faster initial load
+
 	const cards = [
 		{
 			icon: '✈︎',
