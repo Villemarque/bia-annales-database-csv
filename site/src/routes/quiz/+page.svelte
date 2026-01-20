@@ -57,8 +57,7 @@
 					<div
 						class="option"
 						class:selected={selectedAnswer === option.id}
-						onclick={() => (selectedAnswer = option.id)}
-					>
+						onclick={() => (selectedAnswer = option.id)}>
 						<span class="option-letter">{option.id}</span>
 						<span>{option.text}</span>
 					</div>

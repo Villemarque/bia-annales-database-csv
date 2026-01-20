@@ -1,6 +1,5 @@
 import { writable, readonly } from 'svelte/store';
 
-
 type Qid = string;
 
 // see annales-bia.csv
@@ -75,7 +74,7 @@ export const loadQuestions = async (): Promise<void> => {
 			mixed_choices: mixed_choices === '1'
 		};
 		questionsWritable.update((qs) => {
-			qs[qid] = (question);
+			qs[qid] = question;
 			return qs;
 		});
 	}
