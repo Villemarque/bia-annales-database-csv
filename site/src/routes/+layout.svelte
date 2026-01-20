@@ -58,9 +58,14 @@
 		padding: 40px;
 		display: flex;
 		flex-direction: column;
+		max-width: 1400px;
+		margin: 0 auto;
+		width: 100%;
+		box-sizing: border-box;
 	}
 	.content {
 		flex: 1;
+		width: 100%;
 	}
 	@media (max-width: 900px) {
 		.app {
@@ -68,6 +73,14 @@
 		}
 		.main {
 			margin-left: 80px;
+			padding: 30px;
+			width: calc(100% - 80px);
+			margin-right: 0;
+		}
+	}
+	@media (max-width: 600px) {
+		.main {
+			padding: 20px;
 		}
 	}
 </style>

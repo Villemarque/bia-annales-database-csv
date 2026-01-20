@@ -68,7 +68,4 @@
 		vertical-align: middle;
 		margin-right: 0.1em;
 	}
-	.version {
-		color: var(--text-muted);
-	}
 </style>

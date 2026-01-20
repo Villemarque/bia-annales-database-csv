@@ -41,7 +41,7 @@
 <div class="layout-grid">
 	<!-- Left Column: Quiz Content -->
 	<div class="quiz-content">
-		<div class="header">
+		<div class="question-header">
 			<div class="quiz-meta">
 				<span>{formatTime(timeElapsed)}</span>
 				<span>Q 1 / 120</span>
@@ -102,15 +102,10 @@
 		gap: 28px;
 	}
 
-	.header {
+	.question-header {
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-end;
 		align-items: center;
-	}
-
-	.title {
-		font-size: 28px;
-		font-weight: 600;
 	}
 
 	.quiz-meta {
@@ -223,15 +218,6 @@
 		background: var(--card-blue);
 		color: white;
 		border: none;
-	}
-
-	/* Footer */
-	.footer-credit {
-		margin-top: 20px;
-		font-size: 12px;
-		color: var(--text-muted);
-		text-align: center;
-		grid-column: 1 / -1;
 	}
 
 	@media (max-width: 900px) {
