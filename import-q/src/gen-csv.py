@@ -7,9 +7,11 @@
 from __future__ import annotations
 
 import argparse
+import csv
 
 import Levenshtein
 
+from copy import deepcopy
 from difflib import ndiff
 from argparse import RawTextHelpFormatter
 from dataclasses import dataclass
@@ -35,6 +37,8 @@ from cache import CACHE
 #############
 # Constants #
 #############
+
+THE_CSV = SCRIPT_DIR.parent.parent / "annales-bia.csv"
 
 ########
 # Logs #
@@ -124,8 +128,49 @@ def annale_label_to_ord(annale) -> Tuple[int, int, int]:
 CSV_DELIMITER = "\t"
 
 
+def from_label_subject_and_no(label: str) -> Tuple[int, int]:
+    import re
+
+    match = re.match(r"(.)\.(\d+)", label)
+    assert match is not None, f"Bad question number format: {label}"
+    try:
+        subject_no = int(match.group(1)) - 1 # we wanto 0-based
+    except ValueError:
+        assert match.group(1) == "F"
+        subject_no = 5
+    question_no = int(match.group(2)) - 1 # we want 0-based
+    return (subject_no, question_no)
+
+def add_subject_to_csv(_):
+    with open(
+        THE_CSV, "r", newline="", encoding="utf-8"
+    ) as csvfile: 
+        reader = csv.DictReader(csvfile, delimiter=CSV_DELIMITER)
+        rows = list(reader)
+
+    old_fields: list[str] = list(reader.fieldnames) # type: ignore
+    assert old_fields
+    assert "subject" not in old_fields, "subject column already exists"
+    new_fields = deepcopy(old_fields)
+    new_fields.remove("label")
+    new_fields.insert(2, "subject")
+    new_fields.insert(3, "no_subject")
+    for row in rows:
+        subject_no, question_no = from_label_subject_and_no(row["label"])
+        row["subject"] = subject_no
+        row["no_subject"] = question_no
+        del row["label"]
+
+    with open(
+        THE_CSV, "w", newline="", encoding="utf-8"
+    ) as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=new_fields, delimiter=CSV_DELIMITER)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+
+
 def export_csv(engine):
-    import csv
 
     with Session(engine) as session:
         statement = select(ConsolidatedQuestion)
@@ -155,7 +200,7 @@ def export_csv(engine):
         f"Fieldnames do not match dict keys:\nFieldnames: {fieldnames}\nDict keys: {keys}"
     )
     with open(
-        SCRIPT_DIR.parent.parent / "annales-bia.csv", "w", newline="", encoding="utf-8"
+        THE_CSV, "w", newline="", encoding="utf-8"
     ) as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=CSV_DELIMITER)
         writer.writeheader()
@@ -183,6 +228,7 @@ def main() -> None:
         "gen-consolidated": gen_consolidated,
         "export-csv": export_csv,
         "gen+export": gen_and_export,
+        "add_subject_to_csv": add_subject_to_csv,
     }
     run_subparser = subparsers.add_parser("run", help="Run a command")
     run_subparser.add_argument(

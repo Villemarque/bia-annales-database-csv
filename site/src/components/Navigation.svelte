@@ -6,7 +6,7 @@
 
 	const items = [
 		{ icon: '🏠', label: 'Accueil', href: '/' },
-		{ icon: '✈︎', label: 'Programme', href: '/programme' },
+		{ icon: '✈︎', label: 'Programme', href: '/quiz' },
 		{ icon: '📚', label: 'Ressources', href: '/ressources' },
 		{ icon: '📊', label: 'Progression', href: '/progression' },
 		{ icon: '⚙️', label: 'Paramètres', href: '/settings' }
