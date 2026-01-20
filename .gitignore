@@ -1,6 +1,12 @@
 # TODO, remove once officials PDF format settled
 *.pdf
 
+# symlink to `./annales-bia.csv`
+static/annales-bia.csv
+
 *.db
 cache/
+
+# throwaway mockups
 designs/
+*.html
