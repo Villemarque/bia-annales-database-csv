@@ -44,12 +44,18 @@
 		border-right: 1px solid var(--glass-border);
 		display: flex;
 		flex-direction: column;
-		padding: 20px 0;
+		padding: 26.8px 0 20px 0;
 		gap: 30px;
 		transition: width 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 		overflow: hidden;
 		z-index: 20;
 		flex-shrink: 0;
+	}
+
+	@media (max-width: 600px) {
+		.navigation {
+			padding-top: 15.2px;
+		}
 	}
 
 	.navigation.expanded {
