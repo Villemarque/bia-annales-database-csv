@@ -6,9 +6,7 @@
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
 
-	// load data with timeout for 5s
-
-	let { data, children }: LayoutProps = $props();
+	let { children }: LayoutProps = $props();
 </script>
 
 <svelte:head>
@@ -23,7 +21,6 @@
 
 			{@render children()}
 		</div>
-		<div>{data.test}</div>
 		<Footer />
 	</main>
 </div>

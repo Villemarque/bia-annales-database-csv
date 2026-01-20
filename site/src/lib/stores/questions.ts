@@ -1,5 +1,8 @@
 import { writable, readonly } from 'svelte/store';
 
+
+type Qid = string;
+
 // | Champ | Description |
 //| :--- | :--- |
 //| `qid` | Identifiant unique. |
@@ -14,7 +17,7 @@ import { writable, readonly } from 'svelte/store';
 //| `attachment_link` | Lien vers l'image d'illustration si existant |
 //| `mixed_choices` | Indique si l'ordre des choix peut être aléatoire. |
 interface Question {
-	qid: string;
+	qid: Qid;
 	year: number;
 	label: string;
 	no: number;
@@ -30,7 +33,7 @@ interface Question {
 }
 
 // TODO change to dict < Qid, question>
-const questionsWritable = writable<Question[]>([]);
+const questionsWritable = writable<Record<Qid, Question>>({});
 export const questions = readonly(questionsWritable);
 
 const timeoutFor = (s: number) =>
@@ -80,7 +83,7 @@ export const loadQuestions = async (): Promise<void> => {
 			mixed_choices: mixed_choices === '1'
 		};
 		questionsWritable.update((qs) => {
-			qs.push(question);
+			qs[qid] = (question);
 			return qs;
 		});
 	}
