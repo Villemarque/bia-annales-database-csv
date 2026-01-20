@@ -17,7 +17,7 @@
 	<Navigation />
 	<main class="main">
 		<div class="content">
-			<!-- <Header /> -->
+			<Header />
 
 			{@render children()}
 		</div>
@@ -61,5 +61,13 @@
 	}
 	.content {
 		flex: 1;
+	}
+	@media (max-width: 900px) {
+		.app {
+			display: block;
+		}
+		.main {
+			margin-left: 80px;
+		}
 	}
 </style>

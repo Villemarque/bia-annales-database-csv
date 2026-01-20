@@ -7,7 +7,7 @@ type Qid = string;
 interface Question {
 	qid: Qid;
 	year: number;
-	subject: string;
+	subject: number;
 	no_subject: number;
 	no: number;
 	content: string;
@@ -25,6 +25,7 @@ interface Question {
 const questionsWritable = writable<Record<Qid, Question>>({});
 export const questions = readonly(questionsWritable);
 
+// only used for testing
 const timeoutFor = (s: number) =>
 	new Promise<void>((resolve) => {
 		setTimeout(() => {
@@ -60,7 +61,7 @@ export const loadQuestions = async (): Promise<void> => {
 		const question: Question = {
 			qid,
 			year: parseInt(year),
-			subject,
+			subject: parseInt(subject),
 			no_subject: parseInt(no_subject),
 			no: parseInt(no),
 			content,

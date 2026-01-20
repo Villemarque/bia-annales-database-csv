@@ -117,4 +117,13 @@
 	.icon-container {
 		font-size: 18px;
 	}
+
+	@media (max-width: 900px) {
+		.navigation {
+			position: fixed;
+			top: 0;
+			left: 0;
+			height: 100vh;
+		}
+	}
 </style>
