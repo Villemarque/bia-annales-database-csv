@@ -3,8 +3,8 @@
 
 	// for SEO, and faster initial load
 	// only prerendered at build time
-	export const prerender = true;
-	export const ssr = true;
+	// export const prerender = true;
+	// export const ssr = true;
 
 	const cards = [
 		{

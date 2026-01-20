@@ -9,14 +9,14 @@
 		"resolveJsonModule": true,
 		"skipLibCheck": true,
 		"sourceMap": true,
-		   
+
 		/* Linting */
-	    "strict": true,
-	    //"noUnusedLocals": true,
-	    //"noUnusedParameters": true,
-	    "noFallthroughCasesInSwitch": true,
-	    "noUncheckedSideEffectImports": true,
-	
+		"strict": true,
+		//"noUnusedLocals": true,
+		//"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedSideEffectImports": true,
+
 		"moduleResolution": "bundler"
 	}
 	// Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias

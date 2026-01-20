@@ -7,11 +7,8 @@
 	import Footer from '../components/Footer.svelte';
 
 	// load data with timeout for 5s
-	
 
-	export const ssr = false; // SPA for PWA
-
-	let { children }: LayoutProps = $props();
+	let { data, children }: LayoutProps = $props();
 </script>
 
 <svelte:head>
@@ -22,9 +19,11 @@
 	<Navigation />
 	<main class="main">
 		<div class="content">
-			<Header />
+			<!-- <Header /> -->
+
 			{@render children()}
 		</div>
+		<div>{data.test}</div>
 		<Footer />
 	</main>
 </div>

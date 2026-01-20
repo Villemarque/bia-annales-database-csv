@@ -2,7 +2,7 @@
 *.pdf
 
 # symlink to `./annales-bia.csv`
-static/annales-bia.csv
+site/static/annales-bia.csv
 
 *.db
 cache/
