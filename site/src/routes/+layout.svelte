@@ -1,12 +1,17 @@
 <script lang="ts">
+	import type { LayoutProps } from './$types';
+
 	import favicon from '$lib/assets/favicon.svg';
 	import Navigation from '../components/Navigation.svelte';
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
 
+	// load data with timeout for 5s
+	
+
 	export const ssr = false; // SPA for PWA
 
-	let { children } = $props();
+	let { children }: LayoutProps = $props();
 </script>
 
 <svelte:head>

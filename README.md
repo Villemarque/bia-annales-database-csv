@@ -2,7 +2,7 @@
 
 Toutes les questions des différents examen du BIA depuis la réforme du BIA en 2015 ! Ainsi qu'un site intéractif et fonctionnant hors-ligne (TODO) pour s'entrainer.
 
-## Organisatoin
+## Organisation
 
 Le fichier `annales-bia.csv` contient les annales du BIA au format TSV (séparateur tabulation).
 
