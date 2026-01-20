@@ -3,23 +3,12 @@ import { writable, readonly } from 'svelte/store';
 
 type Qid = string;
 
-// | Champ | Description |
-//| :--- | :--- |
-//| `qid` | Identifiant unique. |
-//| `year` | Année de l'examen. |
-//| `label` | Étiquette de la question (ex: `1.1`). |
-//| `no` | Ordre dans l'examen, commençant à 0. |
-//| `content_verbatim` | Énoncé original. Généralement ne pas utiliser, si `content_fixed` existe.|
-//| `content_fixed` | Énoncé corrigé. |
-//| `choice_[abcd]`| Les quatre propositions de réponse. (`choice_a`) réponse A, etc.) |
-//| `answer` | Indice de la réponse correcte (0=A, 1=B, 2=C, 3=D). |
-//| `chapter` | Référence au chapitre du programme. /!\ Les chapitres ne correspondent pas au `label`. |
-//| `attachment_link` | Lien vers l'image d'illustration si existant |
-//| `mixed_choices` | Indique si l'ordre des choix peut être aléatoire. |
+// see annales-bia.csv
 interface Question {
 	qid: Qid;
 	year: number;
-	label: string;
+	subject: string;
+	no_subject: number;
 	no: number;
 	content: string;
 	choice_a: string;
@@ -53,7 +42,8 @@ export const loadQuestions = async (): Promise<void> => {
 		const [
 			qid,
 			year,
-			label,
+			subject,
+			no_subject,
 			no,
 			content_verbatim,
 			content_fixed,
@@ -70,7 +60,8 @@ export const loadQuestions = async (): Promise<void> => {
 		const question: Question = {
 			qid,
 			year: parseInt(year),
-			label,
+			subject,
+			no_subject: parseInt(no_subject),
 			no: parseInt(no),
 			content,
 			choice_a,
