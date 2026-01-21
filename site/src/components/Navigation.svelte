@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
-
 	let isExpanded = $state(false);
 	const toggle = () => (isExpanded = !isExpanded);
 
@@ -27,7 +25,7 @@
 					<a href={item.href} class="menu-item" style="text-decoration: none;">
 						<div class="dot icon-container">{item.icon}</div>
 						{#if isExpanded}
-							<span class="label" transition:fade={{ duration: 200 }}>{item.label}</span>
+							<span class="label">{item.label}</span>
 						{/if}
 					</a>
 				</li>
@@ -43,7 +41,7 @@
 		flex-direction: column;
 		padding: 26.8px 0 20px 0;
 		gap: 20px;
-		transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 		z-index: 20;
 		flex-shrink: 0;
 		align-items: flex-start;
@@ -120,8 +118,8 @@
 	}
 
 	.hamburger {
-		width: 44px;
-		height: 44px;
+		width: 48px;
+		height: 48px;
 		background: var(--glass-bg-strong);
 		backdrop-filter: blur(12px);
 		border: 1px solid var(--glass-border);

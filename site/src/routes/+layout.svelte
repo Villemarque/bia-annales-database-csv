@@ -56,14 +56,12 @@
 	.main {
 		display: flex;
 		flex-direction: column;
-		max-width: 1400px;
-		margin: 0 auto;
-		width: 100%;
-		box-sizing: border-box;
+		min-width: 0;
 	}
 	.content {
 		flex: 1;
-		padding: 15px 0px 15px;
+		padding: 15px 20px 0px 0px;
+		min-width: 0;
 	}
 	@media (max-width: 900px) {
 		.app {
@@ -71,14 +69,6 @@
 		}
 		.main {
 			margin-left: 80px;
-			padding: 30px;
-			width: calc(100% - 80px);
-			margin-right: 0;
-		}
-	}
-	@media (max-width: 600px) {
-		.main {
-			padding: 20px;
 		}
 	}
 </style>
