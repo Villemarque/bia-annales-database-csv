@@ -1,9 +1,7 @@
 <script lang="ts">
 	let {
-		expanded = false,
 		ontoggle
 	}: {
-		expanded?: boolean;
 		ontoggle: () => void;
 	} = $props();
 </script>
@@ -30,9 +28,5 @@
 		box-shadow: none;
 		outline: none;
 		/* No transition as requested */
-	}
-
-	.hamburger:hover {
-		background: rgba(255, 255, 255, 0.85);
 	}
 </style>

@@ -109,7 +109,6 @@
 
 	.sidebar-expanded .hamburger-wrapper,
 	.sidebar-expanded .menu-wrapper {
-		align-items: flex-start;
 		padding-left: 16px;
 	}
 
@@ -129,7 +128,6 @@
 
 	.content {
 		flex: 1;
-		padding: 0 60px 40px;
 		min-width: 0;
 	}
 
@@ -154,7 +152,6 @@
 		.menu-wrapper {
 			padding: 0 !important;
 			justify-content: flex-start;
-			align-items: flex-start;
 		}
 
 		.main-col {
