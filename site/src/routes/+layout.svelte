@@ -13,12 +13,14 @@
 	const toggleSidebar = () => (sidebarExpanded = !sidebarExpanded);
 
 	const menuItems = [
-		{ icon: '🏠', label: 'Accueil', href: '/' },
-		{ icon: '✈︎', label: 'Programme', href: '/quiz' },
-		{ icon: '📚', label: 'Ressources', href: '/ressources' },
-		{ icon: '📊', label: 'Progression', href: '/progression' },
-		{ icon: '⚙️', label: 'Paramètres', href: '/settings' }
+		{ icon: '🏠', label: 'Accueil', action: { href: '/' } },
+		{ icon: '✈︎', label: 'Programme', action: { href: '/quiz' } },
+		{ icon: '📚', label: 'Ressources', action: { href: '/ressources' } },
+		{ icon: '📊', label: 'Progression', action: { href: '/progression' } },
+		{ icon: '⚙️', label: 'Paramètres', action: { href: '/settings' } }
 	];
+
+	const ham_item = [{ icon: '☰', label: 'Menu', action: { onToggle: toggleSidebar } }]
 </script>
 
 <svelte:head>
@@ -28,7 +30,7 @@
 <div class="app" class:sidebar-expanded={sidebarExpanded}>
 	<div class="nav-col">
 		<div class="hamburger-wrapper">
-			<HamburgerButton expanded={sidebarExpanded} ontoggle={toggleSidebar} />
+			<MenuCapsule expanded={sidebarExpanded} items={ham_item} />
 		</div>
 		<div class="menu-wrapper">
 			<MenuCapsule expanded={sidebarExpanded} items={menuItems} />
@@ -148,7 +150,7 @@
 			background: none;
 		}
 
-		.hamburger-wrapper, 
+		.hamburger-wrapper,
 		.menu-wrapper {
 			padding: 0 !important;
 			justify-content: flex-start;

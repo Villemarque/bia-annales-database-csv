@@ -4,20 +4,30 @@
 		items = []
 	}: {
 		expanded?: boolean;
-		items?: Array<{ icon: string; label: string; href: string }>;
+		items?: Array<{ icon: string; label: string; action: { href: string } | { onToggle: () => void } }>;
 	} = $props();
 </script>
+
+{#snippet menu_item(icon, label, expanded)}
+	<div class="icon-circle">{icon}</div>
+	{#if expanded}
+		<span class="label">{label}</span>
+	{/if}
+{/snippet}
 
 <nav class="menu-capsule" class:expanded>
 	<ul>
 		{#each items as item}
 			<li>
-				<a href={item.href} class="menu-item" class:expanded>
-					<div class="icon-circle">{item.icon}</div>
-					{#if expanded}
-						<span class="label">{item.label}</span>
-					{/if}
-				</a>
+				{#if item.action.href}
+					<a href={item.action.href} class="menu-item" class:expanded>
+						{@render menu_item(item.icon, item.label, expanded)}
+					</a>
+				{:else if item.action.onToggle}
+					<a onclick={item.action.onToggle} class="menu-item button-noop" class:expanded aria-label="Toggle Navigation">
+						{@render menu_item(item.icon, item.label, expanded)}
+					</a>
+				{/if}
 			</li>
 		{/each}
 	</ul>
@@ -47,6 +57,10 @@
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
+	}
+
+	button.button-noop {
+		all: unset;
 	}
 
 	.menu-item {

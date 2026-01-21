@@ -7,9 +7,7 @@
 	} = $props();
 </script>
 
-<button class="hamburger" onclick={ontoggle} aria-label="Toggle Navigation">
-	☰
-</button>
+<button class="hamburger" onclick={ontoggle} aria-label="Toggle Navigation"> ☰ </button>
 
 <style>
 	.hamburger {
