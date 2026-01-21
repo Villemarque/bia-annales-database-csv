@@ -20,7 +20,7 @@
 		{ icon: '⚙️', label: 'Paramètres', action: { href: '/settings' } }
 	];
 
-	const ham_item = [{ icon: '☰', label: 'Menu', action: { onToggle: toggleSidebar } }]
+	const ham_item = [{ icon: '☰', label: 'Menu', action: { onToggle: toggleSidebar } }];
 </script>
 
 <svelte:head>
@@ -43,9 +43,9 @@
 			<div class="content">
 				{@render children()}
 			</div>
-			<Footer />
 		</main>
 	</div>
+	<Footer />
 </div>
 
 <style>
@@ -93,7 +93,7 @@
 		grid-template-rows: var(--header-height) 1fr;
 		position: sticky;
 		top: 0;
-		height: 100vh;
+		// height: 100vh;
 	}
 
 	.hamburger-wrapper {
@@ -132,6 +132,10 @@
 		flex: 1;
 		min-width: 0;
 	}
+
+	       .app :global(.footer) {
+               grid-column: 1 / -1;
+       }
 
 	@media (max-width: 900px) {
 		.app {

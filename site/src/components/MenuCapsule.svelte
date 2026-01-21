@@ -12,7 +12,7 @@
 
 {#snippet menu_item(icon, label, hidden)}
 	<div class="icon-circle">{icon}</div>
-		<span class="label">{label}</span>
+	<span class="label">{label}</span>
 {/snippet}
 
 <nav class="menu-capsule" class:expanded>
@@ -105,6 +105,4 @@
 		color: var(--text-dark);
 		letter-spacing: -0.01em;
 	}
-
-
 </style>
