@@ -81,7 +81,7 @@
 		display: grid;
 		grid-template-columns: 80px 1fr;
 		min-height: 100vh;
-		transition: none;
+		transition: grid-template-columns 0.2s ease;
 	}
 
 	.app.sidebar-expanded {

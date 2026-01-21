@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { fade } from 'svelte/transition';
+
 	let {
 		expanded = false,
 		items = []
@@ -8,11 +10,9 @@
 	} = $props();
 </script>
 
-{#snippet menu_item(icon, label, expanded)}
+{#snippet menu_item(icon, label, hidden)}
 	<div class="icon-circle">{icon}</div>
-	{#if expanded}
-		<span class="label">{label}</span>
-	{/if}
+		<span class="label" class:hidden>{label}</span>
 {/snippet}
 
 <nav class="menu-capsule" class:expanded>
@@ -21,11 +21,11 @@
 			<li>
 				{#if item.action.href}
 					<a href={item.action.href} class="menu-item" class:expanded>
-						{@render menu_item(item.icon, item.label, expanded)}
+						{@render menu_item(item.icon, item.label, !expanded)}
 					</a>
 				{:else if item.action.onToggle}
 					<a onclick={item.action.onToggle} class="menu-item button-noop" class:expanded aria-label="Toggle Navigation">
-						{@render menu_item(item.icon, item.label, expanded)}
+						{@render menu_item(item.icon, item.label, !expanded)}
 					</a>
 				{/if}
 			</li>
@@ -43,11 +43,11 @@
 		padding: 12px 0;
 		box-shadow: var(--glass-shadow);
 		overflow: hidden;
-		transition: none; /* Instant as requested */
+		transition: width 0.2s ease;
 	}
 
 	.menu-capsule.expanded {
-		width: 200px;
+		width: 176px;
 	}
 
 	.menu-capsule ul {
@@ -105,5 +105,11 @@
 		font-weight: 600;
 		color: var(--text-dark);
 		letter-spacing: -0.01em;
+		transition: background 0.2s ease;
 	}
+	.label.hidden {
+		display: none;
+	}
+
+
 </style>
