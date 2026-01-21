@@ -10,3 +10,5 @@ cache/
 # throwaway mockups
 designs/
 *.html
+
+.pnpm-store

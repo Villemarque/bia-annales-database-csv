@@ -2,26 +2,48 @@
 	import type { LayoutProps } from './$types';
 
 	import favicon from '$lib/assets/favicon.svg';
-	import Navigation from '../components/Navigation.svelte';
+	import HamburgerButton from '../components/HamburgerButton.svelte';
+	import MenuCapsule from '../components/MenuCapsule.svelte';
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
 
 	let { children }: LayoutProps = $props();
+
+	let sidebarExpanded = $state(false);
+	const toggleSidebar = () => (sidebarExpanded = !sidebarExpanded);
+
+	const menuItems = [
+		{ icon: '🏠', label: 'Accueil', href: '/' },
+		{ icon: '✈︎', label: 'Programme', href: '/quiz' },
+		{ icon: '📚', label: 'Ressources', href: '/ressources' },
+		{ icon: '📊', label: 'Progression', href: '/progression' },
+		{ icon: '⚙️', label: 'Paramètres', href: '/settings' }
+	];
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="app">
-	<Navigation />
-	<main class="main">
-		<Header />
-		<div class="content">
-			{@render children()}
+<div class="app" class:sidebar-expanded={sidebarExpanded}>
+	<div class="nav-col">
+		<div class="hamburger-wrapper">
+			<HamburgerButton expanded={sidebarExpanded} ontoggle={toggleSidebar} />
 		</div>
-		<Footer />
-	</main>
+		<div class="menu-wrapper">
+			<MenuCapsule expanded={sidebarExpanded} items={menuItems} />
+		</div>
+	</div>
+
+	<div class="main-col">
+		<Header />
+		<main class="content-wrapper">
+			<div class="content">
+				{@render children()}
+			</div>
+			<Footer />
+		</main>
+	</div>
 </div>
 
 <style>
@@ -40,36 +62,107 @@
 		--text-dark: #0b1320;
 		--text-muted: rgba(0, 0, 0, 0.6);
 		--radius-xl: 22px;
+		--header-height: 104px; /* Matches Header.svelte padding + title height roughly */
+		--gap-main: 15px;
 		font-family: 'Open Sans', sans-serif;
 	}
+
 	:global(body) {
 		margin: 0;
 		min-height: 100vh;
 		background: var(--bg-grey);
 		color: var(--text-dark);
+		overflow-x: hidden;
 	}
+
 	.app {
 		display: grid;
-		grid-template-columns: auto 1fr;
+		grid-template-columns: 80px 1fr;
 		min-height: 100vh;
+		transition: none;
 	}
-	.main {
+
+	.app.sidebar-expanded {
+		grid-template-columns: 220px 1fr;
+	}
+
+	.nav-col {
+		display: grid;
+		grid-template-rows: var(--header-height) 1fr;
+		position: sticky;
+		top: 0;
+		height: 100vh;
+	}
+
+	.hamburger-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.menu-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding-top: var(--gap-main);
+	}
+
+	.sidebar-expanded .hamburger-wrapper,
+	.sidebar-expanded .menu-wrapper {
+		align-items: flex-start;
+		padding-left: 16px;
+	}
+
+	.main-col {
 		display: flex;
 		flex-direction: column;
 		min-width: 0;
 	}
+
+	.content-wrapper {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		gap: var(--gap-main);
+		padding-top: var(--gap-main);
+	}
+
 	.content {
 		flex: 1;
-		margin-top: 15px;
-		margin-right: 5px;
+		padding: 0 60px 40px;
 		min-width: 0;
 	}
+
 	@media (max-width: 900px) {
 		.app {
 			display: block;
 		}
-		.main {
-			margin-left: 80px;
+
+		.nav-col {
+			position: fixed;
+			left: 16px;
+			top: 24px;
+			height: auto;
+			z-index: 100;
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			background: none;
+		}
+
+		.hamburger-wrapper, 
+		.menu-wrapper {
+			padding: 0 !important;
+			justify-content: flex-start;
+			align-items: flex-start;
+		}
+
+		.main-col {
+			margin-left: 0;
+		}
+
+		.content {
+			padding: 0 20px 40px;
 		}
 	}
 </style>
