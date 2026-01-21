@@ -19,9 +19,9 @@
 			class="footer-link"
 			href="https://github.com/Villemarque/bia-annales-database-csv"
 			target="_blank"
-			rel="noopener noreferrer">© Solal LORCY</a>
+			rel="noopener noreferrer">© Solal LORCY,</a>
 		<a class="footer-link" href="https://opensource.org/licenses/AGPL" target="_blank" rel="noopener noreferrer"
-			>AGPL</a>
+			> Licence : AGPL</a>
 	</div>
 </footer>
 
