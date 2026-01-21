@@ -60,7 +60,8 @@
 	}
 	.content {
 		flex: 1;
-		padding: 15px 20px 0px 0px;
+		margin-top: 15px;
+		margin-right: 5px;
 		min-width: 0;
 	}
 	@media (max-width: 900px) {
