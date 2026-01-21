@@ -12,7 +12,7 @@
 	<ul>
 		{#each items as item}
 			<li>
-				<a href={item.href} class="menu-item">
+				<a href={item.href} class="menu-item" class:expanded>
 					<div class="icon-circle">{item.icon}</div>
 					{#if expanded}
 						<span class="label">{item.label}</span>
@@ -69,7 +69,7 @@
 		padding-left: 6px;
 	}
 
-	.menu-item:hover {
+	.menu-item.expanded:hover {
 		background: rgba(0, 0, 0, 0.04);
 	}
 

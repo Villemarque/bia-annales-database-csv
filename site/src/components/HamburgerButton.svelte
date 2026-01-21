@@ -1,5 +1,6 @@
 <script lang="ts">
 	let {
+		expanded = false,
 		ontoggle
 	}: {
 		ontoggle: () => void;
