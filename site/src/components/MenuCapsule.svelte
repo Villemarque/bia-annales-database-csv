@@ -12,7 +12,7 @@
 
 {#snippet menu_item(icon, label, hidden)}
 	<div class="icon-circle">{icon}</div>
-		<span class="label" class:hidden>{label}</span>
+		<span class="label">{label}</span>
 {/snippet}
 
 <nav class="menu-capsule" class:expanded>
@@ -66,7 +66,7 @@
 	.menu-item {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		justify-content: flex-start;
 		height: 52px;
 		gap: 12px;
 		cursor: pointer;
@@ -79,7 +79,6 @@
 	}
 
 	.expanded .menu-item {
-		justify-content: flex-start;
 		padding-left: 6px;
 	}
 
@@ -105,10 +104,6 @@
 		font-weight: 600;
 		color: var(--text-dark);
 		letter-spacing: -0.01em;
-		transition: background 0.2s ease;
-	}
-	.label.hidden {
-		display: none;
 	}
 
 
