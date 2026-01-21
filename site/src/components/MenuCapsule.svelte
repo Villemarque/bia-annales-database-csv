@@ -1,16 +1,14 @@
 <script lang="ts">
-	import { fade } from 'svelte/transition';
-
 	let {
 		expanded = false,
 		items = []
 	}: {
 		expanded?: boolean;
-		items?: Array<{ icon: string; label: string; action: { href: string } | { onToggle: () => void } }>;
+		items?: Array<{ icon: string; label: string; action: { tpe: "href", href: string } | { tpe: "toggle", onToggle: () => void } }>;
 	} = $props();
 </script>
 
-{#snippet menu_item(icon, label, hidden)}
+{#snippet menu_item(icon: string, label: string)}
 	<div class="icon-circle">{icon}</div>
 	<span class="label">{label}</span>
 {/snippet}
@@ -19,13 +17,13 @@
 	<ul>
 		{#each items as item}
 			<li>
-				{#if item.action.href}
+				{#if item.action.tpe == 'href'}
 					<a href={item.action.href} class="menu-item" class:expanded>
-						{@render menu_item(item.icon, item.label, !expanded)}
+						{@render menu_item(item.icon, item.label)}
 					</a>
-				{:else if item.action.onToggle}
-					<a onclick={item.action.onToggle} class="menu-item button-noop" class:expanded aria-label="Toggle Navigation">
-						{@render menu_item(item.icon, item.label, !expanded)}
+				{:else if item.action.tpe == 'toggle'}
+					<a onclick={item.action.onToggle} role="button" class="menu-item" class:expanded aria-label="Toggle Navigation">
+						{@render menu_item(item.icon, item.label)}
 					</a>
 				{/if}
 			</li>
@@ -57,10 +55,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 8px;
-	}
-
-	button.button-noop {
-		all: unset;
 	}
 
 	.menu-item {

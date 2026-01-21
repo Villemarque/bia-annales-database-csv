@@ -1,11 +1,11 @@
 import type { LayoutLoad } from './$types';
-import { loadQuestions } from '$lib/stores/questions';
+import { init } from '$lib/init';
 
 export const ssr = false; // SPA for PWA
 export const prerender = true;
 
 export const load: LayoutLoad = async ({ fetch, params }) => {
 	console.log('Loading questions in +layout.ts');
-	loadQuestions(); // TODO use the fetch from load?;
+	init(); // TODO use the fetch from load?;
 	return {};
 };

@@ -12,15 +12,18 @@
 	let sidebarExpanded = $state(false);
 	const toggleSidebar = () => (sidebarExpanded = !sidebarExpanded);
 
+	const href = (path: string): { tpe: "href", href: string } => ({ tpe: 'href', href: path });
+	const onToggleF = (fn: () => void): { tpe: "toggle", onToggle: () => void }  => ({ tpe: 'toggle', onToggle: fn });
+
 	const menuItems = [
-		{ icon: '🏠', label: 'Accueil', action: { href: '/' } },
-		{ icon: '✈︎', label: 'Programme', action: { href: '/quiz' } },
-		{ icon: '📚', label: 'Ressources', action: { href: '/ressources' } },
-		{ icon: '📊', label: 'Progression', action: { href: '/progression' } },
-		{ icon: '⚙️', label: 'Paramètres', action: { href: '/settings' } }
+		{ icon: '🏠', label: 'Accueil', action: href('/') },
+		{ icon: '✈︎', label: 'Programme', action: href('quiz') },
+		{ icon: '📚', label: 'Ressources', action: href('/resources') },
+		{ icon: '📊', label: 'Progression', action: href('/progress') },
+		{ icon: '⚙️', label: 'Paramètres',  action: href('/settings') }
 	];
 
-	const ham_item = [{ icon: '☰', label: 'Menu', action: { onToggle: toggleSidebar } }];
+	const ham_item = [{ icon: '☰', label: 'Menu', action: onToggleF(toggleSidebar) }];
 </script>
 
 <svelte:head>
@@ -93,7 +96,6 @@
 		grid-template-rows: var(--header-height) 1fr;
 		position: sticky;
 		top: 0;
-		// height: 100vh;
 	}
 
 	.hamburger-wrapper {
@@ -133,9 +135,9 @@
 		min-width: 0;
 	}
 
-	       .app :global(.footer) {
-               grid-column: 1 / -1;
-       }
+	.app :global(.footer) { 
+		grid-column: 1 / -1;
+	}
 
 	@media (max-width: 900px) {
 		.app {
