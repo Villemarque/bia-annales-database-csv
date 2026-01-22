@@ -1,5 +1,7 @@
 import { writable, readonly } from 'svelte/store';
 
+import {log} from '$lib/log';
+
 type Qid = string;
 
 // see annales-bia.csv
@@ -28,7 +30,7 @@ export const questions = readonly(questionsWritable);
 const timeoutFor = (s: number) =>
 	new Promise<void>((resolve) => {
 		setTimeout(() => {
-			console.log(`${s} seconds passed!`);
+			log.log(`${s} seconds passed!`);
 			resolve();
 		}, s * 1000);
 	});

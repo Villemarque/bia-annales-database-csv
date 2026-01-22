@@ -1,7 +1,4 @@
-import { log } from './log';
-
 const prefix = 'annales-bia-csv';
-//const objectStore = "db";
 
 // TODO, switch to `idb` package?
 export type IDbValue = Blob | string | ArrayBuffer | Uint8Array | string[] | number | object;
@@ -27,16 +24,16 @@ export class Db {
 				// create all stores
 				for (const storeKey of storeKeys) {
 					if (!db.objectStoreNames.contains(storeKey)) {
-						log.log(`Creating object store: ${storeKey}`);
+						console.log(`Creating object store: ${storeKey}`);
 						db.createObjectStore(storeKey, { keyPath: 'id' });
 					}
 				}
 			};
-			openReq.onerror = (event: any) => log.error(`DB open error: ${JSON.stringify(event)}`);
+			openReq.onerror = (event: any) => console.error(`DB open error: ${JSON.stringify(event)}`);
 			openReq.onblocked = function () {
 				// this event shouldn't trigger if we handle onversionchange correctly
 				const blocked = 'Database is blocked, close all other tabs of this page';
-				log.error(blocked);
+				console.error(blocked);
 				alert(blocked);
 			};
 			openReq.onsuccess = function () {
@@ -45,7 +42,7 @@ export class Db {
 				db.onversionchange = function () {
 					db.close();
 					const outdated = 'Database is outdated, please reload the page.';
-					log.error(outdated);
+					console.error(outdated);
 					alert(outdated);
 				};
 				const stores = {
@@ -69,7 +66,7 @@ export class Db {
 			deleteReq.onerror = (event: any) => reject(new Error(`Failed to delete IndexedDB: ${event}`));
 			deleteReq.onblocked = () => {
 				const blocked = 'Database deletion is blocked, close all other tabs of this page';
-				log.error(blocked);
+				console.error(blocked);
 				alert(blocked);
 			};
 		});
@@ -81,7 +78,7 @@ export class Db {
 	}
 
 	setLocalSorage(key: string, value: string) {
-		log.log(`localStorage set: key {${key}} value {${value}}`);
+		console.log(`localStorage set: key {${key}} value {${value}}`);
 		window.localStorage.setItem(`${prefix}-${key}`, value);
 	}
 }
@@ -90,8 +87,7 @@ function promise<V>(f: () => IDBRequest) {
 	return new Promise<V>((resolve, reject) => {
 		const res = f();
 		res.onsuccess = (e: Event) => {
-			const res = (e.target as IDBRequest).result;
-			resolve(res?.data);
+			resolve((e.target as IDBRequest).result);
 		};
 		res.onerror = (e: Event) => reject((e.target as IDBRequest).result);
 	});
