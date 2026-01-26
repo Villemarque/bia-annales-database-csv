@@ -95,15 +95,8 @@ export function makeLog(windowSize: number): PermaLog {
 
 	const get = async (): Promise<string[]> => {
 		const store = await ready;
-        // debug
-    const db = await getDb;
-    const now = Date.now()
-    await db.stores.log.put(now, 'Database initialized');
-    const entry = await db.stores.log.get(now);
-    console.log('entry now', entry);
 		try {
 			const keys = await store.list();
-      console.log('log keys', keys);
 			if (windowSize >= 0 && keys?.length > windowSize)
 				await store.remove(IDBKeyRange.upperBound(keys[keys.length - windowSize], true));
 		} catch (e) {
@@ -113,7 +106,6 @@ export function makeLog(windowSize: number): PermaLog {
 			return [];
 		}
 		const [keys, vals] = await Promise.all([store.list(), store.getMany()]);
-		console.log('log get', keys, vals);
 		return (keys as number[]).map(
 			(k, i) =>
 				// @ts-ignore

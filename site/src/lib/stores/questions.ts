@@ -40,6 +40,7 @@ export const loadQuestions = async (): Promise<void> => {
 	// \t separated values
 	const text = await response.text();
 	const lines = text.split('\n').slice(1); // remove header
+	console.log(`Loaded questions CSV with ${lines[0]}`);
 	for (const line of lines) {
 		const [
 			qid,
@@ -76,12 +77,13 @@ export const loadQuestions = async (): Promise<void> => {
 			mixed_choices: mixed_choices === '1'
 		};
 		questionsWritable.update((qs) => {
+			console.log('Adding question', qid, question);
 			qs[qid] = question;
 			return qs;
 		});
 	}
 	const unsubscribe = questions.subscribe((value) => {
-		console.log('questions value', value);
+		log.log('loaded questions CSV', value);
 	});
 
 	unsubscribe();
