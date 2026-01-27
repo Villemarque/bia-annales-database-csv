@@ -176,21 +176,21 @@ def add_subject_to_csv(_):
 
 
 CHAPTERS = {
-    "1.1": 0,  # Les aéronefs
-    "1.2": 1,  # Instrumentation
-    "1.3": 2,  # Moteurs
-    "2.1": 3,  # la sustentation de l'aile
-    "2.2": 4,  # Le vol stabilisé
-    "2.3": 5,  # L'aérostation et le vol spatial
-    "3.1": 6,  # L'atmosphère
-    "3.2": 7,  # Les masses d'air et les fronts
-    "3.3": 8,  # Les nuages
-    "3.4": 9,  # Les vents
-    "3.5": 10,  # Les phénomènes dangereux
-    "3.6": 11,  # L'information météo
-    "4.1": 12,  # Réglementation
-    "4.2": 13,  # SV & FH
-    "4.3": 14,  # Navigation
+    "1.1.": 0,  # Les aéronefs
+    "1.2.": 1,  # Instrumentation
+    "1.3.": 2,  # Moteurs
+    "2.1.": 3,  # la sustentation de l'aile
+    "2.2.": 4,  # Le vol stabilisé
+    "2.3.": 5,  # L'aérostation et le vol spatial
+    "3.1.": 6,  # L'atmosphère
+    "3.2.": 7,  # Les masses d'air et les fronts
+    "3.3.": 8,  # Les nuages
+    "3.4.": 9,  # Les vents
+    "3.5.": 10,  # Les phénomènes dangereux
+    "3.6.": 11,  # L'information météo
+    "4.1.": 12,  # Réglementation
+    "4.2.": 13,  # SV & FH
+    "4.3.": 14,  # Navigation
 }
 
 
@@ -199,7 +199,10 @@ def change_chapters_to_number_csv(_):
     new_fields = deepcopy(old_fields)
     for row in rows:
         if row["chapter"] != "":
-            row["chapter"] = CHAPTERS[row["chapter"]]
+            if row["chapter"] in ["5.", "6."]: # We do not split those into chapters
+                row["chapter"] = None
+            else:
+                row["chapter"] = CHAPTERS[row["chapter"]]
     write_csv(new_fields, rows)
 
 
