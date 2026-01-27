@@ -1,26 +1,8 @@
 import { derived, writable, readonly } from 'svelte/store';
 
 import { log } from '$lib/log';
+import { type Question, type Qid } from '$lib/types';
 
-type Qid = string;
-
-// see annales-bia.csv
-interface Question {
-	qid: Qid;
-	year: number;
-	subject: number;
-	no_subject: number;
-	no: number;
-	content: string;
-	choice_a: string;
-	choice_b: string;
-	choice_c: string;
-	choice_d: string;
-	answer: number;
-	chapter: string | undefined;
-	attachment_link: string | undefined;
-	mixed_choices: boolean | undefined;
-}
 
 const questionsWritable = writable<Record<Qid, Question>>({});
 export const questions = readonly(questionsWritable);
