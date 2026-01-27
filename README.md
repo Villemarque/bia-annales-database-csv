@@ -21,10 +21,29 @@ Le code-source du site de QCM se trouve dans `site`. Voir
 | `content_fixed` | Énoncé corrigé. |
 | `choice_[abcd]`| Les quatre propositions de réponse. (`choice_a`) réponse A, etc.) |
 | `answer` | Indice de la réponse correcte (0=A, 1=B, 2=C, 3=D). |
-| `chapter` | Référence au chapitre du programme. /!\ Les chapitres ne correspondent pas au `label`. |
+| `chapter` | Numéro de chapitre du programme. /!\ Les chapitres ne correspondent pas au `label`. |
 | `attachment_link` | Lien vers l'image d'illustration si existant |
 | `mixed_choices` | Indique si l'ordre des choix peut être aléatoire. |
 
+
+Les indices des chapitres sont :
+```
+    "1.1 Les aéronefs": 0 
+    "1.2 Instrumentation": 1 
+    "1.3 Moteurs": 2 
+    "2.1 La sustentation de l'aile": 3 
+    "2.2 Le vol stabilisé": 4,  
+    "2.3 L'aérostation et le vol spatial": 5 
+    "3.1 L'atmosphère": 6 
+    "3.2  Les masses d'air et les fronts": 7
+    "3.3  Les nuages": 8
+    "3.4 Les vents": 9 
+    "3.5 Les phénomènes dangereux": 10 
+    "3.6 L'information météo": 11 
+    "4.1 Réglementation": 12 
+    "4.2 Sécurité des Vols (SV) et Facteurs Humains (FH)": 13 
+    "4.3 Navigation": 14
+```
 
 ## FIXME
 
