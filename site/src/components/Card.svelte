@@ -13,7 +13,7 @@
 		color?: string;
 		title?: string;
 		desc?: string;
-		href?: string;
+		href: string;
 		totalQuestions?: number;
 		answeredQuestions?: number;
 		seenQuestions?: number;
@@ -23,7 +23,6 @@
 	let answeredPercent = $derived(totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0);
 </script>
 
-{#if href}
 	<a {href} class="card" style="background: {color}; text-decoration: none;">
 		<div class="icon">{icon}</div>
 		<h3>{title}</h3>
@@ -44,28 +43,6 @@
 			</div>
 		{/if}
 	</a>
-{:else}
-	<div class="card" style="background: {color}">
-		<div class="icon">{icon}</div>
-		<h3>{title}</h3>
-		<p>{desc}</p>
-		{#if totalQuestions > 0}
-			<div class="stats" title="Réponses correctes · Questions vues · Total">
-				<div class="progress">
-					<div class="bar seen" style="width: {seenPercent}%"></div>
-					<div class="bar answered" style="width: {answeredPercent}%"></div>
-				</div>
-				<div class="count">
-					<span class="val answered">{answeredQuestions}</span>
-					<span class="sep">·</span>
-					<span class="val seen">{seenQuestions}</span>
-					<span class="sep">·</span>
-					<span class="val total">{totalQuestions}</span>
-				</div>
-			</div>
-		{/if}
-	</div>
-{/if}
 
 <style>
 	.card {

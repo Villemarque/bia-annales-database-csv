@@ -45,9 +45,9 @@
 		width: 56px;
 		background: var(--glass-bg-strong);
 		backdrop-filter: blur(28px) saturate(160%);
-		border: 1px solid var(--glass-border);
+		// border: 1px solid var(--glass-border);
 		border-radius: 32px;
-		padding: 12px 0;
+		// padding: 12px 0;
 		box-shadow: var(--glass-shadow);
 		overflow: hidden;
 		transition: width 0.2s ease;
