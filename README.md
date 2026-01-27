@@ -24,3 +24,8 @@ Le code-source du site de QCM se trouve dans `site`. Voir
 | `chapter` | Référence au chapitre du programme. /!\ Les chapitres ne correspondent pas au `label`. |
 | `attachment_link` | Lien vers l'image d'illustration si existant |
 | `mixed_choices` | Indique si l'ordre des choix peut être aléatoire. |
+
+
+## FIXME
+
+Hlo2EYVT 2017-3-13 et 2024-3-13 Un avion à ailes en flèche est représenté par la figure  Add link

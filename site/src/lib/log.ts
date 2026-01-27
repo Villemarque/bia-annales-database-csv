@@ -43,7 +43,7 @@ export function makeLog(windowSize: number): PermaLog {
 	// 		resolve(db.stores.log);
 	// 	};
 	// });
-  const ready: Promise<Store> = getDb.then((db: Db) => db.stores.log);
+	const ready: Promise<Store> = getDb.then((db: Db) => db.stores.log);
 
 	(Error.prototype as any).toJSON ??= function () {
 		return { [this.name]: this.message, stack: this.stack };

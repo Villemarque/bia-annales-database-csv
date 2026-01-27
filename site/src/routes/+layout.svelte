@@ -12,15 +12,15 @@
 	let sidebarExpanded = $state(false);
 	const toggleSidebar = () => (sidebarExpanded = !sidebarExpanded);
 
-	const href = (path: string): { tpe: "href", href: string } => ({ tpe: 'href', href: path });
-	const onToggleF = (fn: () => void): { tpe: "toggle", onToggle: () => void }  => ({ tpe: 'toggle', onToggle: fn });
+	const href = (path: string): { tpe: 'href'; href: string } => ({ tpe: 'href', href: path });
+	const onToggleF = (fn: () => void): { tpe: 'toggle'; onToggle: () => void } => ({ tpe: 'toggle', onToggle: fn });
 
 	const menuItems = [
 		{ icon: '🏠', label: 'Accueil', action: href('/') },
 		{ icon: '✈︎', label: 'Programme', action: href('quiz') },
 		{ icon: '📚', label: 'Ressources', action: href('/resources') },
 		{ icon: '📊', label: 'Progression', action: href('/progress') },
-		{ icon: '⚙️', label: 'Paramètres',  action: href('/settings') }
+		{ icon: '⚙️', label: 'Paramètres', action: href('/settings') }
 	];
 
 	const ham_item = [{ icon: '☰', label: 'Menu', action: onToggleF(toggleSidebar) }];
@@ -135,7 +135,7 @@
 		min-width: 0;
 	}
 
-	.app :global(.footer) { 
+	.app :global(.footer) {
 		grid-column: 1 / -1;
 	}
 

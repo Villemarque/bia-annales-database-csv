@@ -1,6 +1,6 @@
 import { writable, readonly } from 'svelte/store';
 
-import {log} from '$lib/log';
+import { log } from '$lib/log';
 
 type Qid = string;
 
@@ -17,9 +17,9 @@ interface Question {
 	choice_c: string;
 	choice_d: string;
 	answer: number;
-	chapter: string;
+	chapter: string | undefined;
 	attachment_link: string | undefined;
-	mixed_choices: boolean;
+	mixed_choices: boolean | undefined;
 }
 
 // TODO change to dict < Qid, question>
@@ -35,13 +35,39 @@ const timeoutFor = (s: number) =>
 		}, s * 1000);
 	});
 
+const maybeBool = (s: string): boolean | undefined => {
+	switch (s.trim()) {
+		case 'True':
+			return true;
+		case 'False':
+			return false;
+		case '':
+			return undefined;
+		default:
+			throw new Error(`Invalid boolean string: '${s}', len = ${s.length}`);
+	}
+};
+
+const notEmpty = (s: string): string => {
+	if (s === '') {
+		throw new Error('Expected non-empty string');
+	}
+	return s;
+};
+
+const undefIfEmpty = (s: string): string | undefined => {
+	if (s === '') {
+		return undefined;
+	}
+	return s;
+};
+
 export const loadQuestions = async (): Promise<void> => {
 	const response = await timeoutFor(0).then(() => fetch('/annales-bia.csv'));
 	// \t separated values
 	const text = await response.text();
 	const lines = text.split('\n').slice(1); // remove header
-	console.log(`Loaded questions CSV with ${lines[0]}`);
-	for (const line of lines) {
+	for (const [i, line] of lines.entries()) {
 		const [
 			qid,
 			year,
@@ -60,27 +86,32 @@ export const loadQuestions = async (): Promise<void> => {
 			mixed_choices
 		] = line.split('\t');
 		const content = content_fixed || content_verbatim;
-		const question: Question = {
-			qid,
-			year: parseInt(year),
-			subject: parseInt(subject),
-			no_subject: parseInt(no_subject),
-			no: parseInt(no),
-			content,
-			choice_a,
-			choice_b,
-			choice_c,
-			choice_d,
-			answer: parseInt(answer),
-			chapter,
-			attachment_link: attachment_link || undefined,
-			mixed_choices: mixed_choices === '1'
-		};
-		questionsWritable.update((qs) => {
-			console.log('Adding question', qid, question);
-			qs[qid] = question;
-			return qs;
-		});
+		try {
+			const question: Question = {
+				qid: notEmpty(qid),
+				year: parseInt(year),
+				subject: parseInt(subject),
+				no_subject: parseInt(no_subject),
+				no: parseInt(no),
+				content: notEmpty(content),
+				choice_a: notEmpty(choice_a),
+				choice_b: notEmpty(choice_b),
+				choice_c: notEmpty(choice_c),
+				choice_d: notEmpty(choice_d),
+				answer: parseInt(answer),
+				chapter: undefIfEmpty(chapter),
+				attachment_link: attachment_link || undefined,
+				mixed_choices: maybeBool(mixed_choices)
+			};
+
+			questionsWritable.update((qs) => {
+				//console.log('Adding question', qid, question);
+				qs[qid] = question;
+				return qs;
+			});
+		} catch (e) {
+			log.error(`Error parsing question on line of CSV ${i + 2}: ${e}`);
+		}
 	}
 	const unsubscribe = questions.subscribe((value) => {
 		log.log('loaded questions CSV', value);

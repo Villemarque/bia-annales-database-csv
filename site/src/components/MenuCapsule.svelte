@@ -4,7 +4,11 @@
 		items = []
 	}: {
 		expanded?: boolean;
-		items?: Array<{ icon: string; label: string; action: { tpe: "href", href: string } | { tpe: "toggle", onToggle: () => void } }>;
+		items?: Array<{
+			icon: string;
+			label: string;
+			action: { tpe: 'href'; href: string } | { tpe: 'toggle'; onToggle: () => void };
+		}>;
 	} = $props();
 </script>
 
@@ -22,7 +26,12 @@
 						{@render menu_item(item.icon, item.label)}
 					</a>
 				{:else if item.action.tpe == 'toggle'}
-					<a onclick={item.action.onToggle} role="button" class="menu-item" class:expanded aria-label="Toggle Navigation">
+					<a
+						onclick={item.action.onToggle}
+						role="button"
+						class="menu-item"
+						class:expanded
+						aria-label="Toggle Navigation">
 						{@render menu_item(item.icon, item.label)}
 					</a>
 				{/if}

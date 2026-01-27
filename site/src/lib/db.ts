@@ -9,7 +9,7 @@ type StoreKeys = (typeof storeKeys)[number];
 
 export class Db {
 	private inner: IDBDatabase;
-  stores: Record<StoreKeys, Store>;
+	stores: Record<StoreKeys, Store>;
 
 	constructor(inner: IDBDatabase, stores: Record<StoreKeys, Store>) {
 		this.inner = inner;
@@ -46,7 +46,7 @@ export class Db {
 					alert(outdated);
 				};
 				const stores = {
-					log: new Store(db, 'log'),
+					log: new Store(db, 'log')
 				};
 				resolve(new Db(db, stores));
 			};
