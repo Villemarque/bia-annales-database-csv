@@ -29,12 +29,18 @@
 		<h3>{title}</h3>
 		<p>{desc}</p>
 		{#if totalQuestions > 0}
-			<div class="stats">
+			<div class="stats" title="Réponses correctes · Questions vues · Total">
 				<div class="progress">
 					<div class="bar seen" style="width: {seenPercent}%"></div>
 					<div class="bar answered" style="width: {answeredPercent}%"></div>
 				</div>
-				<span class="count">{answeredQuestions}/{seenQuestions}/{totalQuestions}</span>
+				<div class="count">
+					<span class="val answered">{answeredQuestions}</span>
+					<span class="sep">·</span>
+					<span class="val seen">{seenQuestions}</span>
+					<span class="sep">·</span>
+					<span class="val total">{totalQuestions}</span>
+				</div>
 			</div>
 		{/if}
 	</a>
@@ -44,12 +50,18 @@
 		<h3>{title}</h3>
 		<p>{desc}</p>
 		{#if totalQuestions > 0}
-			<div class="stats">
+			<div class="stats" title="Réponses correctes · Questions vues · Total">
 				<div class="progress">
 					<div class="bar seen" style="width: {seenPercent}%"></div>
 					<div class="bar answered" style="width: {answeredPercent}%"></div>
 				</div>
-				<span class="count">{answeredQuestions}/{seenQuestions}/{totalQuestions}</span>
+				<div class="count">
+					<span class="val answered">{answeredQuestions}</span>
+					<span class="sep">·</span>
+					<span class="val seen">{seenQuestions}</span>
+					<span class="sep">·</span>
+					<span class="val total">{totalQuestions}</span>
+				</div>
 			</div>
 		{/if}
 	</div>
@@ -80,16 +92,28 @@
 	}
 	.stats {
 		margin-top: 20px;
-		font-family: Andale Mono;
 		display: flex;
 		align-items: center;
 		gap: 12px;
 	}
 	.count {
-		font-size: 13px;
+		font-size: 11px;
 		font-weight: 500;
-		opacity: 0.9;
 		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		gap: 3px;
+	}
+	.val.answered {
+		color: rgba(255, 255, 255, 1);
+		font-weight: 700;
+	}
+	.val.seen, .val.total {
+		color: rgba(255, 255, 255, 0.7);
+	}
+	.sep {
+		color: rgba(255, 255, 255, 0.3);
+		font-weight: 400;
 	}
 	.progress {
 		height: 4px;

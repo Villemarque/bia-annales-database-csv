@@ -32,7 +32,7 @@ This file provides context and instructions for AI agents operating in this repo
 
 - **Framework**: SvelteKit (Svelte 5)
 - **Language**: TypeScript (`.ts`, `.svelte`)
-- **Styling**: Tailwind CSS (configured via Vite plugin)
+- **Styling**: CSS
 - **Bundler**: Vite
 
 ### Formatting & Linting
