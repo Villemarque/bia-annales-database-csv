@@ -15,7 +15,7 @@ from copy import deepcopy
 from difflib import ndiff
 from argparse import RawTextHelpFormatter
 from dataclasses import dataclass
-from typing import Tuple, Protocol, Type, TypeVar, Generic, Sequence
+from typing import Tuple, Protocol, Type, TypeVar, Generic, Sequence, Iterable
 from urllib3.util.retry import Retry
 
 from requests.adapters import HTTPAdapter
@@ -134,21 +134,33 @@ def from_label_subject_and_no(label: str) -> Tuple[int, int]:
     match = re.match(r"(.)\.(\d+)", label)
     assert match is not None, f"Bad question number format: {label}"
     try:
-        subject_no = int(match.group(1)) - 1 # we wanto 0-based
+        subject_no = int(match.group(1)) - 1  # we wanto 0-based
     except ValueError:
         assert match.group(1) == "F"
         subject_no = 5
-    question_no = int(match.group(2)) - 1 # we want 0-based
+    question_no = int(match.group(2)) - 1  # we want 0-based
     return (subject_no, question_no)
 
-def add_subject_to_csv(_):
-    with open(
-        THE_CSV, "r", newline="", encoding="utf-8"
-    ) as csvfile: 
+
+def open_csv_with_fieldnames() -> Tuple[list[str], Iterable[any]]:
+    with open(THE_CSV, "r", newline="", encoding="utf-8") as csvfile:
         reader = csv.DictReader(csvfile, delimiter=CSV_DELIMITER)
         rows = list(reader)
 
-    old_fields: list[str] = list(reader.fieldnames) # type: ignore
+    old_fields: list[str] = list(reader.fieldnames)  # type: ignore
+    return old_fields, rows
+
+
+def write_csv(fieldnames, rows) -> None:
+    with open(THE_CSV, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=CSV_DELIMITER)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+
+
+def add_subject_to_csv(_):
+    old_fields, rows = open_csv_with_fieldnames()
     assert old_fields
     assert "subject" not in old_fields, "subject column already exists"
     new_fields = deepcopy(old_fields)
@@ -160,18 +172,38 @@ def add_subject_to_csv(_):
         row["subject"] = subject_no
         row["no_subject"] = question_no
         del row["label"]
+    write_csv(new_fields, rows)
 
-    with open(
-        THE_CSV, "w", newline="", encoding="utf-8"
-    ) as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=new_fields, delimiter=CSV_DELIMITER)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(row)
+
+CHAPTERS = {
+    "1.1": 0,  # Les aéronefs
+    "1.2": 1,  # Instrumentation
+    "1.3": 2,  # Moteurs
+    "2.1": 3,  # la sustentation de l'aile
+    "2.2": 4,  # Le vol stabilisé
+    "2.3": 5,  # L'aérostation et le vol spatial
+    "3.1": 6,  # L'atmosphère
+    "3.2": 7,  # Les masses d'air et les fronts
+    "3.3": 8,  # Les nuages
+    "3.4": 9,  # Les vents
+    "3.5": 10,  # Les phénomènes dangereux
+    "3.6": 11,  # L'information météo
+    "4.1": 12,  # Réglementation
+    "4.2": 13,  # SV & FH
+    "4.3": 14,  # Navigation
+}
+
+
+def change_chapters_to_number_csv(_):
+    old_fields, rows = open_csv_with_fieldnames()
+    new_fields = deepcopy(old_fields)
+    for row in rows:
+        if row["chapter"] != "":
+            row["chapter"] = CHAPTERS[row["chapter"]]
+    write_csv(new_fields, rows)
 
 
 def export_csv(engine):
-
     with Session(engine) as session:
         statement = select(ConsolidatedQuestion)
         results = sorted(session.exec(statement).all(), key=lambda q: (q.year, q.no))
@@ -199,9 +231,7 @@ def export_csv(engine):
     assert sorted(fieldnames) == sorted(keys), (
         f"Fieldnames do not match dict keys:\nFieldnames: {fieldnames}\nDict keys: {keys}"
     )
-    with open(
-        THE_CSV, "w", newline="", encoding="utf-8"
-    ) as csvfile:
+    with open(THE_CSV, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=CSV_DELIMITER)
         writer.writeheader()
         for d in dicts:
@@ -215,9 +245,11 @@ def export_csv(engine):
 
     print("Exported consolidated_questions.csv")
 
+
 def gen_and_export(engine):
     gen_consolidated(engine)
     export_csv(engine)
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
@@ -229,6 +261,7 @@ def main() -> None:
         "export-csv": export_csv,
         "gen+export": gen_and_export,
         "add_subject_to_csv": add_subject_to_csv,
+        "change_chapters_to_number_csv": change_chapters_to_number_csv,
     }
     run_subparser = subparsers.add_parser("run", help="Run a command")
     run_subparser.add_argument(

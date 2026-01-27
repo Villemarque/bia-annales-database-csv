@@ -19,7 +19,7 @@ export interface Question {
     choice_c: string;
     choice_d: string;
     answer: number;
-    chapter: string | undefined;
+    chapters: number[];
     attachment_link: string | undefined;
     mixed_choices: boolean | undefined;
 }
