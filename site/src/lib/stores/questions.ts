@@ -1,4 +1,4 @@
-import { writable, readonly } from 'svelte/store';
+import { derived, writable, readonly } from 'svelte/store';
 
 import { log } from '$lib/log';
 
@@ -22,9 +22,18 @@ interface Question {
 	mixed_choices: boolean | undefined;
 }
 
-// TODO change to dict < Qid, question>
 const questionsWritable = writable<Record<Qid, Question>>({});
 export const questions = readonly(questionsWritable);
+export const questionsBySubject = derived(questions, ($questions) => {
+	const by_subject: Record<number, number> = {};
+	for (const question of Object.values($questions)) {
+		if (!(question.subject in by_subject)) {
+			by_subject[question.subject] = 0;
+		}
+		by_subject[question.subject] += 1;
+	}
+	return by_subject;
+});
 
 // only used for testing
 const timeoutFor = (s: number) =>
@@ -64,6 +73,8 @@ const undefIfEmpty = (s: string): string | undefined => {
 
 export const loadQuestions = async (): Promise<void> => {
 	const response = await timeoutFor(0).then(() => fetch('/annales-bia.csv'));
+	// we only write to the store once all values parsed, to avoid trigeering derived each time
+	const acc: Record<Qid, Question> = {};
 	// \t separated values
 	const text = await response.text();
 	const lines = text.split('\n').slice(1); // remove header
@@ -103,19 +114,14 @@ export const loadQuestions = async (): Promise<void> => {
 				attachment_link: attachment_link || undefined,
 				mixed_choices: maybeBool(mixed_choices)
 			};
-
-			questionsWritable.update((qs) => {
-				//console.log('Adding question', qid, question);
-				qs[qid] = question;
-				return qs;
-			});
+			acc[qid] = question;
 		} catch (e) {
 			log.error(`Error parsing question on line of CSV ${i + 2}: ${e}`);
 		}
 	}
+	questionsWritable.set(acc);
 	const unsubscribe = questions.subscribe((value) => {
 		log.log('loaded questions CSV', value);
 	});
-
 	unsubscribe();
 };

@@ -1,5 +1,11 @@
 <script lang="ts">
 	import Card from '../components/Card.svelte';
+	import { questionsBySubject } from '$lib/stores/questions';
+
+	const subjs = questionsBySubject;
+	const unsub = subjs.subscribe((value) => {
+		console.log('questionsBySubject', value);
+	});
 
 	// for SEO, and faster initial load
 	// only prerendered at build time
