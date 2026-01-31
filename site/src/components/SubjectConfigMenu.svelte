@@ -87,13 +87,10 @@
 						{#each subjectChapters as chapter}
 							<label class="chapter-item">
 								<span class="label-text">{chapter.name}</span>
-								<div class="toggle-wrapper">
-									<input
-										type="checkbox"
-										checked={selectedChapters.includes(chapter.id)}
-										onchange={() => toggleChapter(chapter.id)} />
-									<span class="toggle-switch"></span>
-								</div>
+								<Toggle
+									checked={selectedChapters.includes(chapter.id)}
+									{color}
+									onchange={() => toggleChapter(chapter.id)} />
 							</label>
 						{/each}
 					</div>
@@ -111,10 +108,7 @@
 				<div class="questions-control">
 					<label class="chapter-item checkbox-row">
 						<span class="label-text">Toutes les questions ({totalQuestions})</span>
-						<div class="toggle-wrapper">
-							<input type="checkbox" bind:checked={isAllQuestions} />
-							<span class="toggle-switch"></span>
-						</div>
+						<Toggle bind:checked={isAllQuestions} {color} />
 					</label>
 
 					{#if !isAllQuestions}
@@ -279,51 +273,7 @@
 		border-color: #e0e0e0;
 	}
 
-	.toggle-wrapper {
-		position: relative;
-		width: 50px;
-		height: 30px;
-	}
-
-	.toggle-wrapper input {
-		position: absolute;
-		opacity: 0;
-		cursor: pointer;
-		height: 0;
-		width: 0;
-	}
-
-	.toggle-switch {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		background-color: #ccc;
-		transition: 0.4s;
-		border-radius: 34px;
-	}
-
-	.toggle-switch:before {
-		position: absolute;
-		content: '';
-		height: 22px;
-		width: 22px;
-		left: 4px;
-		bottom: 4px;
-		background-color: white;
-		transition: 0.4s;
-		border-radius: 50%;
-		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	}
-
-	.toggle-wrapper input:checked + .toggle-switch {
-		background-color: var(--accent-color, #2f80ed);
-	}
-
-	.toggle-wrapper input:checked + .toggle-switch:before {
-		transform: translateX(20px);
-	}
+	/* Toggle styles moved to Toggle.svelte */
 
 	.label-text {
 		font-size: 15px;
