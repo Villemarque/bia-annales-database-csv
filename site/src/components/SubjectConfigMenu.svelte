@@ -23,7 +23,6 @@
 
 	// State
 	let selectedChapters = $state<number[]>(subjectChapters.map((c) => c.id)); // Default all selected
-	let isAllQuestions = $state(false);
 	let sliderValue = $state(0);
 	$effect(() => {
 		sliderValue = Math.min(20, totalQuestions);
@@ -49,7 +48,7 @@
 		const params = new URLSearchParams();
 		params.set('subject', subjectId.toString());
 
-		if (!isAllQuestions) {
+		if (sliderValue < totalQuestions) {
 			params.set('count', sliderValue.toString());
 		}
 
@@ -97,31 +96,17 @@
 			<div class="section">
 				<div class="section-header">
 					<h3>Nombre de questions</h3>
-					{#if !isAllQuestions}
-						<span class="count-value" style="color: {color}">{sliderValue}</span>
-					{/if}
+					<span class="count-value" style="color: {color}">{sliderValue} / {totalQuestions}</span>
 				</div>
 
 				<div class="questions-control">
-					<label class="chapter-item checkbox-row">
-						<span class="label-text">Toutes les questions ({totalQuestions})</span>
-						<Toggle bind:checked={isAllQuestions} />
-					</label>
-
-					{#if !isAllQuestions}
-						<div class="slider-container">
-							<input
-								type="range"
-								min="5"
-								max={Math.min(50, totalQuestions)}
-								bind:value={sliderValue}
-								class="range-slider" />
-							<div class="range-labels">
-								<span>5</span>
-								<span>{Math.min(50, totalQuestions)}</span>
-							</div>
+					<div class="slider-container">
+						<input type="range" min="5" max={totalQuestions} bind:value={sliderValue} class="range-slider" />
+						<div class="range-labels">
+							<span>5</span>
+							<span>{totalQuestions}</span>
 						</div>
-					{/if}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -130,7 +115,6 @@
 			<button class="cancel-btn" onclick={onClose}>Annuler</button>
 			<button
 				class="start-btn"
-				style="--btn-color: {color}"
 				onclick={startQuiz}
 				disabled={subjectChapters.length > 0 && selectedChapters.length === 0}>
 				Commencer le Quiz
@@ -367,8 +351,8 @@
 
 	.start-btn {
 		background: white;
-		border: 2px solid var(--btn-color);
-		color: var(--btn-color);
+		border: 2px solid var(--accent-color);
+		color: var(--accent-color);
 		padding: 12px 32px;
 		font-weight: 700;
 		cursor: pointer;
@@ -379,7 +363,7 @@
 	}
 
 	.start-btn:hover:not(:disabled) {
-		background: var(--btn-color);
+		background: var(--accent-color);
 		color: white;
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -389,7 +373,5 @@
 		opacity: 0.5;
 		cursor: not-allowed;
 		transform: none;
-		border-color: #ccc;
-		color: #ccc;
 	}
 </style>
