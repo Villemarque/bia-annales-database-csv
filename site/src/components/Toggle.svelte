@@ -58,7 +58,7 @@
 	}
 
 	.toggle-wrapper input:checked + .toggle-switch {
-		background-color: var(--toggle-active-color);
+		background-color: #4cd964;
 	}
 
 	.toggle-wrapper input:checked + .toggle-switch:before {
