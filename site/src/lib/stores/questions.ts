@@ -1,8 +1,7 @@
 import { derived, writable, readonly } from 'svelte/store';
 
 import { log } from '$lib/log';
-import { type Question, type Qid } from '$lib/types';
-
+import { type Question, type Qid, type Subject } from '$lib/types';
 
 const questionsWritable = writable<Record<Qid, Question>>({});
 export const questions = readonly(questionsWritable);
@@ -46,11 +45,11 @@ const notEmpty = (s: string): string => {
 	return s;
 };
 
-const undefIfEmpty = (s: string): string | undefined => {
+const parseChapters = (s: string): number[] => {
 	if (s === '') {
-		return undefined;
+		return [];
 	}
-	return s;
+	return s.split(',').map((part) => parseInt(part.trim()));
 };
 
 export const loadQuestions = async (): Promise<void> => {
@@ -74,7 +73,7 @@ export const loadQuestions = async (): Promise<void> => {
 			choice_c,
 			choice_d,
 			answer,
-			chapter,
+			chapters,
 			attachment_link,
 			mixed_choices
 		] = line.split('\t');
@@ -83,7 +82,7 @@ export const loadQuestions = async (): Promise<void> => {
 			const question: Question = {
 				qid: notEmpty(qid),
 				year: parseInt(year),
-				subject: parseInt(subject),
+				subject: parseInt(subject) as Subject,
 				no_subject: parseInt(no_subject),
 				no: parseInt(no),
 				content: notEmpty(content),
@@ -92,7 +91,7 @@ export const loadQuestions = async (): Promise<void> => {
 				choice_c: notEmpty(choice_c),
 				choice_d: notEmpty(choice_d),
 				answer: parseInt(answer),
-				chapter: undefIfEmpty(chapter),
+				chapters: parseChapters(chapters),
 				attachment_link: attachment_link || undefined,
 				mixed_choices: maybeBool(mixed_choices)
 			};

@@ -21,7 +21,7 @@ Le code-source du site de QCM se trouve dans `site`. Voir
 | `content_fixed` | Énoncé corrigé. |
 | `choice_[abcd]`| Les quatre propositions de réponse. (`choice_a`) réponse A, etc.) |
 | `answer` | Indice de la réponse correcte (0=A, 1=B, 2=C, 3=D). |
-| `chapter` | Numéro de chapitre du programme. /!\ Les chapitres ne correspondent pas au `label`. |
+| `chapter` | Numéro de chapitre du programme, séparées par virgule si correspond à plusieurs chapitres. /!\ Les chapitres ne correspondent pas au `label`. |
 | `attachment_link` | Lien vers l'image d'illustration si existant |
 | `mixed_choices` | Indique si l'ordre des choix peut être aléatoire. |
 

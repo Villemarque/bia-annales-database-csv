@@ -1,48 +1,153 @@
-
-
 export type Qid = string;
 export type SessionId = string;
 export type AttemptId = string;
+export type Subject = number & { __subject__: void };
+
+const Subjects = {
+	METEO: 0 as Subject,
+	AERODYNAMIQUE: 1 as Subject,
+	AERONEF: 2 as Subject,
+	NAVIGATION: 3 as Subject,
+	HISTOIRE: 4 as Subject,
+	ANGLAIS: 5 as Subject
+};
 
 type Timpestamp = number; // milliseconds since epoch
 
 // see annales-bia.csv
 export interface Question {
-    qid: Qid;
-    year: number;
-    subject: number;
-    no_subject: number;
-    no: number;
-    content: string;
-    choice_a: string;
-    choice_b: string;
-    choice_c: string;
-    choice_d: string;
-    answer: number;
-    chapters: number[];
-    attachment_link: string | undefined;
-    mixed_choices: boolean | undefined;
+	qid: Qid;
+	year: number;
+	subject: Subject;
+	no_subject: number;
+	no: number;
+	content: string;
+	choice_a: string;
+	choice_b: string;
+	choice_c: string;
+	choice_d: string;
+	answer: number;
+	chapters: number[];
+	attachment_link: string | undefined;
+	mixed_choices: boolean | undefined;
 }
-
 
 export interface Attempt {
-    id: AttemptId;
-    qid: Qid;
-    session_id: SessionId;
-    selected_choice: number;
-    // correct: boolean; // denormalise?
-    timestamp: Timpestamp;
-    duration_ms: number;
-    // source: 'practice' | 'exam' | 'review';
-    notes: string | undefined;
+	id: AttemptId;
+	qid: Qid;
+	session_id: SessionId;
+	selected_choice: number;
+	// correct: boolean; // denormalise?
+	timestamp: Timpestamp;
+	duration_ms: number;
+	// source: 'practice' | 'exam' | 'review';
+	notes: string | undefined;
 }
-
 
 export interface Session {
-    id: SessionId;
-    name: string;
-    year?: number; // only set if it's reproducing the exam of that year
-    created_at: Timpestamp;
-    updated_at: Timpestamp;
-    question_ids: Qid[];
+	id: SessionId;
+	name: string;
+	year?: number; // only set if it's reproducing the exam of that year
+	created_at: Timpestamp;
+	updated_at: Timpestamp;
+	question_ids: Qid[];
 }
+
+export interface Chapter {
+	name: string;
+	id: number;
+	subject: Subject;
+}
+
+// "1.1 Les aéronefs": 0
+// "1.2 Instrumentation": 1
+// "1.3 Moteurs": 2
+// "2.1 La sustentation de l'aile": 3
+// "2.2 Le vol stabilisé": 4,
+// "2.3 L'aérostation et le vol spatial": 5
+// "3.1 L'atmosphère": 6
+// "3.2  Les masses d'air et les fronts": 7
+// "3.3  Les nuages": 8
+// "3.4 Les vents": 9
+// "3.5 Les phénomènes dangereux": 10
+// "3.6 L'information météo": 11
+// "4.1 Réglementation": 12
+// "4.2 Sécurité des Vols (SV) et Facteurs Humains (FH)": 13
+// "4.3 Navigation": 14
+export const Chapters = [
+	{
+		name: '1.1 Les aéronefs',
+		id: 0,
+		subject: Subjects.AERONEF
+	},
+	{
+		name: '1.2 Instrumentation',
+		id: 1,
+		subject: Subjects.AERONEF
+	},
+	{
+		name: '1.3 Moteurs',
+		id: 2,
+		subject: Subjects.AERONEF
+	},
+	{
+		name: "2.1 La sustentation de l'aile",
+		id: 3,
+		subject: Subjects.AERODYNAMIQUE
+	},
+	{
+		name: '2.2 Le vol stabilisé',
+		id: 4,
+		subject: Subjects.AERODYNAMIQUE
+	},
+	{
+		name: "2.3 L'aérostation et le vol spatial",
+		id: 5,
+		subject: Subjects.AERODYNAMIQUE
+	},
+	{
+		name: "3.1 L'atmosphère",
+		id: 6,
+		subject: Subjects.METEO
+	},
+	{
+		name: "3.2  Les masses d'air et les fronts",
+		id: 7,
+		subject: Subjects.METEO
+	},
+	{
+		name: '3.3  Les nuages',
+		id: 8,
+		subject: Subjects.METEO
+	},
+	{
+		name: '3.4 Les vents',
+		id: 9,
+		subject: Subjects.METEO
+	},
+	{
+		name: '3.5 Les phénomènes dangereux',
+		id: 10,
+		subject: Subjects.METEO
+	},
+	{
+		name: "3.6 L'information météo",
+		id: 11,
+		subject: Subjects.METEO
+	},
+	{
+		name: '4.1 Réglementation',
+		id: 12,
+		subject: Subjects.NAVIGATION
+	},
+	{
+		name: '4.2 Sécurité des Vols (SV) et Facteurs Humains (FH)',
+		id: 13,
+		subject: Subjects.NAVIGATION
+	},
+	{
+		name: '4.3 Navigation',
+		id: 14,
+		subject: Subjects.NAVIGATION
+	}
+];

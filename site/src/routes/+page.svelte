@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Card from '../components/Card.svelte';
+	import SubjectConfigMenu from '../components/SubjectConfigMenu.svelte';
 	import { questionsBySubject } from '$lib/stores/questions';
 
 	// Mapping based on annales-bia.csv analysis:
@@ -29,44 +30,75 @@
 			icon: '〰︎',
 			color: 'var(--card-blue)',
 			title: 'Aérodynamique',
-			desc: 'Forces et équilibres en vol.'
+			desc: 'Forces et équilibres en vol.',
+			href: '/quiz'
 		},
 		{
 			subjectId: 0,
 			icon: '☁︎',
 			color: 'var(--card-green)',
 			title: 'Météorologie',
-			desc: 'Phénomènes atmosphériques.'
+			desc: 'Phénomènes atmosphériques.',
+			href: '/quiz'
 		},
 		{
 			subjectId: 3,
 			icon: '🧭',
 			color: 'var(--card-orange)',
 			title: 'Navigation / Réglementation',
-			desc: 'Orientation et règles de l’air.'
+			desc: 'Orientation et règles de l’air.',
+			href: '/quiz'
 		},
 		{
 			subjectId: 4,
 			icon: '⏳',
 			color: 'var(--card-red)',
 			title: 'Histoire',
-			desc: 'Évolution de l’aviation.'
+			desc: 'Évolution de l’aviation.',
+			href: '/quiz'
 		},
 		{
 			subjectId: 5,
 			icon: 'EN',
 			color: 'var(--card-pink)',
 			title: 'Anglais',
-			desc: 'Communication aéronautique.'
+			desc: 'Communication aéronautique.',
+			href: '/quiz'
 		}
 	];
+
+	let activeSubject = $state<{
+		id: number;
+		title: string;
+		color: string;
+		totalQuestions: number;
+	} | null>(null);
+
+	function openMenu(card: { subjectId: number; title: string; color: string }, totalQuestions: number) {
+		activeSubject = {
+			id: card.subjectId,
+			title: card.title,
+			color: card.color,
+			totalQuestions
+		};
+	}
 </script>
 
 <section class="grid">
 	{#each cards as c}
-		<Card {...c} totalQuestions={$questionsBySubject[c.subjectId] || 0} answeredQuestions={50} seenQuestions={100} />
+		{@const total = $questionsBySubject[c.subjectId] || 0}
+		<Card {...c} totalQuestions={total} answeredQuestions={0} seenQuestions={0} onclick={() => openMenu(c, total)} />
 	{/each}
 </section>
+
+{#if activeSubject}
+	<SubjectConfigMenu
+		subjectId={activeSubject.id}
+		title={activeSubject.title}
+		color={activeSubject.color}
+		totalQuestions={activeSubject.totalQuestions}
+		onClose={() => (activeSubject = null)} />
+{/if}
 
 <style>
 	.grid {
