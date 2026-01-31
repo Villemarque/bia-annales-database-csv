@@ -87,10 +87,7 @@
 						{#each subjectChapters as chapter}
 							<label class="chapter-item">
 								<span class="label-text">{chapter.name}</span>
-								<Toggle
-									checked={selectedChapters.includes(chapter.id)}
-									{color}
-									onchange={() => toggleChapter(chapter.id)} />
+								<Toggle checked={selectedChapters.includes(chapter.id)} onchange={() => toggleChapter(chapter.id)} />
 							</label>
 						{/each}
 					</div>
@@ -108,7 +105,7 @@
 				<div class="questions-control">
 					<label class="chapter-item checkbox-row">
 						<span class="label-text">Toutes les questions ({totalQuestions})</span>
-						<Toggle bind:checked={isAllQuestions} {color} />
+						<Toggle bind:checked={isAllQuestions} />
 					</label>
 
 					{#if !isAllQuestions}

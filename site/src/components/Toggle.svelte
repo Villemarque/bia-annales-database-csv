@@ -1,16 +1,14 @@
 <script lang="ts">
 	let {
 		checked = $bindable(false),
-		color = '#2f80ed',
 		onchange
 	}: {
 		checked?: boolean;
-		color?: string;
 		onchange?: () => void;
 	} = $props();
 </script>
 
-<div class="toggle-wrapper" style="--toggle-active-color: {color}">
+<div class="toggle-wrapper">
 	<input type="checkbox" bind:checked {onchange} />
 	<span class="toggle-switch"></span>
 </div>
