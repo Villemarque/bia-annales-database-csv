@@ -21,12 +21,19 @@
 
 	const subjectChapters = ChaptersBySubject[subjectId];
 
+	const hasRest = $derived($questionsBySubject[subjectId]?.rest?.length > 0);
+
 	let chaptersState = $state<ChaptersState>({
 		onlyNew: true,
 		selected: subjectChapters.map((c) => c.id),
 		includeRest: true
 	}); // Default all selected
 
+	const allChaptersSelected = $derived(chaptersState.selected.length === subjectChapters.length);
+
+	// working as is
+	// testbed
+	// https://svelte.dev/playground/acf7489de2d14863868eb867991898c7?version=5.49.1#H4sIAAAAAAAAE3VS0WrrMAz9FWEKS1lI7t1jlgT2DYP7Mg_mJi4zS-1gq-tK8L9fWUnbDLa8KNI5ko4lTcKqgxaVeH5XXvcQ0Hkd4GTwHfzR6iBysTcD2eplEngeEzcFKL5kPo1jET71gCm2U0H_FO-cRW2Ryog6dN6M2Eor0RxG5xGmkzeodoOOsPfuAHdzXslq7tbEvXMXTlGSU2BIODGoQ0DoFSpo4FIve_nzur2h3hG2CahQZ1NAX4EUZydFXHEG16mBaJLe4qVYldbefNKIqMLyW-zOWbaFpoUp0SR6jUdvgXRlm6Qkp475XJE7xO1jMozBfQN_pa3L2zhsPbbP6clgAkzMinU5tgywaga8K0j7DbmpYXhxF5wYuyOis-BsN5juo5lmyVcRD7F96nswqA91OXPbX7Pm3ilNikAfzY6zA6ADlriqQXtH_YWiQn_UMf_lfuYtfr-da2x1N-kt-ovPYF4IkWgZGR9JPjf_d5n2dSnLSt6Y1WwmtnGhs5_SeKBLLgXZxjdp4_cnvJKnzHAythfVXg1Bx_-Wf87FQQMAAA
 	let questionsNumber = $derived.by(() =>
 		getPotentialQuestions($attempts, $questionsBySubject, subjectId)(chaptersState)
 	);
@@ -42,10 +49,14 @@
 	}
 
 	function selectAllChapters() {
-		if (chaptersState.selected.length === subjectChapters.length) {
+		const restSelected = !hasRest || chaptersState.includeRest;
+
+		if (allChaptersSelected && restSelected) {
 			chaptersState.selected = [];
+			if (hasRest) chaptersState.includeRest = false;
 		} else {
 			chaptersState.selected = subjectChapters.map((c) => c.id);
+			if (hasRest) chaptersState.includeRest = true;
 		}
 	}
 
@@ -75,12 +86,28 @@
 		</div>
 
 		<div class="content">
+			<div class="section">
+				<div class="section-header">
+					<h3>Filtre</h3>
+				</div>
+
+				<div class="chapters-grid">
+					<label class="chapter-item">
+						<span class="label-text">Uniquement les questions à revoir</span>
+						<Toggle bind:checked={chaptersState.onlyNew} />
+					</label>
+				</div>
+			</div>
+
+			<!-- if no chapters, everything is in rest, so no need to show it -->
 			{#if subjectChapters.length > 0}
 				<div class="section">
 					<div class="section-header">
 						<h3>Chapitres</h3>
 						<button class="text-btn" onclick={selectAllChapters}>
-							{chaptersState.selected.length === subjectChapters.length ? 'Tout désélectionner' : 'Tout sélectionner'}
+							{allChaptersSelected && ((hasRest && chaptersState.includeRest) || !hasRest)
+								? 'Tout désélectionner'
+								: 'Tout sélectionner'}
 						</button>
 					</div>
 					<div class="chapters-grid">
@@ -92,6 +119,12 @@
 									onchange={() => toggleChapter(chapter.id)} />
 							</label>
 						{/each}
+						{#if hasRest}
+							<label class="chapter-item">
+								<span class="label-text">Divers</span>
+								<Toggle bind:checked={chaptersState.includeRest} />
+							</label>
+						{/if}
 					</div>
 				</div>
 			{/if}
@@ -283,10 +316,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 16px;
-	}
-
-	.checkbox-row {
-		margin-bottom: 8px;
 	}
 
 	.slider-container {
