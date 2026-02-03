@@ -28,24 +28,26 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    # run steps will execute inside site by default
+    defaults:
+      run:
+        working-directory: site
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v4
         with:
           version: 10
       - name: Set up Node
-        working-directory: site
         uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: "pnpm"
+          cache-dependency-path: "site/pnpm-lock.yaml"
 
       - name: Install dependencies
-        working-directory: site
         run: pnpm install
 
       - name: Build
-        working-directory: site
         run: pnpm run build
 
       - name: Setup Pages
