@@ -30,27 +30,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - run: cd site
       - uses: pnpm/action-setup@v4
         with:
           version: 10
       - name: Set up Node
         uses: actions/setup-node@v6
+        working-directory: site
         with:
           node-version: 24
           cache: "pnpm"
-          cache-dependency-path: './site/package-lock.json'
+
       - name: Install dependencies
+        working-directory: site
         run: pnpm install
+
       - name: Build
+         working-directory: site
         run: pnpm run build
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
           # Upload dist repository
-          path: "./build"
+          path: "./site/build"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
