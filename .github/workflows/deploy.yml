@@ -39,6 +39,7 @@ jobs:
         with:
           node-version: 24
           cache: "pnpm"
+          cache-dependency-path: 'site/package-lock.json'
       - name: Install dependencies
         run: pnpm install
       - name: Build
