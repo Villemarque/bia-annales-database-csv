@@ -3,7 +3,8 @@
 	import { Chapters } from '$lib/types';
 	import { type Subject, type ChapterId, ChaptersBySubject } from '$lib/types';
 	import { attempts } from '$lib/stores/attempt';
-	import {questionsBySubject} from '$lib/stores/question';
+	import { questionsBySubject } from '$lib/stores/questions';
+	import { type ChaptersState, getPotentialQuestions } from '$lib/state';
 	import Toggle from './Toggle.svelte';
 
 	let {
@@ -20,41 +21,21 @@
 
 	const subjectChapters = ChaptersBySubject[subjectId];
 
-	interface PotentialQuestions {
-		selected: Record<ChapterId, Qid[]>;
-		rest: Qid[];
-	}
-
 	let chaptersState = $state<ChaptersState>({
 		onlyNew: true,
 		selected: subjectChapters.map((c) => c.id),
 		includeRest: true
 	}); // Default all selected
 
-	let questionsNumber = $derived.by(() => {
-		if (chaptersState.onlyNew) {
-			const selected = chaptersState.selected.map(chapterId => {
-				return (chapterId, $questionsBySubject[subjectId][chapterId].filter(qid => {
-					const attempt = $attempts[qid];
-					return !attempt || !attempt.correct;
-				}));
-			}).reduce((acc, [chapterId, qids]) => {
-				acc[chapterId] = qids;
-				return acc;
-			}, {} as Record<ChapterId, Qid[]>);
-			return {
-
-			}
-		} else {
-			return
-		}
-	})
+	let questionsNumber = $derived.by(() =>
+		getPotentialQuestions($attempts, $questionsBySubject, subjectId)(chaptersState)
+	);
 
 	let sliderValue = $state(Math.min(20, totalQuestions));
 
 	function toggleChapter(id: ChapterId) {
 		if (chaptersState.selected.includes(id)) {
-			chaptersState.selected.remove(id);
+			chaptersState.selected = chaptersState.selected.filter((cid) => cid !== id);
 		} else {
 			chaptersState.selected.push(id);
 		}
@@ -106,7 +87,9 @@
 						{#each subjectChapters as chapter}
 							<label class="chapter-item">
 								<span class="label-text">{chapter.name}</span>
-								<Toggle checked={chaptersState.selected.includes(chapter.id)} onchange={() => toggleChapter(chapter.id)} />
+								<Toggle
+									checked={chaptersState.selected.includes(chapter.id)}
+									onchange={() => toggleChapter(chapter.id)} />
 							</label>
 						{/each}
 					</div>
