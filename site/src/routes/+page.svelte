@@ -85,6 +85,8 @@
 	}
 	function noQuestionsBySubject(s: Subject): number {
 		const byChapters = $questionsBySubject[s];
+		console.log(byChapters);
+		
 		return Object.values(byChapters.chapters).reduce((acc, qids) => acc + qids.length, byChapters.rest.length);
 	}
 </script>

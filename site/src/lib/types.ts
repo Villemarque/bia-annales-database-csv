@@ -25,7 +25,7 @@ export function createBySubject<T>(defaultValue: T): BySubject<T> {
 
 	// Iterate over the keys of the `Subjects` object (e.g., "METEO", "AERODYNAMIQUE").
 	for (const v of Object.values(Subjects) as SubjectValues[]) {
-		bySubject[v] = defaultValue;
+		bySubject[v] = structuredClone(defaultValue);
 	}
 
 	// The loop guarantees all keys are set, so we can safely cast to the full type.
