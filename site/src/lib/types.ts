@@ -1,7 +1,8 @@
-export type Qid = string;
-export type SessionId = string;
-export type AttemptId = string;
+export type Qid = string & { __qid__: void };
+export type SessionId = string & { __sessionid__: void };
+export type AttemptId = string & { __attemptid__: void };
 export type Subject = number & { __subject__: void };
+export type ChapterId = number & { __chapter__: void };
 
 const Subjects = {
 	METEO: 0 as Subject,
@@ -12,7 +13,7 @@ const Subjects = {
 	ANGLAIS: 5 as Subject
 };
 
-type Timpestamp = number; // milliseconds since epoch
+type Timpestamp = number & { __timestamp__: void };
 
 // see annales-bia.csv
 export interface Question {
@@ -27,7 +28,7 @@ export interface Question {
 	choice_c: string;
 	choice_d: string;
 	answer: number;
-	chapters: number[];
+	chapters: ChapterId[];
 	attachment_link: string | undefined;
 	mixed_choices: boolean | undefined;
 }
@@ -77,77 +78,77 @@ export interface Chapter {
 export const Chapters = [
 	{
 		name: '1.1 Les aéronefs',
-		id: 0,
+		id: 0 as ChapterId,
 		subject: Subjects.AERONEF
 	},
 	{
 		name: '1.2 Instrumentation',
-		id: 1,
+        id: 1 as ChapterId,
 		subject: Subjects.AERONEF
 	},
 	{
 		name: '1.3 Moteurs',
-		id: 2,
+        id: 2 as ChapterId,
 		subject: Subjects.AERONEF
 	},
 	{
 		name: "2.1 La sustentation de l'aile",
-		id: 3,
+        id: 3 as ChapterId,
 		subject: Subjects.AERODYNAMIQUE
 	},
 	{
 		name: '2.2 Le vol stabilisé',
-		id: 4,
+        id: 4 as ChapterId,
 		subject: Subjects.AERODYNAMIQUE
 	},
 	{
 		name: "2.3 L'aérostation et le vol spatial",
-		id: 5,
+        id: 5 as ChapterId,
 		subject: Subjects.AERODYNAMIQUE
 	},
 	{
 		name: "3.1 L'atmosphère",
-		id: 6,
+        id: 6 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: "3.2  Les masses d'air et les fronts",
-		id: 7,
+        id: 7 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: '3.3  Les nuages',
-		id: 8,
+        id: 8 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: '3.4 Les vents',
-		id: 9,
+        id: 9 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: '3.5 Les phénomènes dangereux',
-		id: 10,
+        id: 10 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: "3.6 L'information météo",
-		id: 11,
+        id: 11 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: '4.1 Réglementation',
-		id: 12,
+        id: 12 as ChapterId,
 		subject: Subjects.NAVIGATION
 	},
 	{
 		name: '4.2 Sécurité des Vols (SV) et Facteurs Humains (FH)',
-		id: 13,
+        id: 13 as ChapterId,
 		subject: Subjects.NAVIGATION
 	},
 	{
 		name: '4.3 Navigation',
-		id: 14,
+        id: 14 as ChapterId,
 		subject: Subjects.NAVIGATION
 	}
 ];

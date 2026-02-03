@@ -1,7 +1,7 @@
 import { derived, writable, readonly } from 'svelte/store';
 
 import { log } from '$lib/log';
-import { type Question, type Qid, type Subject } from '$lib/types';
+import { type Question, type Qid, type Subject, type ChapterId } from '$lib/types';
 
 const questionsWritable = writable<Record<Qid, Question>>({});
 export const questions = readonly(questionsWritable);
@@ -45,11 +45,11 @@ const notEmpty = (s: string): string => {
 	return s;
 };
 
-const parseChapters = (s: string): number[] => {
+const parseChapters = (s: string): ChapterId[] => {
 	if (s === '') {
 		return [];
 	}
-	return s.split(',').map((part) => parseInt(part.trim()));
+	return s.split(',').map((part) => parseInt(part.trim()) as ChapterId);
 };
 
 export const loadQuestions = async (): Promise<void> => {
@@ -61,7 +61,7 @@ export const loadQuestions = async (): Promise<void> => {
 	const lines = text.split('\n').slice(1); // remove header
 	for (const [i, line] of lines.entries()) {
 		const [
-			qid,
+			qidMaybe,
 			year,
 			subject,
 			no_subject,
@@ -78,9 +78,10 @@ export const loadQuestions = async (): Promise<void> => {
 			mixed_choices
 		] = line.split('\t');
 		const content = content_fixed || content_verbatim;
+		const qid = notEmpty(qidMaybe) as Qid
 		try {
 			const question: Question = {
-				qid: notEmpty(qid),
+				qid,
 				year: parseInt(year),
 				subject: parseInt(subject) as Subject,
 				no_subject: parseInt(no_subject),
