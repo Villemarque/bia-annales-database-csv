@@ -55,7 +55,7 @@ export interface Attempt {
 	qid: Qid;
 	session_id: SessionId;
 	selected_choice: number;
-	// correct: boolean; // denormalise?
+	correct: boolean; // denormalised
 	timestamp: Timpestamp;
 	duration_ms: number;
 	// source: 'practice' | 'exam' | 'review';

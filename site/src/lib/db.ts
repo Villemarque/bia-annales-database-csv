@@ -4,7 +4,7 @@ const prefix = 'annales-bia-csv';
 export type IDbValue = Blob | string | ArrayBuffer | Uint8Array | string[] | number | object;
 
 // bump version when touching this
-const storeKeys = ['log'] as const;
+const storeKeys = ['log', 'attempt'] as const;
 type StoreKeys = (typeof storeKeys)[number];
 
 export class Db {
@@ -17,7 +17,7 @@ export class Db {
 	}
 
 	static async open(): Promise<Db> {
-		const openReq = indexedDB.open(prefix, 1);
+		const openReq = indexedDB.open(prefix, 2);
 		return new Promise<Db>((resolve) => {
 			openReq.onupgradeneeded = () => {
 				let db = openReq.result;
@@ -46,7 +46,8 @@ export class Db {
 					alert(outdated);
 				};
 				const stores = {
-					log: new Store(db, 'log')
+					log: new Store(db, 'log'),
+					attempt: new Store(db, 'attempt')
 				};
 				resolve(new Db(db, stores));
 			};

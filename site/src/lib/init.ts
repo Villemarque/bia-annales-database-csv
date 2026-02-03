@@ -1,9 +1,9 @@
-import { loadQuestions } from './stores/questions.ts';
-import { log } from './log.ts';
-import { initDb } from './getDb.ts';
+import { loadQuestions } from '$lib/stores/questions';
+import { log } from '$lib/log';
+import { initDb } from '$lib/getDb';
 
-export function init(): void {
+export function init(csv: string): void {
 	initDb();
 	// no need to wait for db to start fetching questions
-	loadQuestions();
+	loadQuestions(csv);
 }

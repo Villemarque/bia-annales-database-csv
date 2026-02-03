@@ -4,8 +4,12 @@ import { init } from '$lib/init';
 export const ssr = false; // SPA for PWA
 export const prerender = true;
 
-export const load: LayoutLoad = async ({ fetch, params }) => {
+export const load: LayoutLoad = async ({ fetch }) => {
 	console.log('Loading questions in +layout.ts');
-	init(); // TODO use the fetch from load?;
+	fetch('/annales-bia.csv').then((response) =>
+		response.text().then((csv) => {
+			init(csv);
+		})
+	);
 	return {};
 };

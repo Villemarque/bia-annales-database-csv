@@ -60,12 +60,15 @@
 		}
 	];
 
-	let activeSubject = $state<{
-		id: Subject;
-		title: string;
-		color: string;
-		totalQuestions: number;
-	} | undefined>(undefined);
+	let activeSubject = $state<
+		| {
+				id: Subject;
+				title: string;
+				color: string;
+				totalQuestions: number;
+		  }
+		| undefined
+	>(undefined);
 
 	function openMenu(card: { subjectId: Subject; title: string; color: string }, totalQuestions: number) {
 		activeSubject = {
@@ -94,8 +97,7 @@
 		title={activeSubject.title}
 		totalQuestions={activeSubject.totalQuestions}
 		onClose={() => (activeSubject = undefined)}
-		--accent-color={activeSubject.color}/>
-
+		--accent-color={activeSubject.color} />
 {/if}
 
 <style>

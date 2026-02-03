@@ -2,6 +2,8 @@
 	import { goto } from '$app/navigation';
 	import { Chapters } from '$lib/types';
 	import { type Subject, type ChapterId, ChaptersBySubject } from '$lib/types';
+	import { attempts } from '$lib/stores/attempt';
+	import {questionsBySubject} from '$lib/stores/question';
 	import Toggle from './Toggle.svelte';
 
 	let {
@@ -16,52 +18,65 @@
 		onClose: () => void;
 	} = $props();
 
-	// Filter chapters for this subject
 	const subjectChapters = ChaptersBySubject[subjectId];
 
-	interface ChaptersState {
-		onlyNew: boolean,
-		selected: Set<ChapterId>
-		includeRest: boolean // questions with no chapter
+	interface PotentialQuestions {
+		selected: Record<ChapterId, Qid[]>;
+		rest: Qid[];
 	}
 
-	// State
 	let chaptersState = $state<ChaptersState>({
 		onlyNew: true,
-		selected: new Set(subjectChapters.map((c) => c.id)),
+		selected: subjectChapters.map((c) => c.id),
 		includeRest: true
 	}); // Default all selected
+
+	let questionsNumber = $derived.by(() => {
+		if (chaptersState.onlyNew) {
+			const selected = chaptersState.selected.map(chapterId => {
+				return (chapterId, $questionsBySubject[subjectId][chapterId].filter(qid => {
+					const attempt = $attempts[qid];
+					return !attempt || !attempt.correct;
+				}));
+			}).reduce((acc, [chapterId, qids]) => {
+				acc[chapterId] = qids;
+				return acc;
+			}, {} as Record<ChapterId, Qid[]>);
+			return {
+
+			}
+		} else {
+			return
+		}
+	})
 
 	let sliderValue = $state(Math.min(20, totalQuestions));
 
 	function toggleChapter(id: ChapterId) {
-		if (chaptersState.selected.has(id)) {
-			chaptersState.selected.delete(id);
+		if (chaptersState.selected.includes(id)) {
+			chaptersState.selected.remove(id);
 		} else {
-			chaptersState.selected.add(id);
+			chaptersState.selected.push(id);
 		}
 	}
 
 	function selectAllChapters() {
 		if (chaptersState.selected.length === subjectChapters.length) {
-			chaptersState.selected = new Set();
+			chaptersState.selected = [];
 		} else {
-			chaptersState.selected = new Set(subjectChapters.map((c) => c.id));
+			chaptersState.selected = subjectChapters.map((c) => c.id);
 		}
 	}
 
 	function startQuiz() {
 		// const params = new URLSearchParams();
 		// params.set('subject', subjectId.toString());
-
 		// if (sliderValue < totalQuestions) {
 		// 	params.set('count', sliderValue.toString());
 		// }
-
 		// if (subjectChapters.length > 0 && chaptersState.selected.length > 0 && chaptersState.selected.length < subjectChapters.length) {
 		// 	params.set('chapters', selectedChapters.join(','));
 		// }
-
 		// goto(`/quiz?${params.toString()}`);
 	}
 </script>
@@ -91,7 +106,7 @@
 						{#each subjectChapters as chapter}
 							<label class="chapter-item">
 								<span class="label-text">{chapter.name}</span>
-								<Toggle checked={chaptersState.selected.has(chapter.id)} onchange={() => toggleChapter(chapter.id)} />
+								<Toggle checked={chaptersState.selected.includes(chapter.id)} onchange={() => toggleChapter(chapter.id)} />
 							</label>
 						{/each}
 					</div>

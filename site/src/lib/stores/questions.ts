@@ -73,13 +73,13 @@ const parseChapters = (s: string): ChapterId[] => {
 	return s.split(',').map(parseChapterId);
 };
 
-export const loadQuestions = async (): Promise<void> => {
-	const response = await timeoutFor(0).then(() => fetch('/annales-bia.csv'));
+export const loadQuestions = async (csv: string): Promise<void> => {
+	const response = await fetch('/annales-bia.csv');
 	// we only write to the store once all values parsed, to avoid trigeering derived each time
 	const acc: Record<Qid, Question> = {};
 	// \t separated values
 	const text = await response.text();
-	const lines = text.split('\n').slice(1); // remove header
+	const lines = csv.split('\n').slice(1); // remove header
 	for (const [i, line] of lines.entries()) {
 		const [
 			qidMaybe,
@@ -123,8 +123,9 @@ export const loadQuestions = async (): Promise<void> => {
 		}
 	}
 	questionsWritable.set(acc);
-	const unsubscribe = questions.subscribe((value) => {
-		log.log('loaded questions CSV', value);
-	});
-	unsubscribe();
+	log.log('loaded questions CSV');
+	// const unsubscribe = questions.subscribe((value) => {
+	// 	log.log('loaded questions CSV', value);
+	// });
+	// unsubscribe();
 };

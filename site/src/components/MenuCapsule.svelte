@@ -92,7 +92,7 @@
 		height: 40px;
 		min-width: 40px;
 		border-radius: 50%;
-		background: rgba(0, 0, 0, 0.05);
+		background: var(--glass-bg-strong);
 		border: 1px solid rgba(0, 0, 0, 0.03);
 		display: flex;
 		align-items: center;

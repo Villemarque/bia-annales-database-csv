@@ -1,4 +1,4 @@
-import { Db } from './db';
+import { Db } from '$lib/db';
 
 let theGlobalDb: Db;
 let init: (db: Db) => void;
