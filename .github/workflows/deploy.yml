@@ -45,7 +45,7 @@ jobs:
         run: pnpm install
 
       - name: Build
-         working-directory: site
+        working-directory: site
         run: pnpm run build
 
       - name: Setup Pages
