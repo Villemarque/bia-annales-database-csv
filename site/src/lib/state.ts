@@ -49,7 +49,7 @@ const isUnattemptedOrIncorrect = (attempts: Record<Qid, Attempt>) => (qid: Qid) 
 
 export const getPotentialQuestions =
 	(attempts: Record<Qid, Attempt>, questionsBySubject: BySubject<QuestionsByChapter>, subjectId: Subject) =>
-	(chaptersState: ChaptersState) => {
+	(chaptersState: ChaptersState): PotentialQuestions => {
 		const filterFun = chaptersState.onlyNew ? isUnattemptedOrIncorrect(attempts) : () => true;
 		return potentialQuestionsFrom(subjectId, questionsBySubject, chaptersState, filterFun);
 	};

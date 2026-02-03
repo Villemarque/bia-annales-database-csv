@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { Chapters } from '$lib/types';
 	import { type Subject, type ChapterId, ChaptersBySubject } from '$lib/types';
+	import { log } from '$lib/log';
 	import { attempts } from '$lib/stores/attempt';
 	import { questionsBySubject } from '$lib/stores/questions';
 	import { type ChaptersState, getPotentialQuestions } from '$lib/state';
@@ -34,11 +35,33 @@
 	// working as is
 	// testbed
 	// https://svelte.dev/playground/acf7489de2d14863868eb867991898c7?version=5.49.1#H4sIAAAAAAAAE3VS0WrrMAz9FWEKS1lI7t1jlgT2DYP7Mg_mJi4zS-1gq-tK8L9fWUnbDLa8KNI5ko4lTcKqgxaVeH5XXvcQ0Hkd4GTwHfzR6iBysTcD2eplEngeEzcFKL5kPo1jET71gCm2U0H_FO-cRW2Ryog6dN6M2Eor0RxG5xGmkzeodoOOsPfuAHdzXslq7tbEvXMXTlGSU2BIODGoQ0DoFSpo4FIve_nzur2h3hG2CahQZ1NAX4EUZydFXHEG16mBaJLe4qVYldbefNKIqMLyW-zOWbaFpoUp0SR6jUdvgXRlm6Qkp475XJE7xO1jMozBfQN_pa3L2zhsPbbP6clgAkzMinU5tgywaga8K0j7DbmpYXhxF5wYuyOis-BsN5juo5lmyVcRD7F96nswqA91OXPbX7Pm3ilNikAfzY6zA6ADlriqQXtH_YWiQn_UMf_lfuYtfr-da2x1N-kt-ovPYF4IkWgZGR9JPjf_d5n2dSnLSt6Y1WwmtnGhs5_SeKBLLgXZxjdp4_cnvJKnzHAythfVXg1Bx_-Wf87FQQMAAA
-	let questionsNumber = $derived.by(() =>
+	let potentialQuestions = $derived.by(() =>
 		getPotentialQuestions($attempts, $questionsBySubject, subjectId)(chaptersState)
 	);
 
-	let sliderValue = $state(Math.min(20, totalQuestions));
+	// the difference with `potentialQuestions` is that we always pass all chapters
+	// to display the counts correctly, even when the chapter is not selected
+	let questionsCountByChapter = $derived.by(() =>
+		getPotentialQuestions(
+			$attempts,
+			$questionsBySubject,
+			subjectId
+		)({
+			onlyNew: chaptersState.onlyNew,
+			selected: subjectChapters.map((c) => c.id),
+			includeRest: true
+		})
+	);
+
+	let totalAvailable = $derived(
+		Object.values(potentialQuestions.selected).reduce((acc, qids) => acc + qids.length, potentialQuestions.rest.length)
+	);
+
+	let sliderValue = $state(0);
+
+	$effect(() => {
+		sliderValue = Math.min(20, totalAvailable);
+	});
 
 	function toggleChapter(id: ChapterId) {
 		if (chaptersState.selected.includes(id)) {
@@ -113,7 +136,8 @@
 					<div class="chapters-grid">
 						{#each subjectChapters as chapter}
 							<label class="chapter-item">
-								<span class="label-text">{chapter.name}</span>
+								<span class="label-text"
+									>{chapter.name} ({questionsCountByChapter.selected[chapter.id]?.length || 0})</span>
 								<Toggle
 									checked={chaptersState.selected.includes(chapter.id)}
 									onchange={() => toggleChapter(chapter.id)} />
@@ -121,7 +145,7 @@
 						{/each}
 						{#if hasRest}
 							<label class="chapter-item">
-								<span class="label-text">Divers</span>
+								<span class="label-text">Divers ({questionsCountByChapter.rest.length})</span>
 								<Toggle bind:checked={chaptersState.includeRest} />
 							</label>
 						{/if}
@@ -132,15 +156,15 @@
 			<div class="section">
 				<div class="section-header">
 					<h3>Nombre de questions</h3>
-					<span class="count-value">{sliderValue} / {totalQuestions}</span>
+					<span class="count-value">{sliderValue} / {totalAvailable}</span>
 				</div>
 
 				<div class="questions-control">
 					<div class="slider-container">
-						<input type="range" min="1" max={totalQuestions} bind:value={sliderValue} class="range-slider" />
+						<input type="range" min="1" max={totalAvailable} bind:value={sliderValue} class="range-slider" />
 						<div class="range-labels">
 							<span>1</span>
-							<span>{totalQuestions}</span>
+							<span>{totalAvailable}</span>
 						</div>
 					</div>
 				</div>
@@ -149,12 +173,7 @@
 
 		<div class="footer">
 			<button class="cancel-btn" onclick={onClose}>Annuler</button>
-			<button
-				class="start-btn"
-				onclick={startQuiz}
-				disabled={subjectChapters.length > 0 && chaptersState.selected.length === 0}>
-				Commencer le Quiz
-			</button>
+			<button class="start-btn" onclick={startQuiz} disabled={totalAvailable === 0}> Commencer le Quiz </button>
 		</div>
 	</div>
 </div>
