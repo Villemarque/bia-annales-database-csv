@@ -30,6 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - run: cd site
       - uses: pnpm/action-setup@v4
         with:
           version: 10
@@ -40,8 +41,6 @@ jobs:
         with:
           node-version: 24
           cache: "pnpm"
-      # move to site
-      - run: cd site
       - name: Install dependencies
         run: pnpm install
       - name: Build
