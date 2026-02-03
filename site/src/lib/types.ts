@@ -176,7 +176,7 @@ export const Chapters = [
 	}
 ] as const;
 
-export const ChaptersById = Chapters.reduce(
+export const ChaptersById: Record<ChapterId, Chapter> = Chapters.reduce(
 	(acc, chapter) => {
 		acc[chapter.id] = chapter;
 		return acc;

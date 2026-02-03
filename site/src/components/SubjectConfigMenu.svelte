@@ -1,74 +1,79 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Chapters } from '$lib/types';
-	import type { Subject } from '$lib/types';
+	import { type Subject, type ChapterId, ChaptersBySubject } from '$lib/types';
 	import Toggle from './Toggle.svelte';
 
 	let {
 		subjectId,
 		title,
-		color,
 		totalQuestions,
 		onClose
 	}: {
-		subjectId: number;
+		subjectId: Subject;
 		title: string;
-		color: string;
 		totalQuestions: number;
 		onClose: () => void;
 	} = $props();
 
 	// Filter chapters for this subject
-	const subjectChapters = Chapters.filter((c) => c.subject === subjectId);
+	const subjectChapters = ChaptersBySubject[subjectId];
+
+	interface ChaptersState {
+		onlyNew: boolean,
+		selected: Set<ChapterId>
+		includeRest: boolean // questions with no chapter
+	}
 
 	// State
-	let selectedChapters = $state<number[]>(subjectChapters.map((c) => c.id)); // Default all selected
-	let sliderValue = $state(0);
-	$effect(() => {
-		sliderValue = Math.min(20, totalQuestions);
-	});
+	let chaptersState = $state<ChaptersState>({
+		onlyNew: true,
+		selected: new Set(subjectChapters.map((c) => c.id)),
+		includeRest: true
+	}); // Default all selected
 
-	function toggleChapter(id: number) {
-		if (selectedChapters.includes(id)) {
-			selectedChapters = selectedChapters.filter((c) => c !== id);
+	let sliderValue = $state(Math.min(20, totalQuestions));
+
+	function toggleChapter(id: ChapterId) {
+		if (chaptersState.selected.has(id)) {
+			chaptersState.selected.delete(id);
 		} else {
-			selectedChapters = [...selectedChapters, id];
+			chaptersState.selected.add(id);
 		}
 	}
 
 	function selectAllChapters() {
-		if (selectedChapters.length === subjectChapters.length) {
-			selectedChapters = [];
+		if (chaptersState.selected.length === subjectChapters.length) {
+			chaptersState.selected = new Set();
 		} else {
-			selectedChapters = subjectChapters.map((c) => c.id);
+			chaptersState.selected = new Set(subjectChapters.map((c) => c.id));
 		}
 	}
 
 	function startQuiz() {
-		const params = new URLSearchParams();
-		params.set('subject', subjectId.toString());
+		// const params = new URLSearchParams();
+		// params.set('subject', subjectId.toString());
 
-		if (sliderValue < totalQuestions) {
-			params.set('count', sliderValue.toString());
-		}
+		// if (sliderValue < totalQuestions) {
+		// 	params.set('count', sliderValue.toString());
+		// }
 
-		if (subjectChapters.length > 0 && selectedChapters.length > 0 && selectedChapters.length < subjectChapters.length) {
-			params.set('chapters', selectedChapters.join(','));
-		}
+		// if (subjectChapters.length > 0 && chaptersState.selected.length > 0 && chaptersState.selected.length < subjectChapters.length) {
+		// 	params.set('chapters', selectedChapters.join(','));
+		// }
 
-		goto(`/quiz?${params.toString()}`);
+		// goto(`/quiz?${params.toString()}`);
 	}
 </script>
 
 <div class="overlay" onclick={onClose} role="presentation">
 	<div
 		class="menu"
-		style="--accent-color: {color}"
 		onclick={(e) => e.stopPropagation()}
 		role="dialog"
 		aria-modal="true"
 		aria-label="Configuration du quiz">
-		<div class="header" style="background: {color}">
+		<div class="header">
 			<h2>{title}</h2>
 			<button class="close-btn" onclick={onClose} aria-label="Fermer">✕</button>
 		</div>
@@ -79,14 +84,14 @@
 					<div class="section-header">
 						<h3>Chapitres</h3>
 						<button class="text-btn" onclick={selectAllChapters}>
-							{selectedChapters.length === subjectChapters.length ? 'Tout désélectionner' : 'Tout sélectionner'}
+							{chaptersState.selected.length === subjectChapters.length ? 'Tout désélectionner' : 'Tout sélectionner'}
 						</button>
 					</div>
 					<div class="chapters-grid">
 						{#each subjectChapters as chapter}
 							<label class="chapter-item">
 								<span class="label-text">{chapter.name}</span>
-								<Toggle checked={selectedChapters.includes(chapter.id)} onchange={() => toggleChapter(chapter.id)} />
+								<Toggle checked={chaptersState.selected.has(chapter.id)} onchange={() => toggleChapter(chapter.id)} />
 							</label>
 						{/each}
 					</div>
@@ -96,14 +101,14 @@
 			<div class="section">
 				<div class="section-header">
 					<h3>Nombre de questions</h3>
-					<span class="count-value" style="color: {color}">{sliderValue} / {totalQuestions}</span>
+					<span class="count-value">{sliderValue} / {totalQuestions}</span>
 				</div>
 
 				<div class="questions-control">
 					<div class="slider-container">
-						<input type="range" min="5" max={totalQuestions} bind:value={sliderValue} class="range-slider" />
+						<input type="range" min="1" max={totalQuestions} bind:value={sliderValue} class="range-slider" />
 						<div class="range-labels">
-							<span>5</span>
+							<span>1</span>
 							<span>{totalQuestions}</span>
 						</div>
 					</div>
@@ -116,7 +121,7 @@
 			<button
 				class="start-btn"
 				onclick={startQuiz}
-				disabled={subjectChapters.length > 0 && selectedChapters.length === 0}>
+				disabled={subjectChapters.length > 0 && chaptersState.selected.length === 0}>
 				Commencer le Quiz
 			</button>
 		</div>
@@ -169,6 +174,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		background: var(--accent-color);
 	}
 
 	.header h2 {
@@ -272,6 +278,7 @@
 	.count-value {
 		font-weight: 700;
 		font-size: 18px;
+		color: var(--accent-color);
 	}
 
 	.questions-control {

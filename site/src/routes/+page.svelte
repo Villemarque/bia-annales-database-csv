@@ -4,14 +4,6 @@
 	import { questionsBySubject } from '$lib/stores/questions';
 	import { type Subject, Subjects } from '$lib/types';
 
-	// Mapping based on annales-bia.csv analysis:
-	// 0: Météorologie
-	// 1: Aérodynamique
-	// 2: Connaissance des Aéronefs
-	// 3: Navigation / Réglementation
-	// 4: Histoire
-	// 5: Anglais
-
 	// for SEO, and faster initial load
 	// only prerendered at build time
 	// export const prerender = true;
@@ -69,13 +61,13 @@
 	];
 
 	let activeSubject = $state<{
-		id: number;
+		id: Subject;
 		title: string;
 		color: string;
 		totalQuestions: number;
-	} | null>(null);
+	} | undefined>(undefined);
 
-	function openMenu(card: { subjectId: number; title: string; color: string }, totalQuestions: number) {
+	function openMenu(card: { subjectId: Subject; title: string; color: string }, totalQuestions: number) {
 		activeSubject = {
 			id: card.subjectId,
 			title: card.title,
@@ -85,8 +77,6 @@
 	}
 	function noQuestionsBySubject(s: Subject): number {
 		const byChapters = $questionsBySubject[s];
-		console.log(byChapters);
-		
 		return Object.values(byChapters.chapters).reduce((acc, qids) => acc + qids.length, byChapters.rest.length);
 	}
 </script>
@@ -102,9 +92,10 @@
 	<SubjectConfigMenu
 		subjectId={activeSubject.id}
 		title={activeSubject.title}
-		color={activeSubject.color}
 		totalQuestions={activeSubject.totalQuestions}
-		onClose={() => (activeSubject = null)} />
+		onClose={() => (activeSubject = undefined)}
+		--accent-color={activeSubject.color}/>
+
 {/if}
 
 <style>
