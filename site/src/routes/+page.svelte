@@ -2,6 +2,7 @@
 	import Card from '../components/Card.svelte';
 	import SubjectConfigMenu from '../components/SubjectConfigMenu.svelte';
 	import { questionsBySubject } from '$lib/stores/questions';
+	import { type Subject, Subjects } from '$lib/types';
 
 	// Mapping based on annales-bia.csv analysis:
 	// 0: Météorologie
@@ -18,7 +19,7 @@
 
 	const cards = [
 		{
-			subjectId: 2,
+			subjectId: Subjects.AERONEF,
 			icon: '✈︎',
 			color: 'var(--card-indigo)',
 			title: 'Connaissance des Aéronefs',
@@ -26,7 +27,7 @@
 			href: '/quiz'
 		},
 		{
-			subjectId: 1,
+			subjectId: Subjects.AERODYNAMIQUE,
 			icon: '〰︎',
 			color: 'var(--card-blue)',
 			title: 'Aérodynamique',
@@ -34,7 +35,7 @@
 			href: '/quiz'
 		},
 		{
-			subjectId: 0,
+			subjectId: Subjects.METEO,
 			icon: '☁︎',
 			color: 'var(--card-green)',
 			title: 'Météorologie',
@@ -42,7 +43,7 @@
 			href: '/quiz'
 		},
 		{
-			subjectId: 3,
+			subjectId: Subjects.NAVIGATION,
 			icon: '🧭',
 			color: 'var(--card-orange)',
 			title: 'Navigation / Réglementation',
@@ -50,7 +51,7 @@
 			href: '/quiz'
 		},
 		{
-			subjectId: 4,
+			subjectId: Subjects.HISTOIRE,
 			icon: '⏳',
 			color: 'var(--card-red)',
 			title: 'Histoire',
@@ -58,7 +59,7 @@
 			href: '/quiz'
 		},
 		{
-			subjectId: 5,
+			subjectId: Subjects.ANGLAIS,
 			icon: 'EN',
 			color: 'var(--card-pink)',
 			title: 'Anglais',
@@ -82,11 +83,15 @@
 			totalQuestions
 		};
 	}
+	function noQuestionsBySubject(s: Subject): number {
+		const byChapters = $questionsBySubject[s];
+		return Object.values(byChapters.chapters).reduce((acc, qids) => acc + qids.length, byChapters.rest.length);
+	}
 </script>
 
 <section class="grid">
 	{#each cards as c}
-		{@const total = $questionsBySubject[c.subjectId] || 0}
+		{@const total = noQuestionsBySubject(c.subjectId)}
 		<Card {...c} totalQuestions={total} answeredQuestions={0} seenQuestions={0} onclick={() => openMenu(c, total)} />
 	{/each}
 </section>

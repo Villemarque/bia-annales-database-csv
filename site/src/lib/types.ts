@@ -3,17 +3,34 @@ export type SessionId = string & { __sessionid__: void };
 export type AttemptId = string & { __attemptid__: void };
 export type Subject = number & { __subject__: void };
 export type ChapterId = number & { __chapter__: void };
+type Timpestamp = number & { __timestamp__: void };
 
-const Subjects = {
+export const Subjects = {
 	METEO: 0 as Subject,
 	AERODYNAMIQUE: 1 as Subject,
 	AERONEF: 2 as Subject,
 	NAVIGATION: 3 as Subject,
 	HISTOIRE: 4 as Subject,
 	ANGLAIS: 5 as Subject
+} as const;
+
+type SubjectValues = (typeof Subjects)[keyof typeof Subjects];
+
+export type BySubject<T> = {
+	[key in SubjectValues]: T;
 };
 
-type Timpestamp = number & { __timestamp__: void };
+export function createBySubject<T>(defaultValue: T): BySubject<T> {
+	const bySubject = {} as Partial<BySubject<T>>;
+
+	// Iterate over the keys of the `Subjects` object (e.g., "METEO", "AERODYNAMIQUE").
+	for (const v of Object.values(Subjects) as SubjectValues[]) {
+		bySubject[v] = defaultValue;
+	}
+
+	// The loop guarantees all keys are set, so we can safely cast to the full type.
+	return bySubject as BySubject<T>;
+}
 
 // see annales-bia.csv
 export interface Question {
@@ -56,8 +73,14 @@ export interface Session {
 
 export interface Chapter {
 	name: string;
-	id: number;
+	id: ChapterId;
 	subject: Subject;
+}
+
+export interface QuestionsByChapter {
+	chapters: Record<ChapterId, Qid[]>;
+	// questions with no chapters linked to
+	rest: Qid[];
 }
 
 // "1.1 Les aéronefs": 0
@@ -83,72 +106,85 @@ export const Chapters = [
 	},
 	{
 		name: '1.2 Instrumentation',
-        id: 1 as ChapterId,
+		id: 1 as ChapterId,
 		subject: Subjects.AERONEF
 	},
 	{
 		name: '1.3 Moteurs',
-        id: 2 as ChapterId,
+		id: 2 as ChapterId,
 		subject: Subjects.AERONEF
 	},
 	{
 		name: "2.1 La sustentation de l'aile",
-        id: 3 as ChapterId,
+		id: 3 as ChapterId,
 		subject: Subjects.AERODYNAMIQUE
 	},
 	{
 		name: '2.2 Le vol stabilisé',
-        id: 4 as ChapterId,
+		id: 4 as ChapterId,
 		subject: Subjects.AERODYNAMIQUE
 	},
 	{
 		name: "2.3 L'aérostation et le vol spatial",
-        id: 5 as ChapterId,
+		id: 5 as ChapterId,
 		subject: Subjects.AERODYNAMIQUE
 	},
 	{
 		name: "3.1 L'atmosphère",
-        id: 6 as ChapterId,
+		id: 6 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: "3.2  Les masses d'air et les fronts",
-        id: 7 as ChapterId,
+		id: 7 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: '3.3  Les nuages',
-        id: 8 as ChapterId,
+		id: 8 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: '3.4 Les vents',
-        id: 9 as ChapterId,
+		id: 9 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: '3.5 Les phénomènes dangereux',
-        id: 10 as ChapterId,
+		id: 10 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: "3.6 L'information météo",
-        id: 11 as ChapterId,
+		id: 11 as ChapterId,
 		subject: Subjects.METEO
 	},
 	{
 		name: '4.1 Réglementation',
-        id: 12 as ChapterId,
+		id: 12 as ChapterId,
 		subject: Subjects.NAVIGATION
 	},
 	{
 		name: '4.2 Sécurité des Vols (SV) et Facteurs Humains (FH)',
-        id: 13 as ChapterId,
+		id: 13 as ChapterId,
 		subject: Subjects.NAVIGATION
 	},
 	{
 		name: '4.3 Navigation',
-        id: 14 as ChapterId,
+		id: 14 as ChapterId,
 		subject: Subjects.NAVIGATION
 	}
-];
+] as const;
+
+export const ChaptersById = Chapters.reduce(
+	(acc, chapter) => {
+		acc[chapter.id] = chapter;
+		return acc;
+	},
+	{} as Record<ChapterId, Chapter>
+);
+
+export const ChaptersBySubject: BySubject<Chapter[]> = Object.values(Subjects).reduce((acc, subject) => {
+	acc[subject] = Chapters.filter((chapter) => chapter.subject === subject);
+	return acc;
+}, createBySubject<Chapter[]>([]));

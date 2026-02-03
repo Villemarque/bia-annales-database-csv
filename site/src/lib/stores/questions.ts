@@ -1,17 +1,38 @@
 import { derived, writable, readonly } from 'svelte/store';
 
 import { log } from '$lib/log';
-import { type Question, type Qid, type Subject, type ChapterId } from '$lib/types';
+import {
+	type Question,
+	type Qid,
+	type Subject,
+	type ChapterId,
+	type QuestionsByChapter,
+	type BySubject,
+	createBySubject
+} from '$lib/types';
+import { parseChapterId } from '$lib/chapter';
+import { parseSubject } from '$lib/subject';
 
 const questionsWritable = writable<Record<Qid, Question>>({});
 export const questions = readonly(questionsWritable);
 export const questionsBySubject = derived(questions, ($questions) => {
-	const by_subject: Record<number, number> = {};
+	const by_subject: BySubject<QuestionsByChapter> = createBySubject({
+		chapters: {},
+		rest: []
+	});
+
 	for (const question of Object.values($questions)) {
-		if (!(question.subject in by_subject)) {
-			by_subject[question.subject] = 0;
+		const by_chapter = by_subject[question.subject];
+		if (question.chapters.length === 0) {
+			by_chapter.rest.push(question.qid);
+		} else {
+			for (const chapter_id of question.chapters) {
+				if (!(chapter_id in by_chapter.chapters)) {
+					by_chapter.chapters[chapter_id] = [];
+				}
+				by_chapter.chapters[chapter_id].push(question.qid);
+			}
 		}
-		by_subject[question.subject] += 1;
 	}
 	return by_subject;
 });
@@ -49,7 +70,7 @@ const parseChapters = (s: string): ChapterId[] => {
 	if (s === '') {
 		return [];
 	}
-	return s.split(',').map((part) => parseInt(part.trim()) as ChapterId);
+	return s.split(',').map(parseChapterId);
 };
 
 export const loadQuestions = async (): Promise<void> => {
@@ -78,12 +99,12 @@ export const loadQuestions = async (): Promise<void> => {
 			mixed_choices
 		] = line.split('\t');
 		const content = content_fixed || content_verbatim;
-		const qid = notEmpty(qidMaybe) as Qid
+		const qid = notEmpty(qidMaybe) as Qid;
 		try {
 			const question: Question = {
 				qid,
 				year: parseInt(year),
-				subject: parseInt(subject) as Subject,
+				subject: parseSubject(subject),
 				no_subject: parseInt(no_subject),
 				no: parseInt(no),
 				content: notEmpty(content),
