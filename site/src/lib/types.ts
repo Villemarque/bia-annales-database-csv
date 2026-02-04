@@ -83,6 +83,20 @@ export interface QuestionsByChapter {
 	rest: Qid[];
 }
 
+// deduplicated
+export const QBCtoList = (qbc: QuestionsByChapter): Qid[] => {
+	const qidsSet = new Set<Qid>();
+	for (const chapterQids of Object.values(qbc.chapters)) {
+		for (const qid of chapterQids) {
+			qidsSet.add(qid);
+		}
+	}
+	for (const qid of qbc.rest) {
+		qidsSet.add(qid);
+	}
+	return Array.from(qidsSet);
+};
+
 // "1.1 Les aéronefs": 0
 // "1.2 Instrumentation": 1
 // "1.3 Moteurs": 2

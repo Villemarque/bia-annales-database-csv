@@ -2,7 +2,7 @@
 	import Card from '../components/Card.svelte';
 	import SubjectConfigMenu from '../components/SubjectConfigMenu.svelte';
 	import { questionsBySubject } from '$lib/stores/questions';
-	import { type Subject, Subjects } from '$lib/types';
+	import { type Subject, Subjects, QBCtoList } from '$lib/types';
 
 	// for SEO, and faster initial load
 	// only prerendered at build time
@@ -80,7 +80,10 @@
 	}
 	function noQuestionsBySubject(s: Subject): number {
 		const byChapters = $questionsBySubject[s];
-		return Object.values(byChapters.chapters).reduce((acc, qids) => acc + qids.length, byChapters.rest.length);
+		const total = QBCtoList(byChapters).length;
+		// DEBUG
+		console.log('total of', s, byChapters, total);
+		return total;
 	}
 </script>
 

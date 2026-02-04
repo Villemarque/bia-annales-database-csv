@@ -13,18 +13,13 @@ export interface ChaptersState {
 	includeRest: boolean; // questions with no chapter
 }
 
-interface PotentialQuestions {
-	selected: Record<ChapterId, Qid[]>;
-	rest: Qid[];
-}
-
 const potentialQuestionsFrom = (
 	subjectId: Subject,
 	questionsBySubject: BySubject<QuestionsByChapter>,
 	chaptersState: ChaptersState,
 	filterFun: (qid: Qid) => boolean
-): PotentialQuestions => {
-	const selected = chaptersState.selected
+): QuestionsByChapter => {
+	const chapters = chaptersState.selected
 		.map((chapterId) => {
 			return [chapterId, questionsBySubject[subjectId].chapters[chapterId].filter(filterFun)] as [ChapterId, Qid[]];
 		})
@@ -37,7 +32,7 @@ const potentialQuestionsFrom = (
 		);
 	const rest = chaptersState.includeRest ? questionsBySubject[subjectId].rest.filter(filterFun) : [];
 	return {
-		selected,
+		chapters,
 		rest
 	};
 };
@@ -49,7 +44,7 @@ const isUnattemptedOrIncorrect = (attempts: Record<Qid, Attempt>) => (qid: Qid) 
 
 export const getPotentialQuestions =
 	(attempts: Record<Qid, Attempt>, questionsBySubject: BySubject<QuestionsByChapter>, subjectId: Subject) =>
-	(chaptersState: ChaptersState): PotentialQuestions => {
+	(chaptersState: ChaptersState): QuestionsByChapter => {
 		const filterFun = chaptersState.onlyNew ? isUnattemptedOrIncorrect(attempts) : () => true;
 		return potentialQuestionsFrom(subjectId, questionsBySubject, chaptersState, filterFun);
 	};

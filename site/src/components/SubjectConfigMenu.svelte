@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { Chapters } from '$lib/types';
-	import { type Subject, type ChapterId, ChaptersBySubject } from '$lib/types';
+	import { type Subject, type ChapterId, ChaptersBySubject, QBCtoList } from '$lib/types';
 	import { log } from '$lib/log';
 	import { attempts } from '$lib/stores/attempt';
 	import { questionsBySubject } from '$lib/stores/questions';
@@ -53,10 +53,7 @@
 		})
 	);
 
-	let totalAvailable = $derived(
-		// in case of question with multiple chapters
-		new Set(Object.values(potentialQuestions.selected).reduce((acc, qids) => acc.concat(structuredClone(qids)), structuredClone(potentialQuestions.rest))).size
-	);
+	let totalAvailable = $derived(QBCtoList(potentialQuestions).length);
 
 	let sliderValue = $state(0);
 
@@ -138,7 +135,7 @@
 						{#each subjectChapters as chapter}
 							<label class="chapter-item">
 								<span class="label-text"
-									>{chapter.name} ({questionsCountByChapter.selected[chapter.id]?.length || 0})</span>
+									>{chapter.name} ({questionsCountByChapter.chapters[chapter.id]?.length || 0})</span>
 								<Toggle
 									checked={chaptersState.selected.includes(chapter.id)}
 									onchange={() => toggleChapter(chapter.id)} />
