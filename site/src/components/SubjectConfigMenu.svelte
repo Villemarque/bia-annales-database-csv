@@ -54,7 +54,8 @@
 	);
 
 	let totalAvailable = $derived(
-		Object.values(potentialQuestions.selected).reduce((acc, qids) => acc + qids.length, potentialQuestions.rest.length)
+		// in case of question with multiple chapters
+		new Set(Object.values(potentialQuestions.selected).reduce((acc, qids) => acc.concat(structuredClone(qids)), structuredClone(potentialQuestions.rest))).size
 	);
 
 	let sliderValue = $state(0);
