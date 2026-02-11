@@ -66,11 +66,11 @@ const notEmpty = (s: string): string => {
 	return s;
 };
 
-const parseChapters = (s: string): ChapterId[] => {
+const parseChapters = (s: string, subject: Subject): ChapterId[] => {
 	if (s === '') {
 		return [];
 	}
-	return s.split(',').map(parseChapterId);
+	return s.split(',').map(parseChapterId(subject));
 };
 
 export const loadQuestions = async (csv: string): Promise<void> => {
@@ -84,7 +84,7 @@ export const loadQuestions = async (csv: string): Promise<void> => {
 		const [
 			qidMaybe,
 			year,
-			subject,
+			subjectMaybe,
 			no_subject,
 			no,
 			content_verbatim,
@@ -100,11 +100,12 @@ export const loadQuestions = async (csv: string): Promise<void> => {
 		] = line.split('\t');
 		const content = content_fixed || content_verbatim;
 		const qid = notEmpty(qidMaybe) as Qid;
+		const subject = parseSubject(subjectMaybe);
 		try {
 			const question: Question = {
 				qid,
 				year: parseInt(year),
-				subject: parseSubject(subject),
+				subject,
 				no_subject: parseInt(no_subject),
 				no: parseInt(no),
 				content: notEmpty(content),
@@ -113,7 +114,7 @@ export const loadQuestions = async (csv: string): Promise<void> => {
 				choice_c: notEmpty(choice_c),
 				choice_d: notEmpty(choice_d),
 				answer: parseInt(answer),
-				chapters: parseChapters(chapters),
+				chapters: parseChapters(chapters, subject),
 				attachment_link: attachment_link || undefined,
 				mixed_choices: maybeBool(mixed_choices)
 			};

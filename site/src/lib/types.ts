@@ -59,17 +59,30 @@ export interface Attempt {
 	timestamp: Timpestamp;
 	duration_ms: number;
 	// source: 'practice' | 'exam' | 'review';
-	notes: string | undefined;
+	notes: string | undefined; // ???
 }
 
-export interface Session {
+interface SessionBuilder<T> {
 	id: SessionId;
 	name: string;
 	year?: number; // only set if it's reproducing the exam of that year
 	created_at: Timpestamp;
 	updated_at: Timpestamp;
-	question_ids: Qid[];
+	questions: T[];
 }
+
+export type Session = SessionBuilder<Qid>;
+
+export interface QuestionWip {
+	qid: Qid;
+	selected_choice?: number;
+	correct?: boolean; // if correct is set, then the question is no longer editable
+}
+
+export type OngoingSession = SessionBuilder<QuestionWip> & {
+	// whether to display correct/incorrect as soon as the user selects a choice, or only at the end of the session
+	check_answer_immediate: boolean;
+};
 
 export interface Chapter {
 	name: string;

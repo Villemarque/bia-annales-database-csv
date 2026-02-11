@@ -73,12 +73,12 @@ export class Db {
 		});
 	}
 
-	getLocalStorage(key: string): string | null {
+	static getLocalStorage(key: string): string | null {
 		const value = window.localStorage.getItem(`${prefix}-${key}`);
 		return value;
 	}
 
-	setLocalSorage(key: string, value: string) {
+	static setLocalSorage(key: string, value: string) {
 		console.log(`localStorage set: key {${key}} value {${value}}`);
 		window.localStorage.setItem(`${prefix}-${key}`, value);
 	}

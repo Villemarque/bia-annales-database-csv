@@ -38,13 +38,14 @@ const potentialQuestionsFrom = (
 	};
 };
 
-const isUnattemptedOrIncorrect = (attempts: Record<Qid, Attempt>) => (qid: Qid) => {
-	const attempt = attempts[qid];
-	return !attempt || !attempt.correct;
+const isUnattemptedOrIncorrect = (attempts: Record<Qid, Attempt[]>) => (qid: Qid) => {
+	const attemptsOfQid = attempts[qid];
+	// only one good answer is enough
+	return !attemptsOfQid || attemptsOfQid.some((attempt) => attempt.correct);
 };
 
 export const getPotentialQuestions =
-	(attempts: Record<Qid, Attempt>, questionsBySubject: BySubject<QuestionsByChapter>, subjectId: Subject) =>
+	(attempts: Record<Qid, Attempt[]>, questionsBySubject: BySubject<QuestionsByChapter>, subjectId: Subject) =>
 	(chaptersState: ChaptersState): QuestionsByChapter => {
 		const filterFun = chaptersState.onlyNew ? isUnattemptedOrIncorrect(attempts) : () => true;
 		return potentialQuestionsFrom(subjectId, questionsBySubject, chaptersState, filterFun);

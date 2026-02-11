@@ -1,4 +1,4 @@
-import { derived, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 
 import { log } from '$lib/log';
 import { getDb } from '$lib/getDb';
@@ -12,15 +12,17 @@ import {
 	type BySubject,
 	createBySubject
 } from '$lib/types';
-import { parseChapterId } from '$lib/chapter';
 import { parseSubject } from '$lib/subject';
 
-export const attempts = writable<Record<Qid, Attempt>>({}, (set) => {
+export const attempts = writable<Record<Qid, Attempt[]>>({}, (set) => {
 	getDb.then((db: Db) => {
-		db.stores.attempt.getMany().then((attemptsArray) => {
-			const attemptsRecord: Record<Qid, Attempt> = {};
-			for (const attempt of attemptsArray as Attempt[]) {
-				attemptsRecord[attempt.qid] = attempt;
+		db.stores.attempt.getMany().then((attemptsArrayArray) => {
+			const attemptsRecord: Record<Qid, Attempt[]> = {};
+			for (const attemptsArray of attemptsArrayArray as Attempt[][]) {
+				if (attemptsArray) {
+					const first = attemptsArray[0];
+					attemptsRecord[first.qid] = attemptsArray;
+				}
 			}
 			set(attemptsRecord);
 			log.log('attempts store populated from IndexedDB');
@@ -29,10 +31,10 @@ export const attempts = writable<Record<Qid, Attempt>>({}, (set) => {
 });
 
 // always keep the object in sync with IndexedDB
-attempts.subscribe((value: Record<Qid, Attempt>) => {
+attempts.subscribe((value: Record<Qid, Attempt[]>) => {
 	getDb.then((db: Db) => {
-		for (const [qid, attempt] of Object.entries(value)) {
-			db.stores.attempt.put(qid, attempt);
+		for (const [qid, attempts] of Object.entries(value)) {
+			db.stores.attempt.put(qid, attempts);
 		}
 	});
 });
