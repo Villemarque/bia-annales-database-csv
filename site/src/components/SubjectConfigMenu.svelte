@@ -53,6 +53,15 @@
 		})
 	);
 
+	// DEBUG
+	for (const qid of QBCtoList($questionsBySubject[subjectId])) {
+		// test if in questionsCountByChapter
+		const inPotential = QBCtoList(questionsCountByChapter).includes(qid);
+		if (!inPotential) {
+			log.log('not potential question', subjectId, qid);
+		}
+	}
+
 	let totalAvailable = $derived(QBCtoList(potentialQuestions).length);
 
 	let sliderValue = $state(0);

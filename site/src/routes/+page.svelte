@@ -81,8 +81,6 @@
 	function noQuestionsBySubject(s: Subject): number {
 		const byChapters = $questionsBySubject[s];
 		const total = QBCtoList(byChapters).length;
-		// DEBUG
-		console.log('total of', s, byChapters, total);
 		return total;
 	}
 </script>

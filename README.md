@@ -48,3 +48,12 @@ Les indices des chapitres sont :
 ## FIXME
 
 Hlo2EYVT 2017-3-13 et 2024-3-13 Un avion à ailes en flèche est représenté par la figure  Add link
+T8XH6hdj subject in exam not matching chapters split for lessons (exam meca fluid, seen as aeronef)
+68lntUsI subject in exam not matching chapters split for lessons (exam meca fluid, seen as aeronef)
+
+
+
+
+
+
+

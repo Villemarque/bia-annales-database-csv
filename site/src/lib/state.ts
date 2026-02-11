@@ -21,6 +21,7 @@ const potentialQuestionsFrom = (
 ): QuestionsByChapter => {
 	const chapters = chaptersState.selected
 		.map((chapterId) => {
+			console.log('subjectId', subjectId, 'chapterId', chapterId, questionsBySubject[subjectId].chapters[chapterId]);
 			return [chapterId, questionsBySubject[subjectId].chapters[chapterId].filter(filterFun)] as [ChapterId, Qid[]];
 		})
 		.reduce(
