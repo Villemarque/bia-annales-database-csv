@@ -4,20 +4,8 @@
 	import { questions } from '$lib/stores/questions';
 	import {log} from '$lib/log';
 
+	// need to be a state
 	let { session }: { session: OngoingSession } = $props();
-
-	// Fallback mock data if session is empty (shouldn't happen in real usage)
-	const mockQuestion = {
-		id: 1,
-		text: 'MOCKUP lanceur fusée:',
-		options: [
-			{ id: 'A', text: 'Une phase balistique' },
-			{ id: 'B', text: 'Une phase tractive' },
-			{ id: 'C', text: 'Une phase centrifuge' },
-			{ id: 'D', text: 'Une phase propulsée' }
-		],
-		correctAnswer: 'D'
-	};
 
 	let currentIndex = $state(0);
 	let timeElapsed = $state(0);
@@ -25,17 +13,6 @@
 	let currentQuestionWip = $derived(session.questions[currentIndex]);
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
-
-	// Sync selection with session state (mock for now, would update store in real app)
-	// $effect(() => {
-	// 	// Reset local selection when question changes
-	// 	// In a real app, we'd check if session.questions[currentIndex].selected_choice is set
-	// 	selectedAnswer = null;
-	// 	if (currentQuestionWip?.selected_choice) {
-	// 		const choices = ['A', 'B', 'C', 'D'];
-	// 		selectedAnswer = choices[currentQuestionWip.selected_choice - 1];
-	// 	}
-	// });
 
 	function formatTime(seconds: number) {
 		const hrs = Math.floor(seconds / 3600);
