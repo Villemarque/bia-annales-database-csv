@@ -23,9 +23,6 @@
 
 	function handleSelect(choiceNo: number) {
 		currentQuestionWip.selected_choice = choiceNo;
-		// In a real app, dispatch an event or update the store here
-		// const choiceIndex = ['A', 'B', 'C', 'D'].indexOf(optionId) + 1;
-		// updateSession(session.id, currentIndex, choiceIndex);
 	}
 
 	function goToQuestion(index: number) {
