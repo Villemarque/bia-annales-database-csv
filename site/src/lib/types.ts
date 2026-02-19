@@ -3,6 +3,7 @@ export type SessionId = string & { __sessionid__: void };
 export type AttemptId = string & { __attemptid__: void };
 export type Subject = number & { __subject__: void };
 export type ChapterId = number & { __chapter__: void };
+export type LocalStorageKey = string & { __localkey__: void };
 type Timpestamp = number & { __timestamp__: void };
 
 export const Subjects = {
@@ -62,7 +63,7 @@ export interface Attempt {
 	notes: string | undefined; // ???
 }
 
-interface SessionBuilder<T> {
+interface SessionBase<T> {
 	id: SessionId;
 	name: string;
 	year?: number; // only set if it's reproducing the exam of that year
@@ -71,15 +72,15 @@ interface SessionBuilder<T> {
 	questions: T[];
 }
 
-export type Session = SessionBuilder<Qid>;
+export type Session = SessionBase<Qid>;
 
 export interface QuestionWip {
 	qid: Qid;
 	selected_choice?: number;
-	correct?: boolean; // if correct is set, then the question is no longer editable
+	correct_choice?: number; // if correct is set, then the question is no longer editable
 }
 
-export type OngoingSession = SessionBuilder<QuestionWip> & {
+export type OngoingSession = SessionBase<QuestionWip> & {
 	// whether to display correct/incorrect as soon as the user selects a choice, or only at the end of the session
 	check_answer_immediate: boolean;
 };

@@ -1,0 +1,37 @@
+import { writable } from 'svelte/store';
+
+import { log } from '$lib/log';
+import { Db } from '$lib/db';
+import type {
+	Attempt,
+	Qid,
+	Subject,
+	ChapterId,
+	QuestionsByChapter,
+	OngoingSession,
+	LocalStorageKey
+} from '$lib/types';
+import { parseSubject } from '$lib/subject';
+
+
+const sessionKey = 'ongoingSession' as LocalStorageKey;
+
+const initLocalStorage = <T>(key: LocalStorageKey) => (set: (t: T) => void) => {
+	const valueStr = Db.getLocalStorage(key);
+	if (valueStr) {
+		try {
+			const value = JSON.parse(valueStr) as T;
+			set(value);
+			log.log(`${key} store populated from localStorage`);
+		} catch (error) {
+			log.error(`Error loading ${key} from localStorage:`, error);
+		}
+	}
+};
+
+export const ongoingSession = writable<OngoingSession | undefined>(undefined, initLocalStorage(sessionKey));
+
+// always keep the object in sync with localStorage
+ongoingSession.subscribe((value: OngoingSession | undefined) => {
+    Db.setLocalSorage(sessionKey, JSON.stringify(value));
+});

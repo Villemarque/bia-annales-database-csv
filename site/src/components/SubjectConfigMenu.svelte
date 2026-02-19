@@ -118,7 +118,7 @@
 		<div class="content">
 			<div class="section">
 				<div class="section-header">
-					<h3>Filtre</h3>
+					<h3>Options</h3>
 				</div>
 
 				<div class="chapters-grid">

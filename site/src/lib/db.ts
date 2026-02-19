@@ -1,3 +1,5 @@
+import type { LocalStorageKey } from '$lib/types';
+
 const prefix = 'annales-bia-csv';
 
 // TODO, switch to `idb` package?
@@ -73,12 +75,12 @@ export class Db {
 		});
 	}
 
-	static getLocalStorage(key: string): string | null {
+	static getLocalStorage(key: LocalStorageKey): string | null {
 		const value = window.localStorage.getItem(`${prefix}-${key}`);
 		return value;
 	}
 
-	static setLocalSorage(key: string, value: string) {
+	static setLocalSorage(key: LocalStorageKey, value: string) {
 		console.log(`localStorage set: key {${key}} value {${value}}`);
 		window.localStorage.setItem(`${prefix}-${key}`, value);
 	}
