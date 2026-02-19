@@ -2,13 +2,14 @@
 	import { onMount } from 'svelte';
 	import { type OngoingSession, type QuestionWip, type Qid } from '$lib/types';
 	import { questions } from '$lib/stores/questions';
+	import {log} from '$lib/log';
 
 	let { session }: { session: OngoingSession } = $props();
 
 	// Fallback mock data if session is empty (shouldn't happen in real usage)
 	const mockQuestion = {
 		id: 1,
-		text: 'Le vol d’un lanceur de type fusée commence par :',
+		text: 'MOCKUP lanceur fusée:',
 		options: [
 			{ id: 'A', text: 'Une phase balistique' },
 			{ id: 'B', text: 'Une phase tractive' },
@@ -19,18 +20,15 @@
 	};
 
 	let currentIndex = $state(0);
-	let timeElapsed = $state(17); // Starts at 17s to match mockup
+	let timeElapsed = $state(0);
 
-	// Map session questions to displayable format
-	// For now, if questions store is empty, fallback to mock.
-	// If questions store is populated, try to find the question.
 	let currentQuestionWip = $derived(session.questions[currentIndex]);
-	let currentQuestionData = $derived($questions[currentQuestionWip?.qid]);
 
 	let currentQuestionDisplay = $derived.by(() => {
+		const currentQuestionData = $questions[currentQuestionWip.qid];
 		if (currentQuestionData) {
 			return {
-				id: currentQuestionData.no, // or qid
+				id: currentQuestionData.qid,
 				text: currentQuestionData.content,
 				options: [
 					{ id: 'A', text: currentQuestionData.choice_a },
@@ -38,8 +36,10 @@
 					{ id: 'C', text: currentQuestionData.choice_c },
 					{ id: 'D', text: currentQuestionData.choice_d }
 				],
-				correctAnswer: ['A', 'B', 'C', 'D'][currentQuestionData.answer - 1] // Assuming 1-based index to A-D
+				correctAnswer: ['A', 'B', 'C', 'D'][currentQuestionData.answer]
 			};
+		} else {
+			log.error(`Question data not found for qid: ${currentQuestionWip.qid}, using mock question.`);
 		}
 		return mockQuestion;
 	});
@@ -47,15 +47,15 @@
 	let selectedAnswer = $state<string | null>(null);
 
 	// Sync selection with session state (mock for now, would update store in real app)
-	$effect(() => {
-		// Reset local selection when question changes
-		// In a real app, we'd check if session.questions[currentIndex].selected_choice is set
-		selectedAnswer = null;
-		if (currentQuestionWip?.selected_choice) {
-			const choices = ['A', 'B', 'C', 'D'];
-			selectedAnswer = choices[currentQuestionWip.selected_choice - 1];
-		}
-	});
+	// $effect(() => {
+	// 	// Reset local selection when question changes
+	// 	// In a real app, we'd check if session.questions[currentIndex].selected_choice is set
+	// 	selectedAnswer = null;
+	// 	if (currentQuestionWip?.selected_choice) {
+	// 		const choices = ['A', 'B', 'C', 'D'];
+	// 		selectedAnswer = choices[currentQuestionWip.selected_choice - 1];
+	// 	}
+	// });
 
 	function formatTime(seconds: number) {
 		const hrs = Math.floor(seconds / 3600);
@@ -119,24 +119,11 @@
 					{i + 1}
 				</div>
 			{/each}
-			<!-- Fallback if session questions are empty, to show layout -->
-			{#if session.questions.length === 0}
-				{#each Array.from({ length: 30 }, (_, i) => i) as i}
-					<div class="response-btn" class:current={i === currentIndex}>
-						{i + 1}
-					</div>
-				{/each}
-			{/if}
 		</div>
 	</aside>
 </div>
 
 <style>
-	:root {
-		/* Local overrides or additions to match the HTML file's specific values */
-		--radius-l: 16px;
-		--radius-m: 12px;
-	}
 
 	.layout-grid {
 		display: grid;

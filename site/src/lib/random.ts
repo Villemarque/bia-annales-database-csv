@@ -1,7 +1,7 @@
 
 
 // not crypographically secure
-export const unsafeRandomId = (prefix: str) => {
+export const unsafeRandomId = ({ prefix }: { prefix: string }): string => {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const idLength = 8;
     let id = '';

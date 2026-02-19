@@ -113,7 +113,7 @@
 		const selectedQids = qids.slice(0, sliderValue);
 
 		const newSession: OngoingSession = {
-			id: unsafeRandomId() as SessionId, // Simple ID generation
+			id: unsafeRandomId({prefix: "ses"}) as SessionId, // Simple ID generation
 			name: `Quiz ${title}`,
 			created_at: Date.now() as Timestamp,
 			updated_at: Date.now() as Timestamp,
