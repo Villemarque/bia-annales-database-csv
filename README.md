@@ -52,7 +52,9 @@ T8XH6hdj subject in exam not matching chapters split for lessons (exam meca flui
 68lntUsI subject in exam not matching chapters split for lessons (exam meca fluid, seen as aeronef)
 
 
+## TODO
 
+move icons/ to assets/
 
 
 

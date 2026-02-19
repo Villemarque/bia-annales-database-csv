@@ -1,0 +1,269 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <!-- iOS 26 Dark Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2c2c2e" />
+      <stop offset="40%" stop-color="#151516" />
+      <stop offset="100%" stop-color="#000000" />
+    </linearGradient>
+
+    <!-- Glassmorphic Wing Surfaces -->
+    <linearGradient id="glass-surface-top" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#cccccc" stop-opacity="0.05" />
+    </linearGradient>
+    
+    <linearGradient id="glass-surface-bottom" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#aaaaaa" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#333333" stop-opacity="0.05" />
+    </linearGradient>
+
+    <!-- iOS Glass Inner Highlights -->
+    <linearGradient id="glass-edge" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95" />
+      <stop offset="20%" stop-color="#ffffff" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <linearGradient id="glass-edge-subtle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <!-- Metallic/Mechanical Components -->
+    <linearGradient id="fuselage-body" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7a7a7a" />
+      <stop offset="30%" stop-color="#3a3a3a" />
+      <stop offset="100%" stop-color="#0a0a0a" />
+    </linearGradient>
+
+    <linearGradient id="engine-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#999999" />
+      <stop offset="100%" stop-color="#111111" />
+    </linearGradient>
+
+    <!-- Propeller Motion Blur Gradient -->
+    <radialGradient id="prop-radial" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.0" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.05" />
+      <stop offset="85%" stop-color="#ffffff" stop-opacity="0.18" />
+      <stop offset="95%" stop-color="#ffffff" stop-opacity="0.4" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </radialGradient>
+
+    <linearGradient id="prop-blade" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <!-- Spatial Filters (Depth & Dropshadows) -->
+    <filter id="shadow-extreme" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="35" stdDeviation="25" flood-color="#000000" flood-opacity="0.8" />
+    </filter>
+
+    <filter id="shadow-heavy" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="15" stdDeviation="15" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+
+    <filter id="shadow-light" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+
+    <filter id="motion-blur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="16" />
+    </filter>
+    
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- iOS App Icon Squircle Base -->
+  <rect x="20" y="20" width="760" height="760" rx="170" fill="url(#bg-grad)" />
+  <rect x="22" y="22" width="756" height="756" rx="168" fill="none" stroke="url(#glass-edge-subtle)" stroke-width="2" />
+  
+  <!-- Subtle Spatial Grid/Airflow Lines in Background -->
+  <g stroke="#ffffff" stroke-opacity="0.04" stroke-width="2" stroke-linecap="round">
+    <line x1="150" y1="200" x2="650" y2="200" />
+    <line x1="100" y1="380" x2="700" y2="380" />
+    <line x1="150" y1="560" x2="650" y2="560" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 1: Background Elements & Tail        -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-light)">
+    <!-- Vertical Stabilizer (Tail Fin) -->
+    <rect x="390" y="80" width="20" height="150" rx="10" fill="url(#glass-surface-bottom)" stroke="url(#glass-edge-subtle)" stroke-width="1.5" />
+    
+    <!-- Horizontal Stabilizers (Rear Wings) -->
+    <rect x="280" y="360" width="240" height="20" rx="10" fill="url(#glass-surface-bottom)" stroke="url(#glass-edge-subtle)" stroke-width="1.5" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 2: Bottom Wing & Landing Gear        -->
+  <!-- ========================================== -->
+  <!-- Landing Gear Struts -->
+  <g stroke="#666666" stroke-width="14" stroke-linecap="round" filter="url(#shadow-heavy)">
+    <line x1="360" y1="500" x2="310" y2="620" />
+    <line x1="440" y1="500" x2="490" y2="620" />
+  </g>
+  
+  <!-- Wheels -->
+  <g filter="url(#shadow-heavy)">
+    <rect x="296" y="585" width="28" height="80" rx="14" fill="#111111" stroke="#555555" stroke-width="3" />
+    <circle cx="310" cy="625" r="6" fill="#888888" />
+    
+    <rect x="476" y="585" width="28" height="80" rx="14" fill="#111111" stroke="#555555" stroke-width="3" />
+    <circle cx="490" cy="625" r="6" fill="#888888" />
+  </g>
+
+  <!-- Axle -->
+  <line x1="310" y1="625" x2="490" y2="625" stroke="#333333" stroke-width="6" stroke-linecap="round" filter="url(#shadow-light)" />
+
+  <!-- Bottom Wing -->
+  <g filter="url(#shadow-heavy)">
+    <rect x="180" y="460" width="440" height="46" rx="23" fill="url(#glass-surface-bottom)" />
+    <!-- Wing Edge Highlight -->
+    <rect x="180" y="460" width="440" height="46" rx="23" fill="none" stroke="url(#glass-edge)" stroke-width="2" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 3: Inter-Wing Struts                 -->
+  <!-- ========================================== -->
+  <g fill="#444444" stroke="#888888" stroke-width="1" filter="url(#shadow-light)">
+    <!-- Outer Left -->
+    <rect x="220" y="270" width="12" height="200" rx="6" />
+    <!-- Inner Left -->
+    <rect x="330" y="270" width="10" height="200" rx="5" />
+    <!-- Inner Right -->
+    <rect x="460" y="270" width="10" height="200" rx="5" />
+    <!-- Outer Right -->
+    <rect x="568" y="270" width="12" height="200" rx="6" />
+    
+    <!-- Cross Bracing Wires (Subtle Historic Detail) -->
+    <g stroke="#ffffff" stroke-opacity="0.15" stroke-width="1.5" fill="none">
+      <line x1="226" y1="270" x2="335" y2="470" />
+      <line x1="335" y1="270" x2="226" y2="470" />
+      <line x1="465" y1="270" x2="574" y2="470" />
+      <line x1="574" y1="270" x2="465" y2="470" />
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 4: Top Wing                          -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-extreme)">
+    <rect x="110" y="240" width="580" height="50" rx="25" fill="url(#glass-surface-top)" />
+    <!-- Glass Edge Highlight -->
+    <rect x="110" y="240" width="580" height="50" rx="25" fill="none" stroke="url(#glass-edge)" stroke-width="2.5" />
+    <!-- Top Wing Glare -->
+    <path d="M 120,242 Q 400,242 680,242" stroke="#ffffff" stroke-width="3" stroke-linecap="round" filter="url(#glow)" opacity="0.6" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 5: Fuselage (Front Cross-Section)    -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-heavy)">
+    <!-- Main Body Squirclish Oval -->
+    <rect x="320" y="270" width="160" height="190" rx="75" fill="url(#fuselage-body)" />
+    <rect x="320" y="270" width="160" height="190" rx="75" fill="none" stroke="url(#glass-edge-subtle)" stroke-width="2" />
+    
+    <!-- Cockpit / Windscreen Notch -->
+    <path d="M 360,270 Q 400,240 440,270" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.5" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 6: Radial Engine                     -->
+  <!-- ========================================== -->
+  <g transform="translate(400, 380)" filter="url(#shadow-light)">
+    <!-- Engine Block Base -->
+    <circle cx="0" cy="0" r="65" fill="#181818" stroke="#444444" stroke-width="2" />
+    
+    <!-- Radial Cylinders (8 for geometric symmetry) -->
+    <g fill="#2a2a2a" stroke="#666666" stroke-width="1.5">
+      <!-- 0 Deg -->
+      <rect x="-12" y="-55" width="24" height="30" rx="6" />
+      <line x1="-12" y1="-45" x2="12" y2="-45" /> <line x1="-12" y1="-35" x2="12" y2="-35" />
+      <!-- 45 Deg -->
+      <g transform="rotate(45)">
+        <rect x="-12" y="-55" width="24" height="30" rx="6" />
+        <line x1="-12" y1="-45" x2="12" y2="-45" /> <line x1="-12" y1="-35" x2="12" y2="-35" />
+      </g>
+      <!-- 90 Deg -->
+      <g transform="rotate(90)">
+        <rect x="-12" y="-55" width="24" height="30" rx="6" />
+        <line x1="-12" y1="-45" x2="12" y2="-45" /> <line x1="-12" y1="-35" x2="12" y2="-35" />
+      </g>
+      <!-- 135 Deg -->
+      <g transform="rotate(135)">
+        <rect x="-12" y="-55" width="24" height="30" rx="6" />
+        <line x1="-12" y1="-45" x2="12" y2="-45" /> <line x1="-12" y1="-35" x2="12" y2="-35" />
+      </g>
+      <!-- 180 Deg -->
+      <g transform="rotate(180)">
+        <rect x="-12" y="-55" width="24" height="30" rx="6" />
+        <line x1="-12" y1="-45" x2="12" y2="-45" /> <line x1="-12" y1="-35" x2="12" y2="-35" />
+      </g>
+      <!-- 225 Deg -->
+      <g transform="rotate(225)">
+        <rect x="-12" y="-55" width="24" height="30" rx="6" />
+        <line x1="-12" y1="-45" x2="12" y2="-45" /> <line x1="-12" y1="-35" x2="12" y2="-35" />
+      </g>
+      <!-- 270 Deg -->
+      <g transform="rotate(270)">
+        <rect x="-12" y="-55" width="24" height="30" rx="6" />
+        <line x1="-12" y1="-45" x2="12" y2="-45" /> <line x1="-12" y1="-35" x2="12" y2="-35" />
+      </g>
+      <!-- 315 Deg -->
+      <g transform="rotate(315)">
+        <rect x="-12" y="-55" width="24" height="30" rx="6" />
+        <line x1="-12" y1="-45" x2="12" y2="-45" /> <line x1="-12" y1="-35" x2="12" y2="-35" />
+      </g>
+    </g>
+
+    <!-- Propeller Hub / Nose Cone -->
+    <circle cx="0" cy="0" r="22" fill="url(#engine-grad)" />
+    <circle cx="0" cy="0" r="22" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.5" />
+    <!-- Hub highlight -->
+    <circle cx="-5" cy="-5" r="6" fill="#ffffff" filter="url(#glow)" opacity="0.6" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 7: The Spinning Propeller (Motion)   -->
+  <!-- ========================================== -->
+  <!-- Propeller Outer Ring Blur -->
+  <circle cx="400" cy="380" r="230" fill="none" stroke="#ffffff" stroke-width="6" stroke-opacity="0.15" filter="url(#glow)" />
+  <circle cx="400" cy="380" r="230" fill="url(#prop-radial)" />
+
+  <!-- High-Speed Motion Blur Blades -->
+  <g filter="url(#motion-blur)" opacity="0.7">
+    <!-- Sweeping Arc 1 -->
+    <path d="M 400,380 Q 550,150 620,220 Q 450,420 400,380 Z" fill="url(#prop-blade)" />
+    <!-- Sweeping Arc 2 -->
+    <path d="M 400,380 Q 250,610 180,540 Q 350,340 400,380 Z" fill="url(#prop-blade)" />
+    <!-- Sweeping Arc 3 -->
+    <path d="M 400,380 Q 150,250 200,180 Q 420,350 400,380 Z" fill="url(#prop-blade)" />
+    <!-- Sweeping Arc 4 -->
+    <path d="M 400,380 Q 650,510 600,580 Q 380,410 400,380 Z" fill="url(#prop-blade)" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 8: iOS 26 Spatial Glare & Polish     -->
+  <!-- ========================================== -->
+  <!-- Diagonal Glass Overlay -->
+  <path 
+    d="M 20,200 C 20,80 80,20 200,20 L 500,20 C 620,20 780,100 780,200 C 780,300 450,500 350,500 C 200,500 20,350 20,200 Z" 
+    fill="#ffffff" 
+    opacity="0.03" 
+    pointer-events="none" 
+  />
+  
+  <!-- Subtle Vignette / Edge Shadowing -->
+  <rect x="20" y="20" width="760" height="760" rx="170" fill="none" stroke="#000000" stroke-width="8" opacity="0.4" />
+</svg>

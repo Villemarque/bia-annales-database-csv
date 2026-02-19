@@ -1,10 +1,20 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Chapters } from '$lib/types';
-	import { type Subject, type ChapterId, ChaptersBySubject, QBCtoList } from '$lib/types';
+	import {
+		Chapters,
+		type Subject,
+		type ChapterId,
+		type SessionId,
+		type Timestamp,
+		ChaptersBySubject,
+		QBCtoList,
+		type OngoingSession
+	} from '$lib/types';
+	import { unsafeRandomId } from '$lib/random';
 	import { log } from '$lib/log';
 	import { attempts } from '$lib/stores/attempt';
 	import { questionsBySubject } from '$lib/stores/questions';
+	import { ongoingSession } from '$lib/stores/session';
 	import { type ChaptersState, getPotentialQuestions } from '$lib/state';
 	import Toggle from './Toggle.svelte';
 
@@ -36,7 +46,7 @@
 	// testbed
 	// https://svelte.dev/playground/acf7489de2d14863868eb867991898c7?version=5.49.1#H4sIAAAAAAAAE3VS0WrrMAz9FWEKS1lI7t1jlgT2DYP7Mg_mJi4zS-1gq-tK8L9fWUnbDLa8KNI5ko4lTcKqgxaVeH5XXvcQ0Hkd4GTwHfzR6iBysTcD2eplEngeEzcFKL5kPo1jET71gCm2U0H_FO-cRW2Ryog6dN6M2Eor0RxG5xGmkzeodoOOsPfuAHdzXslq7tbEvXMXTlGSU2BIODGoQ0DoFSpo4FIve_nzur2h3hG2CahQZ1NAX4EUZydFXHEG16mBaJLe4qVYldbefNKIqMLyW-zOWbaFpoUp0SR6jUdvgXRlm6Qkp475XJE7xO1jMozBfQN_pa3L2zhsPbbP6clgAkzMinU5tgywaga8K0j7DbmpYXhxF5wYuyOis-BsN5juo5lmyVcRD7F96nswqA91OXPbX7Pm3ilNikAfzY6zA6ADlriqQXtH_YWiQn_UMf_lfuYtfr-da2x1N-kt-ovPYF4IkWgZGR9JPjf_d5n2dSnLSt6Y1WwmtnGhs5_SeKBLLgXZxjdp4_cnvJKnzHAythfVXg1Bx_-Wf87FQQMAAA
 	let potentialQuestions = $derived.by(() =>
-		getPotentialQuestions($attempts, $questionsBySubject, subjectId)(chaptersState)
+		QBCtoList(getPotentialQuestions($attempts, $questionsBySubject, subjectId)(chaptersState))
 	);
 
 	// the difference with `potentialQuestions` is that we always pass all chapters
@@ -62,7 +72,7 @@
 		}
 	}
 
-	let totalAvailable = $derived(QBCtoList(potentialQuestions).length);
+	let totalAvailable = $derived(potentialQuestions.length);
 
 	let sliderValue = $state(0);
 
@@ -91,15 +101,30 @@
 	}
 
 	function startQuiz() {
-		// const params = new URLSearchParams();
-		// params.set('subject', subjectId.toString());
-		// if (sliderValue < totalQuestions) {
-		// 	params.set('count', sliderValue.toString());
-		// }
-		// if (subjectChapters.length > 0 && chaptersState.selected.length > 0 && chaptersState.selected.length < subjectChapters.length) {
-		// 	params.set('chapters', selectedChapters.join(','));
-		// }
-		// goto(`/quiz?${params.toString()}`);
+		const qids = structuredClone(potentialQuestions);
+
+		// Shuffle questions
+		for (let i = qids.length - 1; i > 0; i--) {
+			const j = Math.floor(Math.random() * (i + 1));
+			[qids[i], qids[j]] = [qids[j], qids[i]];
+		}
+
+		// Select the first N questions based on sliderValue
+		const selectedQids = qids.slice(0, sliderValue);
+
+		const newSession: OngoingSession = {
+			id: unsafeRandomId() as SessionId, // Simple ID generation
+			name: `Quiz ${title}`,
+			created_at: Date.now() as Timestamp,
+			updated_at: Date.now() as Timestamp,
+			questions: selectedQids.map((qid) => ({
+				qid
+			})),
+			check_answer_immediate: true // Default behavior for now
+		};
+
+		ongoingSession.set(newSession);
+		goto('/quiz');
 	}
 </script>
 

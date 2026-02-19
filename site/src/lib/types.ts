@@ -4,7 +4,7 @@ export type AttemptId = string & { __attemptid__: void };
 export type Subject = number & { __subject__: void };
 export type ChapterId = number & { __chapter__: void };
 export type LocalStorageKey = string & { __localkey__: void };
-type Timpestamp = number & { __timestamp__: void };
+export type Timestamp = number & { __timestamp__: void };
 
 export const Subjects = {
 	METEO: 0 as Subject,
@@ -57,7 +57,7 @@ export interface Attempt {
 	session_id: SessionId;
 	selected_choice: number;
 	correct: boolean; // denormalised
-	timestamp: Timpestamp;
+	timestamp: Timestamp;
 	duration_ms: number;
 	// source: 'practice' | 'exam' | 'review';
 	notes: string | undefined; // ???
@@ -67,8 +67,8 @@ interface SessionBase<T> {
 	id: SessionId;
 	name: string;
 	year?: number; // only set if it's reproducing the exam of that year
-	created_at: Timpestamp;
-	updated_at: Timpestamp;
+	created_at: Timestamp;
+	updated_at: Timestamp;
 	questions: T[];
 }
 
