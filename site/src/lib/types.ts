@@ -41,10 +41,7 @@ export interface Question {
 	no_subject: number;
 	no: number;
 	content: string;
-	choice_a: string;
-	choice_b: string;
-	choice_c: string;
-	choice_d: string;
+	choices: string[];
 	answer: number;
 	chapters: ChapterId[];
 	attachment_link: string | undefined;

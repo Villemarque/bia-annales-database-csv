@@ -24,27 +24,7 @@
 
 	let currentQuestionWip = $derived(session.questions[currentIndex]);
 
-	let currentQuestionDisplay = $derived.by(() => {
-		const currentQuestionData = $questions[currentQuestionWip.qid];
-		if (currentQuestionData) {
-			return {
-				id: currentQuestionData.qid,
-				text: currentQuestionData.content,
-				options: [
-					{ id: 'A', text: currentQuestionData.choice_a },
-					{ id: 'B', text: currentQuestionData.choice_b },
-					{ id: 'C', text: currentQuestionData.choice_c },
-					{ id: 'D', text: currentQuestionData.choice_d }
-				],
-				correctAnswer: ['A', 'B', 'C', 'D'][currentQuestionData.answer]
-			};
-		} else {
-			log.error(`Question data not found for qid: ${currentQuestionWip.qid}, using mock question.`);
-		}
-		return mockQuestion;
-	});
-
-	let selectedAnswer = $state<string | null>(null);
+	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
 
 	// Sync selection with session state (mock for now, would update store in real app)
 	// $effect(() => {
@@ -64,8 +44,8 @@
 		return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 	}
 
-	function handleSelect(optionId: string) {
-		selectedAnswer = optionId;
+	function handleSelect(choiceNo: number) {
+		currentQuestionWip.selected_choice = choiceNo;
 		// In a real app, dispatch an event or update the store here
 		// const choiceIndex = ['A', 'B', 'C', 'D'].indexOf(optionId) + 1;
 		// updateSession(session.id, currentIndex, choiceIndex);
@@ -94,14 +74,14 @@
 		</div>
 
 		<div class="question-card">
-			<h2>{currentQuestionDisplay.text}</h2>
+			<h2>{currentQuestionDisplay.content}</h2>
 			<div class="options-grid">
-				{#each currentQuestionDisplay.options as option}
+				{#each currentQuestionDisplay.choices as option, i}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="option" class:selected={selectedAnswer === option.id} onclick={() => handleSelect(option.id)}>
-						<span class="option-letter">{option.id}</span>
-						<span>{option.text}</span>
+					<div class="option" class:selected={currentQuestionWip.selected_choice === i} onclick={() => handleSelect(i)}>
+						<span class="option-letter">{i}</span>
+						<span>{option}</span>
 					</div>
 				{/each}
 			</div>

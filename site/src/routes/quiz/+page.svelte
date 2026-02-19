@@ -5,7 +5,7 @@
 	import { ongoingSession } from '$lib/stores/session';
 	import { goto } from '$app/navigation';
 
-	let session = $ongoingSession;
+	let session = $state($ongoingSession);
 </script>
 
 {#if session}
