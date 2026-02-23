@@ -5,6 +5,8 @@ export type Subject = number & { __subject__: void };
 export type ChapterId = number & { __chapter__: void };
 export type LocalStorageKey = string & { __localkey__: void };
 export type Timestamp = number & { __timestamp__: void };
+export type IdPrefix = "ses" | // session
+					   "att" // attempt 
 
 export const Subjects = {
 	METEO: 0 as Subject,
@@ -55,17 +57,17 @@ export interface Attempt {
 	selected_choice: number;
 	correct: boolean; // denormalised
 	timestamp: Timestamp;
-	duration_ms: number;
-	// source: 'practice' | 'exam' | 'review';
+	duration_s: number;
+	// source: 'practice' | 'exam';
 	notes: string | undefined; // ???
 }
 
 interface SessionBase<T> {
 	id: SessionId;
 	name: string;
-	year?: number; // only set if it's reproducing the exam of that year
+	kind: {is: "exam", year: number, time_left_s: number} 
+		 | {is: "practice", duration_s: number};
 	created_at: Timestamp;
-	updated_at: Timestamp;
 	questions: T[];
 }
 
@@ -73,6 +75,7 @@ export type Session = SessionBase<Qid>;
 
 export interface QuestionWip {
 	qid: Qid;
+	duration_s: number;
 	selected_choice?: number;
 	correct_choice?: number; // if correct is set, then the question is no longer editable
 }

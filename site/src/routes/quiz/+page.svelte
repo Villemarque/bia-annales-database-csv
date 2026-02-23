@@ -9,7 +9,7 @@
 </script>
 
 {#if session}
-	<QuizSession {session} />
+	<QuizSession />
 {:else}
 	<p>Nothing to see!</p>
 {/if}

@@ -116,9 +116,13 @@
 			id: unsafeRandomId({prefix: "ses"}) as SessionId, // Simple ID generation
 			name: `Quiz ${title}`,
 			created_at: Date.now() as Timestamp,
-			updated_at: Date.now() as Timestamp,
+			kind: {
+				is: 'practice',
+				duration_s: 0
+			},
 			questions: selectedQids.map((qid) => ({
-				qid
+				qid,
+				duration_s: 0,
 			})),
 			check_answer_immediate: true // Default behavior for now
 		};

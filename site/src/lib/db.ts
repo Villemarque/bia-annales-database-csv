@@ -81,7 +81,7 @@ export class Db {
 	}
 
 	static setLocalSorage(key: LocalStorageKey, value: string) {
-		console.log(`localStorage set: key {${key}} value {${value}}`);
+		// console.log(`localStorage set: key {${key}} value {${value}}`);
 		window.localStorage.setItem(`${prefix}-${key}`, value);
 	}
 }
