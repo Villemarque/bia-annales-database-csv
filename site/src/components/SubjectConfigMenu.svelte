@@ -14,7 +14,7 @@
 	import { log } from '$lib/log';
 	import { attempts } from '$lib/stores/attempt';
 	import { questionsBySubject } from '$lib/stores/questions';
-	import { sessionState } from '$lib/stores/session.svelte';
+	import { sessionState, sessionDuration } from '$lib/stores/session.svelte';
 	import { type ChaptersState, getPotentialQuestions } from '$lib/state';
 	import Toggle from './Toggle.svelte';
 
@@ -113,21 +113,21 @@
 		const selectedQids = qids.slice(0, sliderValue);
 
 		const newSession: OngoingSession = {
-			id: unsafeRandomId({prefix: "ses"}) as SessionId, // Simple ID generation
+			id: unsafeRandomId({ prefix: 'ses' }) as SessionId, // Simple ID generation
 			name: `Quiz ${title}`,
 			created_at: Date.now() as Timestamp,
 			kind: {
-				is: 'practice',
-				duration_s: 0
+				is: 'practice'
 			},
 			questions: selectedQids.map((qid) => ({
 				qid,
-				duration_s: 0,
+				duration_s: 0
 			})),
 			check_answer_immediate: true // Default behavior for now
 		};
 
 		sessionState.current = newSession;
+		sessionDuration.current = 0;
 		goto('/quiz');
 	}
 </script>

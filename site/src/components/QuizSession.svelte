@@ -9,20 +9,13 @@
 	import { sessionState } from '$lib/stores/session.svelte';
 
 	// need to be a state
-	let { session = $bindable() }: { session: OngoingSession } = $props();
+	let { session = $bindable(), sessionDuration = $bindable() }: { session: OngoingSession; sessionDuration: number } =
+		$props();
 
 	let currentIndex = $state(0);
 
-	if (!session) {
-		log.error('No ongoing session found!');
-		goto('/'); // Redirect to home or an error page
-	}
-	// updating `sessionNotReactive` will not trigger a re-render, but we will update it manually when needed
-	// mostly used for typing.
-	//let sessionNotReactive = sessionState.current!;
-
 	let currentQuestionWip = $derived(session.questions[currentIndex]);
-	let timeShown = $derived(session.kind.is === 'exam' ? session.kind.time_left_s : session.kind.duration_s);
+	let timeShown = $derived(session.kind.is == 'exam' ? session.kind.initial_time - sessionDuration : sessionDuration);
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
 
@@ -43,14 +36,7 @@
 
 	onMount(() => {
 		const timer = setInterval(() => {
-			if (session) {
-				if (session.kind.is === 'exam') {
-					session.kind.time_left_s = Math.max(0, session.kind.time_left_s - 1);
-					// TODO add logic for when timer goes to zero
-				} else if (session.kind.is === 'practice') {
-					session.kind.duration_s += 1;
-				}
-			}
+			sessionDuration += 1;
 		}, 1000);
 		return () => clearInterval(timer);
 	});

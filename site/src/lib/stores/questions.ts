@@ -109,11 +109,7 @@ export const loadQuestions = async (csv: string): Promise<void> => {
 				no_subject: parseInt(no_subject),
 				no: parseInt(no),
 				content: notEmpty(content),
-				choices: [
-				notEmpty(choice_a),
-				notEmpty(choice_b),
-				notEmpty(choice_c),
-				notEmpty(choice_d)],
+				choices: [notEmpty(choice_a), notEmpty(choice_b), notEmpty(choice_c), notEmpty(choice_d)],
 				answer: parseInt(answer),
 				chapters: parseChapters(chapters, subject),
 				attachment_link: attachment_link || undefined,

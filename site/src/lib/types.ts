@@ -5,8 +5,9 @@ export type Subject = number & { __subject__: void };
 export type ChapterId = number & { __chapter__: void };
 export type LocalStorageKey = string & { __localkey__: void };
 export type Timestamp = number & { __timestamp__: void };
-export type IdPrefix = "ses" | // session
-					   "att" // attempt 
+export type IdPrefix =
+	| 'ses' // session
+	| 'att'; // attempt
 
 export const Subjects = {
 	METEO: 0 as Subject,
@@ -65,13 +66,14 @@ export interface Attempt {
 interface SessionBase<T> {
 	id: SessionId;
 	name: string;
-	kind: {is: "exam", year: number, time_left_s: number} 
-		 | {is: "practice", duration_s: number};
+	kind: { is: 'exam'; year: number; initial_time: number } | { is: 'practice' };
 	created_at: Timestamp;
 	questions: T[];
 }
 
-export type Session = SessionBase<Qid>;
+export type Session = SessionBase<Qid> & {
+	duration_s: number;
+};
 
 export interface QuestionWip {
 	qid: Qid;
@@ -80,6 +82,8 @@ export interface QuestionWip {
 	correct_choice?: number; // if correct is set, then the question is no longer editable
 }
 
+// duration_s is notset until the end of the session, so that we can display a timer during the session
+// without having to (de)serialise the session object on every tick.
 export type OngoingSession = SessionBase<QuestionWip> & {
 	// whether to display correct/incorrect as soon as the user selects a choice, or only at the end of the session
 	check_answer_immediate: boolean;
