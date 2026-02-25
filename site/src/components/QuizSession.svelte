@@ -80,7 +80,9 @@
 
 		<div class="question-card">
 			<h2>{currentQuestionDisplay.content}</h2>
-			<div class="options-grid">
+			<div
+				class="options-grid"
+				class:locked={session.check_answer_immediate && currentQuestionWip.selected_choice !== undefined}>
 				{#each currentQuestionDisplay.choices as option, i (i)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -244,6 +246,11 @@
 
 	.option.selected .option-letter {
 		color: white;
+	}
+
+	.options-grid.locked .option {
+		cursor: default;
+		pointer-events: none;
 	}
 
 	/* Responses Sidebar */
