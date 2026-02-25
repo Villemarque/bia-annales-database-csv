@@ -54,13 +54,13 @@ export interface Question {
 export interface Attempt {
 	id: AttemptId;
 	qid: Qid;
-	session_id: SessionId;
-	selected_choice: number;
+	sessionId: SessionId;
+	selectedChoice: number;
 	correct: boolean; // denormalised
 	timestamp: Timestamp;
 	duration_s: number;
 	// source: 'study' | 'exam';
-	notes: string | undefined; // ???
+	// notes?: string; // ???
 }
 
 interface SessionBase<T> {

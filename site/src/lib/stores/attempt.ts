@@ -10,9 +10,15 @@ import {
 	type ChapterId,
 	type QuestionsByChapter,
 	type BySubject,
+	type QuestionWip,
+	type AttemptId,
+	type Timestamp,
+	type Question,
+	type OngoingSession,
 	createBySubject
 } from '$lib/types';
 import { parseSubject } from '$lib/subject';
+import { unsafeRandomId } from '$lib/random';
 
 export const attempts = writable<Record<Qid, Attempt[]>>({}, (set) => {
 	getDb.then((db: Db) => {
@@ -38,6 +44,27 @@ attempts.subscribe((value: Record<Qid, Attempt[]>) => {
 		}
 	});
 });
+
+export const makeAttempt = (
+	from: QuestionWip,
+	session: OngoingSession,
+	q: Question,
+	duration_s: number
+): Attempt | undefined => {
+	if (from.selected_choice === undefined) {
+		log.error(`Cannot make Attempt from QuestionWip with undefined selected_choice! ${JSON.stringify(from)}`);
+		return;
+	}
+	return {
+		id: unsafeRandomId({ prefix: 'att' }) as AttemptId,
+		qid: from.qid,
+		sessionId: session.id,
+		selectedChoice: from.selected_choice,
+		correct: from.selected_choice === q.answer,
+		timestamp: Date.now() as Timestamp,
+		duration_s
+	};
+};
 
 export const addAttempt = (attempt: Attempt) => {
 	attempts.update((current) => {

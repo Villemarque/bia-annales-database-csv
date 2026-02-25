@@ -6,7 +6,7 @@ const prefix = 'annales-bia-csv';
 export type IDbValue = Blob | string | ArrayBuffer | Uint8Array | string[] | number | object;
 
 // bump version when touching this
-const storeKeys = ['log', 'attempt'] as const;
+const storeKeys = ['log', 'attempt', 'session'] as const;
 type StoreKeys = (typeof storeKeys)[number];
 
 export class Db {
@@ -49,7 +49,8 @@ export class Db {
 				};
 				const stores = {
 					log: new Store(db, 'log'),
-					attempt: new Store(db, 'attempt')
+					attempt: new Store(db, 'attempt'),
+					session: new Store(db, 'session')
 				};
 				resolve(new Db(db, stores));
 			};
