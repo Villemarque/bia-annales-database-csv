@@ -59,14 +59,14 @@ export interface Attempt {
 	correct: boolean; // denormalised
 	timestamp: Timestamp;
 	duration_s: number;
-	// source: 'practice' | 'exam';
+	// source: 'study' | 'exam';
 	notes: string | undefined; // ???
 }
 
 interface SessionBase<T> {
 	id: SessionId;
 	name: string;
-	kind: { is: 'exam'; year: number; initial_time: number } | { is: 'practice' };
+	kind: { is: 'exam'; year: number; initial_time: number } | { is: 'study' };
 	created_at: Timestamp;
 	questions: T[];
 }
@@ -84,10 +84,7 @@ export interface QuestionWip {
 
 // duration_s is notset until the end of the session, so that we can display a timer during the session
 // without having to (de)serialise the session object on every tick.
-export type OngoingSession = SessionBase<QuestionWip> & {
-	// whether to display correct/incorrect as soon as the user selects a choice, or only at the end of the session
-	check_answer_immediate: boolean;
-};
+export type OngoingSession = SessionBase<QuestionWip>;
 
 export interface Chapter {
 	name: string;

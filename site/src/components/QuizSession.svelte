@@ -60,6 +60,31 @@
 		currentIndex = index;
 	}
 
+	function shouldShowFeedback(selectedChoice: number | undefined) {
+		return session.kind.is !== 'exam' && selectedChoice !== undefined;
+	}
+
+	function isOptionCorrect(selectedChoice: number | undefined, optionIndex: number, answerIndex: number) {
+		return shouldShowFeedback(selectedChoice) && optionIndex === answerIndex;
+	}
+
+	function isOptionIncorrect(selectedChoice: number | undefined, optionIndex: number, answerIndex: number) {
+		return shouldShowFeedback(selectedChoice) && selectedChoice === optionIndex && optionIndex !== answerIndex;
+	}
+
+	function isQuestionCorrect(selectedChoice: number | undefined, answerIndex: number) {
+		return shouldShowFeedback(selectedChoice) && selectedChoice === answerIndex;
+	}
+
+	function isQuestionIncorrect(selectedChoice: number | undefined, answerIndex: number) {
+		return shouldShowFeedback(selectedChoice) && selectedChoice !== answerIndex;
+	}
+
+	const questionBtnClass = (selectedChoice: number | undefined, answerIndex: number) => {
+		if (!shouldShowFeedback(selectedChoice)) return '';
+		return selectedChoice === answerIndex ? 'correct' : 'incorrect';
+	};
+
 	onMount(() => {
 		const timer = setInterval(() => {
 			sessionDuration += 1;
@@ -80,21 +105,15 @@
 
 		<div class="question-card">
 			<h2>{currentQuestionDisplay.content}</h2>
-			<div
-				class="options-grid"
-				class:locked={session.check_answer_immediate && currentQuestionWip.selected_choice !== undefined}>
+			<div class="options-grid" class:locked={shouldShowFeedback(currentQuestionWip.selected_choice)}>
 				{#each currentQuestionDisplay.choices as option, i (i)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<div
 						class="option"
 						class:selected={currentQuestionWip.selected_choice === i}
-						class:correct={currentQuestionWip.selected_choice !== undefined &&
-							session.check_answer_immediate &&
-							i === currentQuestionDisplay.answer}
-						class:incorrect={currentQuestionWip.selected_choice === i &&
-							session.check_answer_immediate &&
-							i !== currentQuestionDisplay.answer}
+						class:correct={isOptionCorrect(currentQuestionWip.selected_choice, i, currentQuestionDisplay.answer)}
+						class:incorrect={isOptionIncorrect(currentQuestionWip.selected_choice, i, currentQuestionDisplay.answer)}
 						onclick={() => handleSelect(i)}>
 						<span class="option-letter">{letters[i]}</span>
 						<span>{option}</span>
@@ -112,14 +131,7 @@
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
-					class="response-btn"
-					class:current={i === currentIndex}
-					class:correct={q.selected_choice !== undefined &&
-						session.check_answer_immediate &&
-						q.selected_choice === $questions[q.qid].answer}
-					class:incorrect={q.selected_choice !== undefined &&
-						session.check_answer_immediate &&
-						q.selected_choice !== $questions[q.qid].answer}
+					class={`response-btn ${questionBtnClass(q.selected_choice, $questions[q.qid].answer)} ${i === currentIndex ? 'current' : ''}`}
 					onclick={() => goToQuestion(i)}>
 					{i + 1}
 				</div>

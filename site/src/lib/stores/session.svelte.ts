@@ -34,13 +34,12 @@ export const makeNewSession = (name: string, selectedQids: Qid[]) => {
 		name,
 		created_at: Date.now() as Timestamp,
 		kind: {
-			is: 'practice'
+			is: 'study'
 		},
 		questions: selectedQids.map((qid) => ({
 			qid,
 			duration_s: 0
-		})),
-		check_answer_immediate: true // Default behavior for now
+		}))
 	};
 	sessionDuration.current = 0;
 };
