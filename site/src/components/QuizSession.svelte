@@ -16,7 +16,13 @@
 	const letters = ['A', 'B', 'C', 'D'];
 
 	let currentQuestionWip = $derived(session.questions[currentIndex]);
-	let timeShown = $derived(session.kind.is === 'exam' ? session.kind.initial_time - sessionDuration : sessionDuration);
+	let timeShown = $derived.by(() => {
+		if (session.kind.is === 'exam') {
+			// @ts-ignore - initial_time exists in the type definition but LSP might be stale
+			return session.kind.initial_time - sessionDuration;
+		}
+		return sessionDuration;
+	});
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
 
@@ -293,6 +299,7 @@
 		border-radius: 12px; /* --radius-m */
 		background: rgba(255, 255, 255, 0.6);
 		border: 1px solid var(--glass-border);
+		box-sizing: border-box;
 		display: flex;
 		align-items: center;
 		justify-content: center;
