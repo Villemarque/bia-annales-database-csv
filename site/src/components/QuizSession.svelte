@@ -12,8 +12,14 @@
 	let {
 		session = $bindable(),
 		sessionDuration = $bindable(),
-		durationByQ = $bindable()
-	}: { session: OngoingSession; sessionDuration: number; durationByQ: Record<Qid, number> } = $props();
+		durationByQ = $bindable(),
+		onSessionFinish,
+		onSessionCancel,
+	}: { session: OngoingSession; sessionDuration: number; durationByQ: Record<Qid, number>; 
+		onSessionCancel: () => void,
+		onSessionFinish: () => void;
+
+	 } = $props();
 
 	let currentIndex = $state(0);
 	let isFinished = $state(false);
@@ -89,10 +95,12 @@
 	}
 
 	function finishSession() {
+		onSessionFinish();
 		isFinished = true;
 	}
 
 	function cancelSession() {
+		onSessionCancel();
 		goto('/');
 	}
 
