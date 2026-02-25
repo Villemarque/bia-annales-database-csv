@@ -1,12 +1,11 @@
 <script lang="ts">
 	// TODO FIXME this should really not be a component
 	// but a page, or split differently
-	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { type OngoingSession, type QuestionWip, type Qid } from '$lib/types';
+	import { type OngoingSession, type Attempt, type Timestamp, type AttemptId } from '$lib/types';
 	import { questions } from '$lib/stores/questions';
-	import { log } from '$lib/log';
-	import { sessionState } from '$lib/stores/session.svelte';
+	import { addAttempt } from '$lib/stores/attempt';
+	import { unsafeRandomId } from '$lib/random';
 
 	// need to be a state
 	let { session = $bindable(), sessionDuration = $bindable() }: { session: OngoingSession; sessionDuration: number } =
@@ -14,8 +13,10 @@
 
 	let currentIndex = $state(0);
 
+	const letters = ['A', 'B', 'C', 'D'];
+
 	let currentQuestionWip = $derived(session.questions[currentIndex]);
-	let timeShown = $derived(session.kind.is == 'exam' ? session.kind.initial_time - sessionDuration : sessionDuration);
+	let timeShown = $derived(session.kind.is === 'exam' ? session.kind.initial_time - sessionDuration : sessionDuration);
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
 
@@ -27,7 +28,32 @@
 	}
 
 	function handleSelect(choiceNo: number) {
+		// If immediate checking is on, and we already selected a choice, do nothing (lock it)
+		if (session.check_answer_immediate && session.questions[currentIndex].selected_choice !== undefined) {
+			return;
+		}
+
 		session.questions[currentIndex].selected_choice = choiceNo;
+
+		if (session.check_answer_immediate) {
+			const isCorrect = choiceNo === currentQuestionDisplay.answer;
+
+			if (isCorrect) {
+				session.questions[currentIndex].correct_choice = choiceNo;
+			}
+
+			const attempt: Attempt = {
+				id: unsafeRandomId({ prefix: 'att' }) as AttemptId,
+				qid: currentQuestionDisplay.qid,
+				session_id: session.id,
+				selected_choice: choiceNo,
+				correct: isCorrect,
+				timestamp: Date.now() as Timestamp,
+				duration_s: 0,
+				notes: undefined
+			};
+			addAttempt(attempt);
+		}
 	}
 
 	function goToQuestion(index: number) {
@@ -55,11 +81,20 @@
 		<div class="question-card">
 			<h2>{currentQuestionDisplay.content}</h2>
 			<div class="options-grid">
-				{#each currentQuestionDisplay.choices as option, i}
+				{#each currentQuestionDisplay.choices as option, i (i)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
-					<div class="option" class:selected={currentQuestionWip.selected_choice === i} onclick={() => handleSelect(i)}>
-						<span class="option-letter">{i}</span>
+					<div
+						class="option"
+						class:selected={currentQuestionWip.selected_choice === i}
+						class:correct={currentQuestionWip.selected_choice !== undefined &&
+							session.check_answer_immediate &&
+							i === currentQuestionDisplay.answer}
+						class:incorrect={currentQuestionWip.selected_choice === i &&
+							session.check_answer_immediate &&
+							i !== currentQuestionDisplay.answer}
+						onclick={() => handleSelect(i)}>
+						<span class="option-letter">{letters[i]}</span>
 						<span>{option}</span>
 					</div>
 				{/each}
@@ -74,7 +109,16 @@
 			{#each session.questions as q, i}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
-				<div class="response-btn" class:current={i === currentIndex} onclick={() => goToQuestion(i)}>
+				<div
+					class="response-btn"
+					class:current={i === currentIndex}
+					class:correct={q.selected_choice !== undefined &&
+						session.check_answer_immediate &&
+						q.selected_choice === $questions[q.qid].answer}
+					class:incorrect={q.selected_choice !== undefined &&
+						session.check_answer_immediate &&
+						q.selected_choice !== $questions[q.qid].answer}
+					onclick={() => goToQuestion(i)}>
 					{i + 1}
 				</div>
 			{/each}
@@ -150,10 +194,46 @@
 		transform: translateY(-2px);
 	}
 
+	.option.correct {
+		background: #d4edda;
+		border-color: #c3e6cb;
+		color: #155724;
+	}
+
+	.option.correct .option-letter {
+		color: #155724;
+	}
+
+	.option.incorrect {
+		background: #f8d7da;
+		border-color: #f5c6cb;
+		color: #721c24;
+	}
+
+	.option.incorrect .option-letter {
+		color: #721c24;
+	}
+
 	.option.selected {
 		background: var(--card-blue);
 		color: white;
 		border-color: transparent;
+	}
+
+	.option.selected.correct {
+		background: #28a745;
+		color: white;
+	}
+	.option.selected.correct .option-letter {
+		color: white;
+	}
+
+	.option.selected.incorrect {
+		background: #dc3545;
+		color: white;
+	}
+	.option.selected.incorrect .option-letter {
+		color: white;
 	}
 
 	.option-letter {
@@ -214,6 +294,30 @@
 		background: var(--card-blue);
 		color: white;
 		border: none;
+	}
+
+	.response-btn.correct {
+		background: #28a745;
+		color: white;
+		border: none;
+	}
+
+	.response-btn.incorrect {
+		background: #dc3545;
+		color: white;
+		border: none;
+	}
+
+	.response-btn.current.incorrect {
+		border: 2px solid #dc3545;
+		background: white;
+		color: #dc3545;
+	}
+
+	.response-btn.current.correct {
+		border: 2px solid #28a745;
+		background: white;
+		color: #28a745;
 	}
 
 	@media (max-width: 900px) {

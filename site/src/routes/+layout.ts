@@ -6,7 +6,7 @@ export const prerender = true;
 
 export const load: LayoutLoad = async ({ fetch }) => {
 	console.log('Loading questions in +layout.ts');
-	fetch('/annales-bia.csv').then((response) =>
+	await fetch('/annales-bia.csv').then((response) =>
 		response.text().then((csv) => {
 			init(csv);
 		})

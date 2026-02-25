@@ -38,3 +38,13 @@ attempts.subscribe((value: Record<Qid, Attempt[]>) => {
 		}
 	});
 });
+
+export const addAttempt = (attempt: Attempt) => {
+	attempts.update((current) => {
+		const qid = attempt.qid;
+		const attemptsForQid = current[qid] || [];
+		attemptsForQid.push(attempt);
+		current[qid] = attemptsForQid;
+		return current;
+	});
+};

@@ -73,12 +73,10 @@ const parseChapters = (s: string, subject: Subject): ChapterId[] => {
 	return s.split(',').map(parseChapterId(subject));
 };
 
-export const loadQuestions = async (csv: string): Promise<void> => {
-	const response = await fetch('/annales-bia.csv');
+export const loadQuestions = (csv: string): void => {
 	// we only write to the store once all values parsed, to avoid trigeering derived each time
 	const acc: Record<Qid, Question> = {};
 	// \t separated values
-	const text = await response.text();
 	const lines = csv.split('\n').slice(1); // remove header
 	for (const [i, line] of lines.entries()) {
 		const [
