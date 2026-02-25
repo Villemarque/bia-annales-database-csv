@@ -10,11 +10,10 @@
 		QBCtoList,
 		type OngoingSession
 	} from '$lib/types';
-	import { unsafeRandomId } from '$lib/random';
 	import { log } from '$lib/log';
 	import { attempts } from '$lib/stores/attempt';
 	import { questionsBySubject } from '$lib/stores/questions';
-	import { sessionState, sessionDuration } from '$lib/stores/session.svelte';
+	import { makeNewSession } from '$lib/stores/session.svelte';
 	import { type ChaptersState, getPotentialQuestions } from '$lib/state';
 	import Toggle from './Toggle.svelte';
 
@@ -112,22 +111,7 @@
 		// Select the first N questions based on sliderValue
 		const selectedQids = qids.slice(0, sliderValue);
 
-		const newSession: OngoingSession = {
-			id: unsafeRandomId({ prefix: 'ses' }) as SessionId, // Simple ID generation
-			name: `Quiz ${title}`,
-			created_at: Date.now() as Timestamp,
-			kind: {
-				is: 'practice'
-			},
-			questions: selectedQids.map((qid) => ({
-				qid,
-				duration_s: 0
-			})),
-			check_answer_immediate: true // Default behavior for now
-		};
-
-		sessionState.current = newSession;
-		sessionDuration.current = 0;
+		makeNewSession(`Quiz ${title}`, selectedQids);
 		goto('/quiz');
 	}
 </script>
