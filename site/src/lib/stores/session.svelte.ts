@@ -12,6 +12,7 @@ import type {
 	LocalStorageKey
 } from '$lib/types';
 import { parseSubject } from '$lib/subject';
+import { PersistedState } from "runed";
 
 
 const sessionKey = 'ongoingSession' as LocalStorageKey;
@@ -29,9 +30,9 @@ const initLocalStorage = <T>(key: LocalStorageKey) => (set: (t: T) => void) => {
 	}
 };
 
-export const ongoingSession = writable<OngoingSession | undefined>(undefined, initLocalStorage(sessionKey));
+export const sessionState = new PersistedState<OngoingSession | undefined>(sessionKey, undefined);
 
 // always keep the object in sync with localStorage
-ongoingSession.subscribe((value: OngoingSession | undefined) => {
-    Db.setLocalSorage(sessionKey, JSON.stringify(value));
-});
+// ongoingSession.subscribe((value: OngoingSession | undefined) => {
+//     Db.setLocalSorage(sessionKey, JSON.stringify(value));
+// });

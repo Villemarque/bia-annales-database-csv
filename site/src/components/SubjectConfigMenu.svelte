@@ -14,7 +14,7 @@
 	import { log } from '$lib/log';
 	import { attempts } from '$lib/stores/attempt';
 	import { questionsBySubject } from '$lib/stores/questions';
-	import { ongoingSession } from '$lib/stores/session';
+	import { sessionState } from '$lib/stores/session.svelte';
 	import { type ChaptersState, getPotentialQuestions } from '$lib/state';
 	import Toggle from './Toggle.svelte';
 
@@ -127,7 +127,7 @@
 			check_answer_immediate: true // Default behavior for now
 		};
 
-		ongoingSession.set(newSession);
+		sessionState.current = newSession;
 		goto('/quiz');
 	}
 </script>

@@ -6,7 +6,7 @@
 	import { type OngoingSession, type QuestionWip, type Qid } from '$lib/types';
 	import { questions } from '$lib/stores/questions';
 	import {log} from '$lib/log';
-	import { ongoingSession } from "$lib/stores/session";
+	import { sessionState } from "$lib/stores/session.svelte";
 
 
 	// need to be a state
@@ -14,17 +14,16 @@
 
 	let currentIndex = $state(0);
 
-	if (!$ongoingSession) {
+	if (!sessionState.current) {
 		log.error('No ongoing session found!');
 		goto('/'); // Redirect to home or an error page
 	}
 	// updating `sessionNotReactive` will not trigger a re-render, but we will update it manually when needed
 	// mostly used for typing.
-	let sessionNotReactive = $ongoingSession!;
+	//let sessionNotReactive = sessionState.current!;
 
-	let currentQuestionWip = $derived(sessionNotReactive.questions[currentIndex]);
-	$inspect(currentQuestionWip);
-	let timeShown = $derived(sessionNotReactive.kind.is === 'exam' ? sessionNotReactive.kind.time_left_s : sessionNotReactive.kind.duration_s);
+	let currentQuestionWip = $derived(sessionState.current.questions[currentIndex]);
+	let timeShown = $derived(sessionState.current.kind.is === 'exam' ? sessionState.current.kind.time_left_s : sessionState.current.kind.duration_s);
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
 
@@ -36,9 +35,7 @@
 	}
 
 	function handleSelect(choiceNo: number) {
-		// stores are not deeply reactive
-		$ongoingSession.questions[currentIndex] = {...$ongoingSession.questions[currentIndex], selected_choice: choiceNo};
-	
+		sessionState.current.questions[currentIndex].selected_choice = choiceNo;
 	}
 
 	function goToQuestion(index: number) {
@@ -47,12 +44,12 @@
 
 	onMount(() => {
 		const timer = setInterval(() => {
-			if ($ongoingSession) {
-				if ($ongoingSession.kind.is === 'exam') {
-					$ongoingSession.kind.time_left_s = Math.max(0, $ongoingSession.kind.time_left_s - 1);
+			if (sessionState.current) {
+				if (sessionState.current.kind.is === 'exam') {
+					sessionState.current.kind.time_left_s = Math.max(0, sessionState.current.kind.time_left_s - 1);
 					// TODO add logic for when timer goes to zero
-				} else if ($ongoingSession.kind.is === 'practice') {
-					$ongoingSession.kind.duration_s += 1;
+				} else if (sessionState.current.kind.is === 'practice') {
+					sessionState.current.kind.duration_s += 1;
 				}
 
 			}
@@ -68,7 +65,7 @@
 		<div class="question-header">
 			<div class="quiz-meta">
 				<span>{formatTime(timeShown)}</span>
-				<span>Q {currentIndex + 1} / {$ongoingSession.questions.length || 120}</span>
+				<span>Q {currentIndex + 1} / {sessionState.current.questions.length || 120}</span>
 			</div>
 		</div>
 
@@ -91,7 +88,7 @@
 	<aside class="responses-sidebar">
 		<h3>Réponses</h3>
 		<div class="response-grid">
-			{#each $ongoingSession.questions as q, i}
+			{#each sessionState.current.questions as q, i}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div class="response-btn" class:current={i === currentIndex} onclick={() => goToQuestion(i)}>

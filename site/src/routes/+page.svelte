@@ -77,6 +77,7 @@
 			color: card.color,
 			totalQuestions
 		};
+		console.log("clicked!")
 	}
 	function noQuestionsBySubject(s: Subject): number {
 		const byChapters = $questionsBySubject[s];
