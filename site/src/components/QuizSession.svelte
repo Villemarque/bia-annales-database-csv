@@ -5,16 +5,15 @@
 	import { onMount } from 'svelte';
 	import { type OngoingSession, type QuestionWip, type Qid } from '$lib/types';
 	import { questions } from '$lib/stores/questions';
-	import {log} from '$lib/log';
-	import { sessionState } from "$lib/stores/session.svelte";
-
+	import { log } from '$lib/log';
+	import { sessionState } from '$lib/stores/session.svelte';
 
 	// need to be a state
-	//let { session }: { session: OngoingSession } = $props();
+	let { session = $bindable() }: { session: OngoingSession } = $props();
 
 	let currentIndex = $state(0);
 
-	if (!sessionState.current) {
+	if (!session) {
 		log.error('No ongoing session found!');
 		goto('/'); // Redirect to home or an error page
 	}
@@ -22,8 +21,8 @@
 	// mostly used for typing.
 	//let sessionNotReactive = sessionState.current!;
 
-	let currentQuestionWip = $derived(sessionState.current.questions[currentIndex]);
-	let timeShown = $derived(sessionState.current.kind.is === 'exam' ? sessionState.current.kind.time_left_s : sessionState.current.kind.duration_s);
+	let currentQuestionWip = $derived(session.questions[currentIndex]);
+	let timeShown = $derived(session.kind.is === 'exam' ? session.kind.time_left_s : session.kind.duration_s);
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
 
@@ -35,7 +34,7 @@
 	}
 
 	function handleSelect(choiceNo: number) {
-		sessionState.current.questions[currentIndex].selected_choice = choiceNo;
+		session.questions[currentIndex].selected_choice = choiceNo;
 	}
 
 	function goToQuestion(index: number) {
@@ -44,16 +43,14 @@
 
 	onMount(() => {
 		const timer = setInterval(() => {
-			if (sessionState.current) {
-				if (sessionState.current.kind.is === 'exam') {
-					sessionState.current.kind.time_left_s = Math.max(0, sessionState.current.kind.time_left_s - 1);
+			if (session) {
+				if (session.kind.is === 'exam') {
+					session.kind.time_left_s = Math.max(0, session.kind.time_left_s - 1);
 					// TODO add logic for when timer goes to zero
-				} else if (sessionState.current.kind.is === 'practice') {
-					sessionState.current.kind.duration_s += 1;
+				} else if (session.kind.is === 'practice') {
+					session.kind.duration_s += 1;
 				}
-
 			}
-
 		}, 1000);
 		return () => clearInterval(timer);
 	});
@@ -65,7 +62,7 @@
 		<div class="question-header">
 			<div class="quiz-meta">
 				<span>{formatTime(timeShown)}</span>
-				<span>Q {currentIndex + 1} / {sessionState.current.questions.length || 120}</span>
+				<span>Q {currentIndex + 1} / {session.questions.length || 120}</span>
 			</div>
 		</div>
 
@@ -88,7 +85,7 @@
 	<aside class="responses-sidebar">
 		<h3>Réponses</h3>
 		<div class="response-grid">
-			{#each sessionState.current.questions as q, i}
+			{#each session.questions as q, i}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div class="response-btn" class:current={i === currentIndex} onclick={() => goToQuestion(i)}>
@@ -100,7 +97,6 @@
 </div>
 
 <style>
-
 	.layout-grid {
 		display: grid;
 		grid-template-columns: 1fr 300px;
