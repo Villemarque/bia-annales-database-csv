@@ -24,9 +24,9 @@ export const attempts = writable<Record<Qid, Attempt[]>>({}, (set) => {
 	getDb.then((db: Db) => {
 		// {id: Qid, data: Attempt[]}[]
 		db.stores.attempt.getMany().then((attemptsArrayArray) => {
-			log.log("attemptsArray", attemptsArrayArray)
+			log.log('attemptsArray', attemptsArrayArray);
 			const attemptsRecord: Record<Qid, Attempt[]> = {};
-			for (const idbObj of attemptsArrayArray as {id: Qid, data: Attempt[]}[]) {
+			for (const idbObj of attemptsArrayArray as { id: Qid; data: Attempt[] }[]) {
 				attemptsRecord[idbObj.id] = idbObj.data;
 			}
 			set(attemptsRecord);

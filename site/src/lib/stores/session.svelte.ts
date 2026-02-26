@@ -34,8 +34,8 @@ export const pastSessions = writable<Session[]>([], (set) => {
 		// {id: SessionId, data: Session}[]
 		db.stores.session.getMany().then((idbArray) => {
 			// sort by most recent first
-			const sessions = (idbArray as {id: SessionId, data: Session}[]).map((obj) => obj.data);
-			(sessions).sort((a, b) => b.created_at - a.created_at);
+			const sessions = (idbArray as { id: SessionId; data: Session }[]).map((obj) => obj.data);
+			sessions.sort((a, b) => b.created_at - a.created_at);
 			set(sessions);
 			log.log('(finished) sessions store populated from IndexedDB');
 		});
@@ -44,10 +44,10 @@ export const pastSessions = writable<Session[]>([], (set) => {
 
 // always keep the object in sync with IndexedDB
 pastSessions.subscribe((value: Session[]) => {
-	log.log("new value past session", value)
+	log.log('new value past session', value);
 	getDb.then((db: Db) => {
 		for (const session of value) {
-			console.log("SESSION", session);
+			console.log('SESSION', session);
 			db.stores.session.put(session.id, session);
 		}
 	});
@@ -75,7 +75,6 @@ export const makeNewSession = (name: string, selectedQids: Qid[]) => {
 };
 
 export const saveSession = () => {
-	log.log("test saveSession")
 	if (sessionState.current === undefined) {
 		log.error('Trying to end a session when there is no ongoing session!');
 	} else {
@@ -92,7 +91,7 @@ export const saveSession = () => {
 			current.unshift(endedSession);
 			return current;
 		});
-		log.log("past session after insert", JSON.stringify(pastSessions))
+		log.log('past session after insert', JSON.stringify(pastSessions));
 	}
 	cancelSession();
 };

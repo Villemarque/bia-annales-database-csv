@@ -14,16 +14,18 @@
 		sessionDuration = $bindable(),
 		durationByQ = $bindable(),
 		onSessionFinish,
-		onSessionCancel,
-	}: { session: OngoingSession; sessionDuration: number; durationByQ: Record<Qid, number>; 
-		onSessionCancel: () => void,
+		onSessionCancel
+	}: {
+		session: OngoingSession;
+		sessionDuration: number;
+		durationByQ: Record<Qid, number>;
+		onSessionCancel: () => void;
 		onSessionFinish: () => void;
-
-	 } = $props();
+	} = $props();
 
 	let currentIndex = $state(0);
 	interface FinishData {
-		score: number
+		score: number;
 	}
 	let finishData = $state<FinishData | undefined>(undefined);
 	let isFinished = $derived(finishData !== undefined);
@@ -90,7 +92,7 @@
 				}
 			}
 		}
-		finishData = {score};
+		finishData = { score };
 	}
 
 	function cancelSession() {

@@ -16,8 +16,7 @@
 		bind:sessionDuration={sessionDuration.current}
 		bind:durationByQ={durationByQ.current}
 		onSessionFinish={saveSession}
-		onSessionCancel={cancelSession}
-		 />
+		onSessionCancel={cancelSession} />
 {:else}
 	<p>No ongoing session found. This a bug. Report to the developer</p>
 {/if}
