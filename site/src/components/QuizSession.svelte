@@ -22,7 +22,11 @@
 	 } = $props();
 
 	let currentIndex = $state(0);
-	let isFinished = $state(false);
+	interface FinishData {
+		score: number
+	}
+	let finishData = $state<FinishData | undefined>(undefined);
+	let isFinished = $derived(finishData !== undefined);
 
 	const letters = ['A', 'B', 'C', 'D'];
 
@@ -36,25 +40,6 @@
 	});
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
-
-	let score = $derived.by(() => {
-		let correct = 0;
-		for (const q of session.questions) {
-			if (q.correct_choice !== undefined) {
-				const actualAnswer = $questions[q.qid].answer;
-				if (q.correct_choice === actualAnswer) {
-					correct++;
-				}
-			} else if (q.selected_choice !== undefined) {
-				// Fallback if correct_choice wasn't set (e.g. non-immediate mode)
-				const actualAnswer = $questions[q.qid].answer;
-				if (q.selected_choice === actualAnswer) {
-					correct++;
-				}
-			}
-		}
-		return correct;
-	});
 
 	function formatTime(seconds: number) {
 		const hrs = Math.floor(seconds / 3600);
@@ -96,7 +81,16 @@
 
 	function finishSession() {
 		onSessionFinish();
-		isFinished = true;
+		let score = 0;
+		for (const q of session.questions) {
+			if (q.selected_choice !== undefined) {
+				const actualAnswer = $questions[q.qid].answer;
+				if (q.selected_choice === actualAnswer) {
+					score++;
+				}
+			}
+		}
+		finishData = {score};
 	}
 
 	function cancelSession() {

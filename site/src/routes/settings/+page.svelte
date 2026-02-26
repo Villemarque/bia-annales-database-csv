@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { log } from '$lib/log';
 	import { onMount } from 'svelte';
+	import { getDb } from '$lib/getDb';
 
 	let logs = $state<string[]>([]);
 
@@ -12,6 +13,14 @@
 		if (confirm('Voulez-vous vraiment effacer tous les journaux ?')) {
 			await log.clear();
 			await loadLogs();
+		}
+	}
+
+	async function resetAllData() {
+		if (confirm('ATTENTION: Cela va effacer TOUTES vos données (sessions, tentatives, réglages). Continuer ?')) {
+			const db = await getDb;
+			await db.clearDb();
+			window.location.reload();
 		}
 	}
 
@@ -39,6 +48,16 @@
 			{/if}
 		</div>
 	</div>
+
+	<div class="card danger-zone">
+		<div class="header">
+			<h2>Zone de danger</h2>
+		</div>
+		<p class="description">
+			Réinitialiser l'application effacera définitivement toutes vos données locales (sessions, historique, tentatives).
+		</p>
+		<button onclick={resetAllData} class="btn-reset">Tout réinitialiser</button>
+	</div>
 </div>
 
 <style>
@@ -46,6 +65,9 @@
 		max-width: 800px;
 		margin: 0 auto;
 		padding: 20px 0;
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
 	}
 
 	.card {
@@ -58,6 +80,17 @@
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
+	}
+
+	.danger-zone {
+		border-color: rgba(220, 53, 69, 0.2);
+	}
+
+	.description {
+		color: var(--text-muted);
+		font-size: 15px;
+		line-height: 1.5;
+		margin: 0;
 	}
 
 	.header {
@@ -85,6 +118,23 @@
 
 	.btn-clear:hover {
 		opacity: 0.9;
+	}
+
+	.btn-reset {
+		background: var(--card-red);
+		border: none;
+		color: white;
+		padding: 12px 24px;
+		border-radius: 12px;
+		font-weight: 700;
+		cursor: pointer;
+		transition: all 0.2s;
+		align-self: flex-start;
+	}
+
+	.btn-reset:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 	}
 
 	.logs-container {
