@@ -134,17 +134,17 @@
 <div class="layout-grid">
 	<!-- Left Column: Quiz Content or Summary -->
 	<div class="quiz-content">
-		{#if isFinished}
+		{#if finishData !== undefined}
 			<div class="summary-card">
 				<h2>Session Terminée</h2>
 				<div class="score-display">
 					<div class="score-circle">
-						<span class="score-value">{Math.round((score / session.questions.length) * 100)}%</span>
+						<span class="score-value">{Math.round((finishData.score / session.questions.length) * 100)}%</span>
 						<span class="score-label">Score</span>
 					</div>
 					<div class="stats-grid">
 						<div class="stat-item">
-							<span class="stat-value">{score} / {session.questions.length}</span>
+							<span class="stat-value">{finishData.score} / {session.questions.length}</span>
 							<span class="stat-label">Réponses correctes</span>
 						</div>
 						<div class="stat-item">

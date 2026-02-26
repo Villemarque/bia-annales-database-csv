@@ -5,12 +5,12 @@
 	import { sessionState, sessionDuration, durationByQ, saveSession, cancelSession } from '$lib/stores/session.svelte';
 	import { goto } from '$app/navigation';
 
-	if (!sessionState.current) {
+	if (sessionState.current === undefined) {
 		goto('/');
 	}
 </script>
 
-{#if sessionState.current && sessionDuration.current}
+{#if sessionState.current}
 	<QuizSession
 		bind:session={sessionState.current}
 		bind:sessionDuration={sessionDuration.current}
@@ -18,5 +18,6 @@
 		onSessionFinish={saveSession}
 		onSessionCancel={cancelSession}
 		 />
-		}
+{:else}
+	<p>No ongoing session found. This a bug. Report to the developer</p>
 {/if}
