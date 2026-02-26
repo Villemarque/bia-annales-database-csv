@@ -29,7 +29,7 @@
 	.footer {
 		margin-top: 60px;
 		font-size: 12px;
-		font-family: ui-monospace;
+		font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
 		color: var(--text-muted);
 		text-align: center;
 		display: flex;

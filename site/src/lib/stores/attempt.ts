@@ -22,13 +22,12 @@ import { unsafeRandomId } from '$lib/random';
 
 export const attempts = writable<Record<Qid, Attempt[]>>({}, (set) => {
 	getDb.then((db: Db) => {
+		// {id: Qid, data: Attempt[]}[]
 		db.stores.attempt.getMany().then((attemptsArrayArray) => {
+			log.log("attemptsArray", attemptsArrayArray)
 			const attemptsRecord: Record<Qid, Attempt[]> = {};
-			for (const attemptsArray of attemptsArrayArray as Attempt[][]) {
-				if (attemptsArray) {
-					const first = attemptsArray[0];
-					attemptsRecord[first.qid] = attemptsArray;
-				}
+			for (const idbObj of attemptsArrayArray as {id: Qid, data: Attempt[]}[]) {
+				attemptsRecord[idbObj.id] = idbObj.data;
 			}
 			set(attemptsRecord);
 			log.log('attempts store populated from IndexedDB');

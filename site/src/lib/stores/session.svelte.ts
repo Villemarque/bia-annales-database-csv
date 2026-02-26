@@ -25,15 +25,18 @@ const durationByQKey = 'sessionDurationByQ' as LocalStorageKey;
 
 export const sessionState = new PersistedState<OngoingSession | undefined>(sessionKey, undefined);
 // if above is defined, assume below belongs to it
+// separate from sessionState for optimisation, see https://github.com/svecosystem/runed/issues/291
 export const sessionDuration = new PersistedState<number>(durationKey, 0);
 export const durationByQ = new PersistedState<Record<Qid, number>>(durationByQKey, {});
 // most recent first
 export const pastSessions = writable<Session[]>([], (set) => {
 	getDb.then((db: Db) => {
-		db.stores.attempt.getMany().then((sessions) => {
+		// {id: SessionId, data: Session}[]
+		db.stores.session.getMany().then((idbArray) => {
 			// sort by most recent first
-			(sessions as Session[]).sort((a, b) => b.created_at - a.created_at);
-			set(sessions as Session[]);
+			const sessions = (idbArray as {id: SessionId, data: Session}[]).map((obj) => obj.data);
+			(sessions).sort((a, b) => b.created_at - a.created_at);
+			set(sessions);
 			log.log('(finished) sessions store populated from IndexedDB');
 		});
 	});
@@ -41,9 +44,11 @@ export const pastSessions = writable<Session[]>([], (set) => {
 
 // always keep the object in sync with IndexedDB
 pastSessions.subscribe((value: Session[]) => {
+	log.log("new value past session", value)
 	getDb.then((db: Db) => {
 		for (const session of value) {
-			db.stores.attempt.put(session.id, session);
+			console.log("SESSION", session);
+			db.stores.session.put(session.id, session);
 		}
 	});
 });
@@ -70,15 +75,24 @@ export const makeNewSession = (name: string, selectedQids: Qid[]) => {
 };
 
 export const saveSession = () => {
-	if (!sessionState.current) {
+	log.log("test saveSession")
+	if (sessionState.current === undefined) {
 		log.error('Trying to end a session when there is no ongoing session!');
 	} else {
+		// hack needed here to avoid issues with proxy
+		// and get back a plain value
+		// https://github.com/svecosystem/runed/issues/407
+		const ongoing = JSON.parse(JSON.stringify(sessionState.current));
 		const endedSession: Session = {
-			...sessionState.current,
+			...ongoing,
 			questions: sessionState.current.questions.map((q) => q.qid),
 			duration_s: sessionDuration.current || 0
 		};
-		pastSessions.update((current) => [endedSession, ...current]);
+		pastSessions.update((current) => {
+			current.unshift(endedSession);
+			return current;
+		});
+		log.log("past session after insert", JSON.stringify(pastSessions))
 	}
 	cancelSession();
 };
