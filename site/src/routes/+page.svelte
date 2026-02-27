@@ -17,48 +17,42 @@
 			icon: '✈︎',
 			color: 'var(--card-indigo)',
 			title: 'Connaissance des Aéronefs',
-			desc: 'Structure et systèmes avion.',
-			href: '/quiz'
+			desc: 'Structure et systèmes avion.'
 		},
 		{
 			subjectId: Subjects.AERODYNAMIQUE,
 			icon: '〰︎',
 			color: 'var(--card-blue)',
 			title: 'Aérodynamique',
-			desc: 'Forces et équilibres en vol.',
-			href: '/quiz'
+			desc: 'Forces et équilibres en vol.'
 		},
 		{
 			subjectId: Subjects.METEO,
 			icon: '☁︎',
 			color: 'var(--card-green)',
 			title: 'Météorologie',
-			desc: 'Phénomènes atmosphériques.',
-			href: '/quiz'
+			desc: 'Phénomènes atmosphériques.'
 		},
 		{
 			subjectId: Subjects.NAVIGATION,
 			icon: '🧭',
 			color: 'var(--card-orange)',
 			title: 'Navigation / Réglementation',
-			desc: 'Orientation et règles de l’air.',
-			href: '/quiz'
+			desc: 'Orientation et règles de l’air.'
 		},
 		{
 			subjectId: Subjects.HISTOIRE,
 			icon: '⏳',
 			color: 'var(--card-red)',
 			title: 'Histoire',
-			desc: 'Évolution de l’aviation.',
-			href: '/quiz'
+			desc: 'Évolution de l’aviation.'
 		},
 		{
 			subjectId: Subjects.ANGLAIS,
 			icon: 'EN',
 			color: 'var(--card-pink)',
 			title: 'Anglais',
-			desc: 'Communication aéronautique.',
-			href: '/quiz'
+			desc: 'Communication aéronautique.'
 		}
 	];
 
@@ -102,7 +96,8 @@
 			totalQuestions={stats.total}
 			correctAnswers={stats.correct}
 			seenQuestions={stats.seen}
-			onclick={() => openMenu(c)} />
+			onclick={() => openMenu(c)}
+			--card-bg-color={c.color} />
 	{/each}
 </section>
 

@@ -1,24 +1,20 @@
 <script lang="ts">
 	let {
-		icon = '',
-		color = '',
-		title = '',
-		desc = '',
-		href = '',
-		totalQuestions = 0,
-		correctAnswers = 0,
-		seenQuestions = 0,
-		onclick = undefined
+		icon,
+		title,
+		desc,
+		totalQuestions,
+		correctAnswers,
+		seenQuestions,
+		onclick
 	}: {
-		icon?: string;
-		color?: string;
-		title?: string;
-		desc?: string;
-		href?: string;
-		totalQuestions?: number;
-		correctAnswers?: number;
-		seenQuestions?: number;
-		onclick?: () => void;
+		icon: string;
+		title: string;
+		desc: string;
+		totalQuestions: number;
+		correctAnswers: number;
+		seenQuestions: number;
+		onclick: () => void;
 	} = $props();
 
 	let seenPercent = $derived(totalQuestions > 0 ? (seenQuestions / totalQuestions) * 100 : 0);
@@ -32,55 +28,26 @@
 	}
 </script>
 
-{#if href}
-	<a
-		{href}
-		class="card"
-		style="background: {color}; text-decoration: none;"
-		onclick={handleClick}
-		role="button"
-		tabindex="0">
-		<div class="icon">{icon}</div>
-		<h3>{title}</h3>
-		<p>{desc}</p>
-		{#if totalQuestions > 0}
-			<div class="stats" title="Réponses correctes · Questions vues · Total">
-				<div class="progress">
-					<div class="bar seen" style="width: {seenPercent}%"></div>
-					<div class="bar answered" style="width: {answeredPercent}%"></div>
-				</div>
-				<div class="count">
-					<span class="val answered">{correctAnswers}</span>
-					<span class="sep">·</span>
-					<span class="val seen">{seenQuestions}</span>
-					<span class="sep">·</span>
-					<span class="val total">{totalQuestions}</span>
-				</div>
+<div class="card subject-card" onclick={handleClick}  role="button" tabindex="0">
+	<div class="icon">{icon}</div>
+	<h3>{title}</h3>
+	<p>{desc}</p>
+	{#if totalQuestions > 0}
+		<div class="stats" title="Réponses correctes · Questions vues · Total">
+			<div class="progress">
+				<div class="bar seen" style="width: {seenPercent}%"></div>
+				<div class="bar answered" style="width: {answeredPercent}%"></div>
 			</div>
-		{/if}
-	</a>
-{:else}
-	<div class="card" style="background: {color}">
-		<div class="icon">{icon}</div>
-		<h3>{title}</h3>
-		<p>{desc}</p>
-		{#if totalQuestions > 0}
-			<div class="stats" title="Réponses correctes · Questions vues · Total">
-				<div class="progress">
-					<div class="bar seen" style="width: {seenPercent}%"></div>
-					<div class="bar answered" style="width: {answeredPercent}%"></div>
-				</div>
-				<div class="count">
-					<span class="val answered">{correctAnswers}</span>
-					<span class="sep">·</span>
-					<span class="val seen">{seenQuestions}</span>
-					<span class="sep">·</span>
-					<span class="val total">{totalQuestions}</span>
-				</div>
+			<div class="count">
+				<span class="val answered">{correctAnswers}</span>
+				<span class="sep">·</span>
+				<span class="val seen">{seenQuestions}</span>
+				<span class="sep">·</span>
+				<span class="val total">{totalQuestions}</span>
 			</div>
-		{/if}
-	</div>
-{/if}
+		</div>
+	{/if}
+</div>
 
 <style>
 	.card {
@@ -94,6 +61,10 @@
 		cursor: pointer;
 		border: none;
 		text-align: left;
+	}
+	.subject-card {
+		text-decoration: none;
+		background: var(--card-bg-color);
 	}
 	.card:hover {
 		transform: translateY(-8px) scale(1.02);
