@@ -1,9 +1,9 @@
 <script lang="ts">
-	// TODO FIXME this should really not be a component
-	// but a page, or split differently
+	// should this be a component or page?
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import type { OngoingSession, Attempt, Timestamp, AttemptId, Qid } from '$lib/types';
+	import { formatTime } from '$lib/utils';
 	import { questions } from '$lib/stores/questions';
 	import { makeAttempt, addAttempt } from '$lib/stores/attempt';
 	import { unsafeRandomId } from '$lib/random';
@@ -24,11 +24,6 @@
 	} = $props();
 
 	let currentIndex = $state(0);
-	interface FinishData {
-		score: number;
-	}
-	let finishData = $state<FinishData | undefined>(undefined);
-	let isFinished = $derived(finishData !== undefined);
 
 	const letters = ['A', 'B', 'C', 'D'];
 
@@ -43,16 +38,9 @@
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
 
-	function formatTime(seconds: number) {
-		const hrs = Math.floor(seconds / 3600);
-		const mins = Math.floor((seconds % 3600) / 60);
-		const secs = seconds % 60;
-		return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-	}
-
 	function handleSelect(choiceNo: number) {
-		const isStudy = session.kind.is === 'study';
-		if (isFinished || (isStudy && session.questions[currentIndex].selected_choice !== undefined)) {
+		const isStudy = (session.kind.is as string) === 'study';
+		if (isStudy && session.questions[currentIndex].selected_choice !== undefined) {
 			return;
 		}
 
@@ -83,16 +71,7 @@
 
 	function finishSession() {
 		onSessionFinish();
-		let score = 0;
-		for (const q of session.questions) {
-			if (q.selected_choice !== undefined) {
-				const actualAnswer = $questions[q.qid].answer;
-				if (q.selected_choice === actualAnswer) {
-					score++;
-				}
-			}
-		}
-		finishData = { score };
+		goto(`/sessions/${session.id}`);
 	}
 
 	function cancelSession() {
@@ -101,7 +80,7 @@
 	}
 
 	function shouldShowFeedback(selectedChoice: number | undefined) {
-		return (session.kind.is !== 'exam' && selectedChoice !== undefined) || isFinished;
+		return session.kind.is !== 'exam' && selectedChoice !== undefined;
 	}
 
 	function isOptionCorrect(selectedChoice: number | undefined, optionIndex: number, answerIndex: number) {
@@ -119,14 +98,11 @@
 
 	onMount(() => {
 		const timer = setInterval(() => {
-			if (!isFinished) {
-				sessionDuration += 1;
-				durationByQ[currentQuestionWip.qid] = (durationByQ[currentQuestionWip.qid] || 0) + 1;
-			} else {
-				if (session.kind.is === 'exam' && session.kind.initial_time <= sessionDuration) {
-					finishSession();
-					clearInterval(timer);
-				}
+			sessionDuration += 1;
+			durationByQ[currentQuestionWip.qid] = (durationByQ[currentQuestionWip.qid] || 0) + 1;
+			// do NOT but this as an $effect
+			if (session.kind.is === 'exam' && timeShown <= session.kind.initial_time - sessionDuration) {
+				finishSession();
 			}
 		}, 1000);
 		return () => clearInterval(timer);
@@ -134,58 +110,33 @@
 </script>
 
 <div class="layout-grid">
-	<!-- Left Column: Quiz Content or Summary -->
+	<!-- Left Column: Quiz Content -->
 	<div class="quiz-content">
-		{#if finishData !== undefined}
-			<div class="summary-card">
-				<h2>Session Terminée</h2>
-				<div class="score-display">
-					<div class="score-circle">
-						<span class="score-value">{Math.round((finishData.score / session.questions.length) * 100)}%</span>
-						<span class="score-label">Score</span>
-					</div>
-					<div class="stats-grid">
-						<div class="stat-item">
-							<span class="stat-value">{finishData.score} / {session.questions.length}</span>
-							<span class="stat-label">Réponses correctes</span>
-						</div>
-						<div class="stat-item">
-							<span class="stat-value">{formatTime(sessionDuration)}</span>
-							<span class="stat-label">Temps total</span>
-						</div>
-					</div>
-				</div>
-				<div class="actions">
-					<button class="primary-btn" onclick={() => goto('/')}>Retour à l'accueil</button>
-				</div>
+		<div class="question-header">
+			<div class="quiz-meta">
+				<span>{formatTime(timeShown)}</span>
+				<span>Q {currentIndex + 1} / {session.questions.length || 120}</span>
 			</div>
-		{:else}
-			<div class="question-header">
-				<div class="quiz-meta">
-					<span>{formatTime(timeShown)}</span>
-					<span>Q {currentIndex + 1} / {session.questions.length || 120}</span>
-				</div>
-			</div>
+		</div>
 
-			<div class="question-card">
-				<h2>{currentQuestionDisplay.content}</h2>
-				<div class="options-grid" class:locked={shouldShowFeedback(currentQuestionWip.selected_choice)}>
-					{#each currentQuestionDisplay.choices as option, i (i)}
-						<!-- svelte-ignore a11y_click_events_have_key_events -->
-						<!-- svelte-ignore a11y_no_static_element_interactions -->
-						<div
-							class="option"
-							class:selected={currentQuestionWip.selected_choice === i}
-							class:correct={isOptionCorrect(currentQuestionWip.selected_choice, i, currentQuestionDisplay.answer)}
-							class:incorrect={isOptionIncorrect(currentQuestionWip.selected_choice, i, currentQuestionDisplay.answer)}
-							onclick={() => handleSelect(i)}>
-							<span class="option-letter">{letters[i]}</span>
-							<span>{option}</span>
-						</div>
-					{/each}
-				</div>
+		<div class="question-card">
+			<h2>{currentQuestionDisplay.content}</h2>
+			<div class="options-grid" class:locked={shouldShowFeedback(currentQuestionWip.selected_choice)}>
+				{#each currentQuestionDisplay.choices as option, i (i)}
+					<!-- svelte-ignore a11y_click_events_have_key_events -->
+					<!-- svelte-ignore a11y_no_static_element_interactions -->
+					<div
+						class="option"
+						class:selected={currentQuestionWip.selected_choice === i}
+						class:correct={isOptionCorrect(currentQuestionWip.selected_choice, i, currentQuestionDisplay.answer)}
+						class:incorrect={isOptionIncorrect(currentQuestionWip.selected_choice, i, currentQuestionDisplay.answer)}
+						onclick={() => handleSelect(i)}>
+						<span class="option-letter">{letters[i]}</span>
+						<span>{option}</span>
+					</div>
+				{/each}
 			</div>
-		{/if}
+		</div>
 	</div>
 
 	<!-- Right Column: Sidebar -->
@@ -205,9 +156,7 @@
 
 		<div class="sidebar-actions">
 			<button class="sidebar-btn cancel" onclick={cancelSession}>Annuler</button>
-			{#if !isFinished}
-				<button class="sidebar-btn finish" onclick={finishSession}>Terminer</button>
-			{/if}
+			<button class="sidebar-btn finish" onclick={finishSession}>Terminer</button>
 		</div>
 	</aside>
 </div>

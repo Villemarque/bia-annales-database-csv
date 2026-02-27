@@ -5,7 +5,7 @@
 	import { sessionState, sessionDuration, durationByQ, saveSession, cancelSession } from '$lib/stores/session.svelte';
 	import { goto } from '$app/navigation';
 
-	if (sessionState.current === undefined) {
+	if (sessionState.current === null) {
 		goto('/');
 	}
 </script>
