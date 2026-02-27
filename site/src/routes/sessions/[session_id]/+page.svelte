@@ -22,7 +22,6 @@
 	// 	session.questions.flatMap((qid) => $attempts[qid].filter((q) => q.sessionId == session.id))
 	// );
 
-	// let score: number = $derived(sessAtts.filter((q) => q.correct).length);
 	function formatTime(seconds: number) {
 		const hrs = Math.floor(seconds / 3600);
 		const mins = Math.floor((seconds % 3600) / 60);
@@ -31,14 +30,13 @@
 	}
 
 	let percent = $derived(
-		session && session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0
+		session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0
 	);
 </script>
 
 <div class="summary-page">
-	{#if session}
 		<div class="summary-card">
-			<h2>Session Terminée</h2>
+			<h2>{session.name}</h2>
 			<div class="score-display">
 				<ScoreRing {percent} size={200} strokeWidth={8} />
 				<div class="stats-grid">
@@ -53,28 +51,20 @@
 				</div>
 			</div>
 			<div class="actions">
-				<button class="primary-btn" onclick={() => goto('/')}>Retour à l'accueil</button>
+				<a class="primary-btn" href="/">Retour à l'accueil</a>
 			</div>
 		</div>
-	{:else}
-		<div class="error-container">
-			<p>Session introuvable.</p>
-			<button class="primary-btn" onclick={() => goto('/')}>Retour à l'accueil</button>
-		</div>
-	{/if}
 </div>
 
 <style>
 	.summary-page {
-		padding: 40px 20px;
 		display: flex;
 		justify-content: center;
 		align-items: flex-start;
-		min-height: 100vh;
 	}
 
 	.summary-card {
-		padding: 40px;
+		padding: 30px;
 		border-radius: var(--radius-xl);
 		background: var(--glass-bg-strong);
 		backdrop-filter: blur(28px) saturate(160%);
@@ -99,7 +89,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		gap: 40px;
 		margin-bottom: 40px;
 		width: 100%;
 	}
@@ -140,11 +129,11 @@
 		display: flex;
 		justify-content: center;
 		width: 100%;
-		margin-top: 20px;
 	}
 
 	.primary-btn {
 		background: var(--card-blue);
+		text-decoration: none;
 		color: white;
 		border: none;
 		padding: 16px 40px;
