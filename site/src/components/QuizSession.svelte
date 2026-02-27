@@ -80,11 +80,13 @@
 	}
 
 	function isOptionCorrect(wip: QuestionWip, optionIndex: number) {
-		return (wip.correct_choice !== undefined) && optionIndex === wip.correct_choice;
+		return wip.correct_choice !== undefined && optionIndex === wip.correct_choice;
 	}
 
 	function isOptionIncorrect(wip: QuestionWip, optionIndex: number) {
-		return (wip.correct_choice !== undefined) && optionIndex !== wip.correct_choice && optionIndex === wip.selected_choice;
+		return (
+			wip.correct_choice !== undefined && optionIndex !== wip.correct_choice && optionIndex === wip.selected_choice
+		);
 	}
 
 	const questionBtnClass = (wip: QuestionWip) => {

@@ -4,16 +4,15 @@
 
 	import { pastSessions } from '$lib/stores/session.svelte';
 	import { questions } from '$lib/stores/questions';
-	import { formatTime } from '$lib/utils';
 	import type { Session, Attempt } from '$lib/types';
 	import { attempts } from '$lib/stores/attempt';
 
-	let { params }: PageProps = $props();
+	let { params }: { params: { session_id: string } } = $props();
 
 	const sessionId = params.session_id;
 
 	// typing is a lie, but check is made just after to conform to it
-	let session: Session = $derived($pastSessions.find((s) => s.id === sessionId))!;
+	let session: Session = $derived($pastSessions.find((s: any) => s.id === sessionId))!;
 	if (!session) {
 		goto('/');
 	}
@@ -23,6 +22,16 @@
 	// );
 
 	// let score: number = $derived(sessAtts.filter((q) => q.correct).length);
+	function formatTime(seconds: number) {
+		const hrs = Math.floor(seconds / 3600);
+		const mins = Math.floor((seconds % 3600) / 60);
+		const secs = seconds % 60;
+		return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+	}
+
+	let percent = $derived(
+		session && session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0
+	);
 </script>
 
 <div class="summary-page">
@@ -30,9 +39,11 @@
 		<div class="summary-card">
 			<h2>Session Terminée</h2>
 			<div class="score-display">
-				<div class="score-circle">
-					<span class="score-value">{Math.round((session.score / session.questions.length) * 100)}%</span>
-					<span class="score-label">Score</span>
+				<div class="score-circle" style="background: conic-gradient(#28a745 {percent}%, #dc3545 0);">
+					<div class="score-content">
+						<span class="score-value">{Math.round(percent)}%</span>
+						<span class="score-label">Score</span>
+					</div>
 				</div>
 				<div class="stats-grid">
 					<div class="stat-item">
@@ -101,13 +112,25 @@
 		width: 180px;
 		height: 180px;
 		border-radius: 50%;
-		border: 10px solid var(--card-blue);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		background: rgba(255, 255, 255, 0.5);
 		box-shadow: 0 10px 30px rgba(47, 128, 237, 0.15);
+		padding: 10px;
+		box-sizing: border-box;
+	}
+
+	.score-content {
+		width: 100%;
+		height: 100%;
+		background: rgba(255, 255, 255, 0.85);
+		backdrop-filter: blur(4px);
+		border-radius: 50%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.score-value {
