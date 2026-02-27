@@ -1,0 +1,18 @@
+.basecard {
+	padding: 26px;
+	border-radius: var(--radius-xl);
+	box-shadow: var(--glass-shadow);
+	transition: transform 0.35s ease;
+	display: flex;
+	flex-direction: column;
+	cursor: pointer;
+	border: none;
+	text-align: left;
+}
+.basecard:hover {
+	transform: translateY(-6px) scale(1.02);
+}
+.basecard:focus-visible {
+	outline: 3px solid rgba(255, 255, 255, 0.5);
+	outline-offset: 2px;
+}

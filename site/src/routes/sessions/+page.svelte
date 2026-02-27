@@ -174,17 +174,6 @@
 	.session-card {
 		display: flex;
 		background: var(--glass-bg-strong);
-/*		border-radius: var(--radius-l);
-		border: 1px solid var(--glass-border);*/
-		/*overflow: hidden;*/
-/*		transition:
-			transform 0.2s,
-			box-shadow 0.2s;*/
-	}
-
-	.session-card:hover {
-		transform: translateY(-2px);
-		box-shadow: var(--glass-shadow);
 	}
 
 	.session-info {

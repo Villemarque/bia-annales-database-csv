@@ -9,12 +9,11 @@ const config = {
 
 	kit: {
 		// https://svelte.dev/docs/kit/adapter-static#GitHub-Pages
-		adapter: adapter({fallback: "404.html"}),
+		adapter: adapter({ fallback: '404.html' }),
 		paths: {
 			base: '/bia-annales-database-csv'
 		}
-	},
-
+	}
 };
 
 export default config;

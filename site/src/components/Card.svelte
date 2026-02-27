@@ -28,7 +28,7 @@
 	}
 </script>
 
-<div class="card subject-card" onclick={handleClick}  role="button" tabindex="0">
+<div class="basecard subject-card" onclick={handleClick} role="button" tabindex="0">
 	<div class="icon">{icon}</div>
 	<h3>{title}</h3>
 	<p>{desc}</p>
@@ -50,20 +50,8 @@
 </div>
 
 <style>
-	.card {
-		padding: 26px;
-		border-radius: var(--radius-xl);
-		color: white;
-		box-shadow: var(--glass-shadow);
-		transition: transform 0.35s ease;
-		display: flex;
-		flex-direction: column;
-		cursor: pointer;
-		border: none;
-		text-align: left;
-	}
 	.subject-card {
-		text-decoration: none;
+		color: white;
 		background: var(--card-bg-color);
 	}
 	.card:hover {
@@ -73,11 +61,11 @@
 		outline: 3px solid rgba(255, 255, 255, 0.5);
 		outline-offset: 2px;
 	}
-	.card h3 {
+	.subject-card h3 {
 		margin: 16px 0 8px;
 		font-size: 18px;
 	}
-	.card p {
+	.subject-card p {
 		margin: 0;
 		font-size: 14px;
 		opacity: 0.9;

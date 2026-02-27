@@ -29,31 +29,29 @@
 		return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 	}
 
-	let percent = $derived(
-		session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0
-	);
+	let percent = $derived(session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0);
 </script>
 
 <div class="summary-page">
-		<div class="summary-card">
-			<h2>{session.name}</h2>
-			<div class="score-display">
-				<ScoreRing {percent} size={200} strokeWidth={8} />
-				<div class="stats-grid">
-					<div class="stat-item">
-						<span class="stat-value">{session.score} / {session.questions.length}</span>
-						<span class="stat-label">Réponses correctes</span>
-					</div>
-					<div class="stat-item">
-						<span class="stat-value">{formatTime(session.duration_s)}</span>
-						<span class="stat-label">Temps total</span>
-					</div>
+	<div class="summary-card">
+		<h2>{session.name}</h2>
+		<div class="score-display">
+			<ScoreRing {percent} size={200} strokeWidth={8} />
+			<div class="stats-grid">
+				<div class="stat-item">
+					<span class="stat-value">{session.score} / {session.questions.length}</span>
+					<span class="stat-label">Réponses correctes</span>
+				</div>
+				<div class="stat-item">
+					<span class="stat-value">{formatTime(session.duration_s)}</span>
+					<span class="stat-label">Temps total</span>
 				</div>
 			</div>
-			<div class="actions">
-				<a class="primary-btn" href="/">Retour à l'accueil</a>
-			</div>
 		</div>
+		<div class="actions">
+			<a class="primary-btn" href="/">Retour à l'accueil</a>
+		</div>
+	</div>
 </div>
 
 <style>

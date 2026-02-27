@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { LayoutProps } from './$types';
+	import './layout.css'; // for reusable CSS components
 
 	import favicon from '$lib/assets/favicon.svg';
 	import HamburgerButton from '../components/HamburgerButton.svelte';
@@ -77,19 +78,6 @@
 		background: var(--bg-grey);
 		color: var(--text-dark);
 		overflow-x: hidden;
-	}
-
-	:global(.basecard) {
-        padding: 26px;
-        border-radius: var(--radius-xl);
-        // color: white;
-        box-shadow: var(--glass-shadow);
-        transition: transform 0.35s ease;
-        display: flex;
-        flex-direction: column;
-        cursor: pointer;
-        border: none;
-        text-align: left;
 	}
 
 	.app {
