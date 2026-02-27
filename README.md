@@ -4,7 +4,7 @@ Toutes les questions des différents examen du BIA depuis la réforme du BIA en 
 
 ## Organisation
 
-Le fichier `annales-bia.csv` contient les annales du BIA au format TSV (séparateur tabulation).
+Le fichier `site/static/annales-bia.csv` contient les annales du BIA au format TSV (séparateur tabulation).
 
 Le code-source du site de QCM se trouve dans `site`. Voir 
 
