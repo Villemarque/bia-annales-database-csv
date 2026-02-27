@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	let {
 		expanded = false,
 		items = []
@@ -22,7 +23,7 @@
 		{#each items as item}
 			<li>
 				{#if item.action.tpe == 'href'}
-					<a href={item.action.href} class="menu-item" class:expanded>
+					<a href={resolve(item.action.href)} class="menu-item" class:expanded>
 						{@render menu_item(item.icon, item.label)}
 					</a>
 				{:else if item.action.tpe == 'toggle'}

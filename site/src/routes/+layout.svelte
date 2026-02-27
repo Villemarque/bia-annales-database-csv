@@ -17,7 +17,7 @@
 
 	const menuItems = [
 		{ icon: '🏠', label: 'Accueil', action: href('/') },
-		{ icon: '✈︎', label: 'Programme', action: href('quiz') },
+		{ icon: '✈︎', label: 'Programme', action: href('/quiz') },
 		{ icon: '📜', label: 'Sessions', action: href('/sessions') },
 		{ icon: '⚙️', label: 'Paramètres', action: href('/settings') }
 	];
@@ -77,6 +77,19 @@
 		background: var(--bg-grey);
 		color: var(--text-dark);
 		overflow-x: hidden;
+	}
+
+	:global(.basecard) {
+        padding: 26px;
+        border-radius: var(--radius-xl);
+        // color: white;
+        box-shadow: var(--glass-shadow);
+        transition: transform 0.35s ease;
+        display: flex;
+        flex-direction: column;
+        cursor: pointer;
+        border: none;
+        text-align: left;
 	}
 
 	.app {

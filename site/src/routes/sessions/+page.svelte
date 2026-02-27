@@ -62,7 +62,7 @@
 		<div class="sessions-list">
 			{#each $pastSessions as session (session.id)}
 				{@const percent = session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0}
-				<div class="session-card">
+				<div class="basecard session-card">
 					<div
 						class="session-info"
 						onclick={() => goto(`/sessions/${session.id}`)}
@@ -174,12 +174,12 @@
 	.session-card {
 		display: flex;
 		background: var(--glass-bg-strong);
-		border-radius: var(--radius-l);
-		border: 1px solid var(--glass-border);
-		overflow: hidden;
-		transition:
+/*		border-radius: var(--radius-l);
+		border: 1px solid var(--glass-border);*/
+		/*overflow: hidden;*/
+/*		transition:
 			transform 0.2s,
-			box-shadow 0.2s;
+			box-shadow 0.2s;*/
 	}
 
 	.session-card:hover {
