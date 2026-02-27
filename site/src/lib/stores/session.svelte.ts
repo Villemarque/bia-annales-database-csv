@@ -23,7 +23,8 @@ const sessionKey = 'ongoingSession' as LocalStorageKey;
 const durationKey = 'sessionDuration' as LocalStorageKey;
 const durationByQKey = 'sessionDurationByQ' as LocalStorageKey;
 
-export const sessionState = new PersistedState<OngoingSession | undefined>(sessionKey, undefined);
+// using `null` and not undefined, see https://github.com/svecosystem/runed/pull/411
+export const sessionState = new PersistedState<OngoingSession | null>(sessionKey, null);
 // if above is defined, assume below belongs to it
 // separate from sessionState for optimisation, see https://github.com/svecosystem/runed/issues/291
 export const sessionDuration = new PersistedState<number>(durationKey, 0);
@@ -75,7 +76,7 @@ export const makeNewSession = (name: string, selectedQids: Qid[]) => {
 };
 
 export const saveSession = () => {
-	if (sessionState.current === undefined) {
+	if (sessionState.current === null) {
 		log.error('Trying to end a session when there is no ongoing session!');
 	} else {
 		// hack needed here to avoid issues with proxy
@@ -91,7 +92,6 @@ export const saveSession = () => {
 			current.unshift(endedSession);
 			return current;
 		});
-		log.log('past session after insert', JSON.stringify(pastSessions));
 	}
 	cancelSession();
 };
@@ -100,7 +100,9 @@ export const cancelSession = () => {
 	if (!sessionState.current) {
 		log.error('Trying to cancel a session when there is no ongoing session!');
 	}
-	sessionState.current = undefined;
+	log.log(`Cancelling session ${sessionState.current}`);
+	sessionState.current = null;
+	log.log(`After cancelling session ${sessionState.current}`);
 	sessionDuration.current = 0;
 	durationByQ.current = {};
 };

@@ -118,7 +118,6 @@ export class Store {
 
 	// ArrayBuffer, Blob, File, and typed arrays like Uint8Array
 	async put(key: IDbValue, value: IDbValue): Promise<void> {
-		console.log(`putting in store ${this.storeKey}: key {${key}} value {${JSON.stringify(value)}}`);
 		return promise(() => this.objectStore('readwrite').put({ id: key, data: value }));
 	}
 
