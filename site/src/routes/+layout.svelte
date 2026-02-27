@@ -19,8 +19,6 @@
 		{ icon: '🏠', label: 'Accueil', action: href('/') },
 		{ icon: '✈︎', label: 'Programme', action: href('quiz') },
 		{ icon: '📜', label: 'Sessions', action: href('/sessions') },
-		{ icon: '📚', label: 'Ressources', action: href('/resources') },
-		{ icon: '📊', label: 'Progression', action: href('/progress') },
 		{ icon: '⚙️', label: 'Paramètres', action: href('/settings') }
 	];
 

@@ -6,6 +6,7 @@
 	import { questions } from '$lib/stores/questions';
 	import type { Session, Attempt } from '$lib/types';
 	import { attempts } from '$lib/stores/attempt';
+	import ScoreRing from '../../../components/ScoreRing.svelte';
 
 	let { params }: { params: { session_id: string } } = $props();
 
@@ -39,22 +40,7 @@
 		<div class="summary-card">
 			<h2>Session Terminée</h2>
 			<div class="score-display">
-				<div class="score-circle">
-					<svg viewBox="0 0 100 100" class="score-ring">
-						<!-- Background track -->
-						<circle class="ring-track" cx="50" cy="50" r="45" />
-						<!-- Progress ring -->
-						<circle
-							class="ring-progress"
-							cx="50"
-							cy="50"
-							r="45"
-							style="stroke-dasharray: 282.7; stroke-dashoffset: {282.7 - (282.7 * percent) / 100};" />
-					</svg>
-					<div class="score-content">
-						<span class="score-value">{Math.round(percent)} %</span>
-					</div>
-				</div>
+				<ScoreRing {percent} size={200} strokeWidth={8} />
 				<div class="stats-grid">
 					<div class="stat-item">
 						<span class="stat-value">{session.score} / {session.questions.length}</span>
@@ -116,50 +102,6 @@
 		gap: 40px;
 		margin-bottom: 40px;
 		width: 100%;
-	}
-
-	.score-circle {
-		position: relative;
-		width: 200px;
-		height: 200px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.score-ring {
-		width: 100%;
-		height: 100%;
-		transform: rotate(-90deg);
-	}
-
-	.ring-track {
-		fill: none;
-		stroke: #f1f3f5;
-		stroke-width: 8;
-	}
-
-	.ring-progress {
-		fill: none;
-		stroke: #58a68d;
-		stroke-width: 8;
-		stroke-linecap: round;
-		transition: stroke-dashoffset 0.6s ease-out;
-	}
-
-	.score-content {
-		position: absolute;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.score-value {
-		font-size: 44px;
-		font-weight: 500;
-		color: #343a40;
-		line-height: 1;
 	}
 
 	.stats-grid {

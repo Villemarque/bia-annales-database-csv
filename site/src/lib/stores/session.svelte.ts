@@ -1,7 +1,7 @@
 import { writable, readonly } from 'svelte/store';
 
 import { unsafeRandomId } from '$lib/random';
-import {entries} from '$lib/utils';
+import { entries } from '$lib/utils';
 import { log } from '$lib/log';
 import { Db } from '$lib/db';
 import { getDb } from '$lib/getDb';
@@ -18,7 +18,7 @@ import type {
 	SessionId
 } from '$lib/types';
 import { parseSubject } from '$lib/subject';
-import {attempts} from '$lib/stores/attempt';
+import { attempts } from '$lib/stores/attempt';
 import { PersistedState } from 'runed';
 
 const sessionKey = 'ongoingSession' as LocalStorageKey;
@@ -116,8 +116,8 @@ export const deletePastSession = (id: SessionId) => {
 	pastSessionsWritable.update((sessions: Session[]) => sessions.filter((s: Session) => s.id !== id));
 	attempts.update((val: Record<Qid, Attempt[]>) => {
 		for (const [qid, attemptsArray] of entries(val)) {
-			val[qid] = attemptsArray.filter((a: Attempt) => a.sessionId != id)
+			val[qid] = attemptsArray.filter((a: Attempt) => a.sessionId != id);
 		}
-		return val
-	})
-}
+		return val;
+	});
+};

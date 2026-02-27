@@ -2,6 +2,7 @@
 	import { pastSessions, deletePastSession } from '$lib/stores/session.svelte';
 	import type { Session, SessionId } from '$lib/types';
 	import { goto } from '$app/navigation';
+	import ScoreRing from '../../components/ScoreRing.svelte';
 
 	function formatTime(seconds: number) {
 		const hrs = Math.floor(seconds / 3600);
@@ -68,20 +69,24 @@
 						onkeydown={(e) => e.key === 'Enter' && goto(`/sessions/${session.id}`)}
 						role="button"
 						tabindex="0">
-						<div class="session-header">
-							<span class="session-date">{formatDate(session.created_at)}</span>
-							<span class="session-name">{session.name || 'Session sans nom'}</span>
-						</div>
-						<div class="session-stats">
-							<div class="stat">
-								<span class="label">Score</span>
-								<span class="value" style="color: {percent >= 50 ? 'var(--card-green)' : 'var(--card-red)'}">
-									{session.score} / {session.questions.length} ({Math.round(percent)}%)
-								</span>
+						<ScoreRing {percent} size={64} strokeWidth={6} />
+
+						<div class="session-details">
+							<div class="session-header">
+								<span class="session-date">{formatDate(session.created_at)}</span>
+								<span class="session-name">{session.name || 'Session sans nom'}</span>
 							</div>
-							<div class="stat">
-								<span class="label">Durée</span>
-								<span class="value">{formatTime(session.duration_s)}</span>
+							<div class="session-stats">
+								<div class="stat">
+									<span class="label">Score</span>
+									<span class="value" style="color: {percent >= 50 ? '#58a68d' : 'var(--card-red)'}">
+										{session.score} / {session.questions.length}
+									</span>
+								</div>
+								<div class="stat">
+									<span class="label">Durée</span>
+									<span class="value">{formatTime(session.duration_s)}</span>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -187,8 +192,15 @@
 		padding: 24px;
 		cursor: pointer;
 		display: flex;
+		align-items: center;
+		gap: 24px;
+	}
+
+	.session-details {
+		display: flex;
 		flex-direction: column;
-		gap: 16px;
+		flex: 1;
+		gap: 12px;
 	}
 
 	.session-header {
