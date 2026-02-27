@@ -3,10 +3,10 @@
 	import type { OngoingSession, Qid } from '$lib/types';
 	import QuizSession from '../../components/QuizSession.svelte';
 	import { sessionState, sessionDuration, durationByQ, saveSession, cancelSession } from '$lib/stores/session.svelte';
-	import { goto } from '$app/navigation';
+	import { go } from '$lib/go.svelte';
 
 	if (sessionState.current === null) {
-		goto('/');
+		go('/');
 	}
 </script>
 

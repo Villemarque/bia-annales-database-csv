@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { LayoutProps } from './$types';
+	import type { ResolvedPathname } from '$app/types';
 	import './layout.css'; // for reusable CSS components
 
 	import favicon from '$lib/assets/favicon.svg';
@@ -13,7 +14,7 @@
 	let sidebarExpanded = $state(false);
 	const toggleSidebar = () => (sidebarExpanded = !sidebarExpanded);
 
-	const href = (path: string): { tpe: 'href'; href: string } => ({ tpe: 'href', href: path });
+	const href = (path: ResolvedPathname): { tpe: 'href'; href: ResolvedPathname } => ({ tpe: 'href', href: path });
 	const onToggleF = (fn: () => void): { tpe: 'toggle'; onToggle: () => void } => ({ tpe: 'toggle', onToggle: fn });
 
 	const menuItems = [

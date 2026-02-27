@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { pastSessions, deletePastSession } from '$lib/stores/session.svelte';
 	import type { Session, SessionId } from '$lib/types';
-	import { goto } from '$app/navigation';
+	import { go } from '$lib/go.svelte';
 	import ScoreRing from '../../components/ScoreRing.svelte';
 
 	function formatTime(seconds: number) {
@@ -37,7 +37,7 @@
 <div class="sessions-page">
 	<header class="header">
 		<h1>Historique des sessions</h1>
-		<button class="back-btn" onclick={() => goto('/')}>
+		<button class="back-btn" onclick={() => go('/')}>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				width="20"
@@ -56,7 +56,7 @@
 	{#if $pastSessions.length === 0}
 		<div class="empty-state">
 			<p>Aucune session enregistrée.</p>
-			<button class="primary-btn" onclick={() => goto('/')}>Commencer une session</button>
+			<button class="primary-btn" onclick={() => go('/')}>Commencer une session</button>
 		</div>
 	{:else}
 		<div class="sessions-list">
@@ -65,8 +65,8 @@
 				<div class="basecard session-card">
 					<div
 						class="session-info"
-						onclick={() => goto(`/sessions/${session.id}`)}
-						onkeydown={(e) => e.key === 'Enter' && goto(`/sessions/${session.id}`)}
+						onclick={() => go(`/sessions/${session.id}`)}
+						onkeydown={(e) => e.key === 'Enter' && go(`/sessions/${session.id}`)}
 						role="button"
 						tabindex="0">
 						<ScoreRing {percent} size={64} strokeWidth={6} />

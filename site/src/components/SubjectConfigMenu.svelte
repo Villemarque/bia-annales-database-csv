@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { go } from '$lib/go.svelte';
 	import {
 		Chapters,
 		type Subject,
@@ -110,7 +110,7 @@
 		const selectedQids = qids.slice(0, sliderValue);
 
 		makeNewSession(`Quiz ${title}`, selectedQids);
-		goto('/quiz');
+		go('/quiz');
 	}
 </script>
 

@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { go } from '$lib/go.svelte';
+	import { resolve } from '$app/paths';
 	import type { PageProps } from './$types';
 
 	import { pastSessions } from '$lib/stores/session.svelte';
@@ -15,7 +16,7 @@
 	// typing is a lie, but check is made just after to conform to it
 	let session: Session = $derived($pastSessions.find((s: any) => s.id === sessionId))!;
 	if (!session) {
-		goto('/');
+		go('/');
 	}
 
 	// let sessAtts: Attempt[] = $derived(

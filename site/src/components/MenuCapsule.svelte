@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { ResolvedPathname } from '$app/types';
 	import { resolve } from '$app/paths';
 	let {
 		expanded = false,
@@ -8,7 +9,7 @@
 		items?: Array<{
 			icon: string;
 			label: string;
-			action: { tpe: 'href'; href: string } | { tpe: 'toggle'; onToggle: () => void };
+			action: { tpe: 'href'; href: ResolvedPathname } | { tpe: 'toggle'; onToggle: () => void };
 		}>;
 	} = $props();
 </script>
@@ -23,7 +24,8 @@
 		{#each items as item}
 			<li>
 				{#if item.action.tpe == 'href'}
-					<a href={resolve(item.action.href)} class="menu-item" class:expanded>
+					// TODO FIXME...
+					<a href={resolve(item.action.href as any)} class="menu-item" class:expanded>
 						{@render menu_item(item.icon, item.label)}
 					</a>
 				{:else if item.action.tpe == 'toggle'}

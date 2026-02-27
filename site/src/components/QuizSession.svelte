@@ -2,7 +2,7 @@
 	// should this be a component or page?
 	import { onMount } from 'svelte';
 	import { log } from '$lib/log';
-	import { goto } from '$app/navigation';
+	import { go } from '$lib/go.svelte';
 	import type { OngoingSession, Attempt, Timestamp, AttemptId, Qid, QuestionWip } from '$lib/types';
 	import { formatTime } from '$lib/utils';
 	import { questions } from '$lib/stores/questions';
@@ -71,12 +71,12 @@
 		const sessionId = session.id;
 		onSessionFinish();
 		log.log('after onSessionFinish');
-		goto(`/sessions/${sessionId}`);
+		go(`/sessions/${sessionId}`);
 	}
 
 	function cancelSession() {
 		onSessionCancel();
-		goto('/');
+		go('/');
 	}
 
 	function isOptionCorrect(wip: QuestionWip, optionIndex: number) {
