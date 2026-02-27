@@ -8,9 +8,8 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		// TODO FIXME, once the main page is pre-rendered
-		// use app.html as fallback not to conflict!
-		adapter: adapter({fallback: "index.html"}),
+		// https://svelte.dev/docs/kit/adapter-static#GitHub-Pages
+		adapter: adapter({fallback: "404.html"}),
 		paths: {
 			base: '/bia-annales-database-csv'
 		}
