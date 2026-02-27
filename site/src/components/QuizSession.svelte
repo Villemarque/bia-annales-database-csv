@@ -95,7 +95,7 @@
 		const timer = setInterval(() => {
 			sessionDuration += 1;
 			durationByQ[currentQuestionWip.qid] = (durationByQ[currentQuestionWip.qid] || 0) + 1;
-			// do NOT but this as an $effect
+			// do NOT put this as an $effect
 			if (session.kind.is === 'exam' && timeShown <= session.kind.initial_time - sessionDuration) {
 				finishSession();
 			}
