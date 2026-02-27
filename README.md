@@ -14,7 +14,7 @@ Le code-source du site de QCM se trouve dans `site`. Voir
 | :--- | :--- |
 | `qid` | Identifiant unique. |
 | `year` | Année de l'examen. |
-| `subject` | Numéro de matière, de 0 à 6 (météo, mécanique du vol, aéronef, navigation, histoire, anglais). |
+| `subject` | Numéro de matière, de 0 à 5 (météo, mécanique du vol, aéronef, navigation, histoire, anglais). |
 | `no_subject` | Numéro de la question dans la matière, commence à 0. |
 | `no` | Ordre dans l'examen, commençant à 0. |
 | `content_verbatim` | Énoncé original. Généralement ne pas utiliser, si `content_fixed` existe.|

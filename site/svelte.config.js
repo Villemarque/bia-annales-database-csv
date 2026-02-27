@@ -8,6 +8,8 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
+		// TODO FIXME, once the main page is pre-rendered
+		// use app.html as fallback not to conflict!
 		adapter: adapter({fallback: "index.html"}),
 		paths: {
 			base: '/bia-annales-database-csv'
