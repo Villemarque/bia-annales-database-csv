@@ -18,11 +18,11 @@
 		goto('/');
 	}
 
-	let sessAtts: Attempt[] = $derived(
-		session.questions.flatMap((qid) => $attempts[qid].filter((q) => q.sessionId == session.id))
-	);
+	// let sessAtts: Attempt[] = $derived(
+	// 	session.questions.flatMap((qid) => $attempts[qid].filter((q) => q.sessionId == session.id))
+	// );
 
-	let score: number = $derived(sessAtts.filter((q) => q.correct).length);
+	// let score: number = $derived(sessAtts.filter((q) => q.correct).length);
 </script>
 
 <div class="summary-page">
@@ -31,12 +31,12 @@
 			<h2>Session Terminée</h2>
 			<div class="score-display">
 				<div class="score-circle">
-					<span class="score-value">{Math.round((score / session.questions.length) * 100)}%</span>
+					<span class="score-value">{Math.round((session.score / session.questions.length) * 100)}%</span>
 					<span class="score-label">Score</span>
 				</div>
 				<div class="stats-grid">
 					<div class="stat-item">
-						<span class="stat-value">{score} / {session.questions.length}</span>
+						<span class="stat-value">{session.score} / {session.questions.length}</span>
 						<span class="stat-label">Réponses correctes</span>
 					</div>
 					<div class="stat-item">

@@ -67,9 +67,11 @@
 
 	function finishSession() {
 		log.log('before onSessionFinish');
+		// `onSessionFinish` might erase it, so save before
+		const sessionId = session.id;
 		onSessionFinish();
 		log.log('after onSessionFinish');
-		goto(`/sessions/${session.id}`);
+		goto(`/sessions/${sessionId}`);
 	}
 
 	function cancelSession() {
