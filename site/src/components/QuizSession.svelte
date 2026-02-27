@@ -9,7 +9,6 @@
 	import { makeAttempt, addAttempt } from '$lib/stores/attempt';
 	import { unsafeRandomId } from '$lib/random';
 
-	// need to be a state
 	let {
 		session = $bindable(),
 		sessionDuration = $bindable(),
