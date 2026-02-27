@@ -6,7 +6,7 @@
 		desc = '',
 		href = '',
 		totalQuestions = 0,
-		answeredQuestions = 0,
+		correctAnswers = 0,
 		seenQuestions = 0,
 		onclick = undefined
 	}: {
@@ -16,13 +16,13 @@
 		desc?: string;
 		href?: string;
 		totalQuestions?: number;
-		answeredQuestions?: number;
+		correctAnswers?: number;
 		seenQuestions?: number;
 		onclick?: () => void;
 	} = $props();
 
 	let seenPercent = $derived(totalQuestions > 0 ? (seenQuestions / totalQuestions) * 100 : 0);
-	let answeredPercent = $derived(totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0);
+	let answeredPercent = $derived(totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0);
 
 	function handleClick(e: MouseEvent) {
 		if (onclick) {
@@ -50,7 +50,7 @@
 					<div class="bar answered" style="width: {answeredPercent}%"></div>
 				</div>
 				<div class="count">
-					<span class="val answered">{answeredQuestions}</span>
+					<span class="val answered">{correctAnswers}</span>
 					<span class="sep">·</span>
 					<span class="val seen">{seenQuestions}</span>
 					<span class="sep">·</span>
@@ -71,7 +71,7 @@
 					<div class="bar answered" style="width: {answeredPercent}%"></div>
 				</div>
 				<div class="count">
-					<span class="val answered">{answeredQuestions}</span>
+					<span class="val answered">{correctAnswers}</span>
 					<span class="sep">·</span>
 					<span class="val seen">{seenQuestions}</span>
 					<span class="sep">·</span>

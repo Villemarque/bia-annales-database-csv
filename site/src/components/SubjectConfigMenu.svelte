@@ -20,12 +20,10 @@
 	let {
 		subjectId,
 		title,
-		totalQuestions,
 		onClose
 	}: {
 		subjectId: Subject;
 		title: string;
-		totalQuestions: number;
 		onClose: () => void;
 	} = $props();
 

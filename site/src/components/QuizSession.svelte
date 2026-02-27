@@ -1,6 +1,7 @@
 <script lang="ts">
 	// should this be a component or page?
 	import { onMount } from 'svelte';
+	import { log } from '$lib/log';
 	import { goto } from '$app/navigation';
 	import type { OngoingSession, Attempt, Timestamp, AttemptId, Qid } from '$lib/types';
 	import { formatTime } from '$lib/utils';
@@ -39,7 +40,7 @@
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
 
 	function handleSelect(choiceNo: number) {
-		const isStudy = (session.kind.is as string) === 'study';
+		const isStudy = session.kind.is === 'study';
 		if (isStudy && session.questions[currentIndex].selected_choice !== undefined) {
 			return;
 		}
@@ -70,7 +71,9 @@
 	}
 
 	function finishSession() {
+		log.log('before onSessionFinish');
 		onSessionFinish();
+		log.log('after onSessionFinish');
 		goto(`/sessions/${session.id}`);
 	}
 

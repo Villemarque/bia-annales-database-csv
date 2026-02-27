@@ -2,7 +2,9 @@
 	import Card from '../components/Card.svelte';
 	import SubjectConfigMenu from '../components/SubjectConfigMenu.svelte';
 	import { questionsBySubject } from '$lib/stores/questions';
-	import { type Subject, Subjects, QBCtoList } from '$lib/types';
+	import { log } from '$lib/log';
+	import { attempts } from '$lib/stores/attempt';
+	import { type Subject, Subjects, QBCtoList, type Attempt } from '$lib/types';
 
 	// for SEO, and faster initial load
 	// only prerendered at build time
@@ -65,30 +67,42 @@
 				id: Subject;
 				title: string;
 				color: string;
-				totalQuestions: number;
 		  }
 		| undefined
 	>(undefined);
 
-	function openMenu(card: { subjectId: Subject; title: string; color: string }, totalQuestions: number) {
+	function openMenu(card: { subjectId: Subject; title: string; color: string }) {
 		activeSubject = {
 			id: card.subjectId,
 			title: card.title,
-			color: card.color,
-			totalQuestions
+			color: card.color
 		};
 	}
-	function noQuestionsBySubject(s: Subject): number {
+
+	const getStats = (s: Subject): { total: number; seen: number; correct: number } => {
 		const byChapters = $questionsBySubject[s];
-		const total = QBCtoList(byChapters).length;
-		return total;
-	}
+		const all = QBCtoList(byChapters);
+		const attempted: Attempt[][] = all.map((q) => $attempts[q] || []);
+		const seen = attempted.filter((atts) => atts.length > 0).length;
+		const correct = attempted.filter((atts) => atts.some((a) => a.correct)).length;
+
+		return {
+			total: all.length,
+			seen,
+			correct
+		};
+	};
 </script>
 
 <section class="grid">
 	{#each cards as c}
-		{@const total = noQuestionsBySubject(c.subjectId)}
-		<Card {...c} totalQuestions={total} answeredQuestions={0} seenQuestions={0} onclick={() => openMenu(c, total)} />
+		{@const stats = getStats(c.subjectId)}
+		<Card
+			{...c}
+			totalQuestions={stats.total}
+			correctAnswers={stats.correct}
+			seenQuestions={stats.seen}
+			onclick={() => openMenu(c)} />
 	{/each}
 </section>
 
@@ -96,7 +110,6 @@
 	<SubjectConfigMenu
 		subjectId={activeSubject.id}
 		title={activeSubject.title}
-		totalQuestions={activeSubject.totalQuestions}
 		onClose={() => (activeSubject = undefined)}
 		--accent-color={activeSubject.color} />
 {/if}
