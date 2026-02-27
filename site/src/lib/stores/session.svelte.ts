@@ -1,6 +1,7 @@
-import { writable } from 'svelte/store';
+import { writable, readonly } from 'svelte/store';
 
 import { unsafeRandomId } from '$lib/random';
+import {entries} from '$lib/utils';
 import { log } from '$lib/log';
 import { Db } from '$lib/db';
 import { getDb } from '$lib/getDb';
@@ -17,6 +18,7 @@ import type {
 	SessionId
 } from '$lib/types';
 import { parseSubject } from '$lib/subject';
+import {attempts} from '$lib/stores/attempt';
 import { PersistedState } from 'runed';
 
 const sessionKey = 'ongoingSession' as LocalStorageKey;
@@ -30,7 +32,7 @@ export const sessionState = new PersistedState<OngoingSession | null>(sessionKey
 export const sessionDuration = new PersistedState<number>(durationKey, 0);
 export const durationByQ = new PersistedState<Record<Qid, number>>(durationByQKey, {});
 // most recent first
-export const pastSessions = writable<Session[]>([], (set) => {
+const pastSessionsWritable = writable<Session[]>([], (set) => {
 	getDb.then((db: Db) => {
 		// {id: SessionId, data: Session}[]
 		db.stores.session.getMany().then((idbArray) => {
@@ -42,9 +44,10 @@ export const pastSessions = writable<Session[]>([], (set) => {
 		});
 	});
 });
+export const pastSessions = readonly(pastSessionsWritable);
 
 // always keep the object in sync with IndexedDB
-pastSessions.subscribe((value: Session[]) => {
+pastSessionsWritable.subscribe((value: Session[]) => {
 	log.log('new value past session', value);
 	getDb.then((db: Db) => {
 		for (const session of value) {
@@ -90,7 +93,7 @@ export const saveSession = () => {
 			duration_s: sessionDuration.current || 0,
 			score
 		};
-		pastSessions.update((current) => {
+		pastSessionsWritable.update((current) => {
 			current.unshift(endedSession);
 			return current;
 		});
@@ -108,3 +111,13 @@ export const cancelSession = () => {
 	sessionDuration.current = 0;
 	durationByQ.current = {};
 };
+
+export const deletePastSession = (id: SessionId) => {
+	pastSessionsWritable.update((sessions: Session[]) => sessions.filter((s: Session) => s.id !== id));
+	attempts.update((val: Record<Qid, Attempt[]>) => {
+		for (const [qid, attemptsArray] of entries(val)) {
+			val[qid] = attemptsArray.filter((a: Attempt) => a.sessionId != id)
+		}
+		return val
+	})
+}

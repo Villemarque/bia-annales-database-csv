@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { pastSessions } from '$lib/stores/session.svelte';
+	import { pastSessions, deletePastSession } from '$lib/stores/session.svelte';
 	import type { Session, SessionId } from '$lib/types';
 	import { goto } from '$app/navigation';
 
@@ -28,7 +28,7 @@
 
 	function deleteSession(id: SessionId) {
 		if (confirm('Voulez-vous vraiment supprimer cette session ?')) {
-			pastSessions.update((sessions: Session[]) => sessions.filter((s: Session) => s.id !== id));
+			deletePastSession(id);
 		}
 	}
 </script>

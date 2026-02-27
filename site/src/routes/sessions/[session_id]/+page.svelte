@@ -39,10 +39,20 @@
 		<div class="summary-card">
 			<h2>Session Terminée</h2>
 			<div class="score-display">
-				<div class="score-circle" style="background: conic-gradient(#28a745 {percent}%, #dc3545 0);">
+				<div class="score-circle">
+					<svg viewBox="0 0 100 100" class="score-ring">
+						<!-- Background track -->
+						<circle class="ring-track" cx="50" cy="50" r="45" />
+						<!-- Progress ring -->
+						<circle
+							class="ring-progress"
+							cx="50"
+							cy="50"
+							r="45"
+							style="stroke-dasharray: 282.7; stroke-dashoffset: {282.7 - (282.7 * percent) / 100};" />
+					</svg>
 					<div class="score-content">
-						<span class="score-value">{Math.round(percent)}%</span>
-						<span class="score-label">Score</span>
+						<span class="score-value">{Math.round(percent)} %</span>
 					</div>
 				</div>
 				<div class="stats-grid">
@@ -109,24 +119,36 @@
 	}
 
 	.score-circle {
-		width: 180px;
-		height: 180px;
-		border-radius: 50%;
+		position: relative;
+		width: 200px;
+		height: 200px;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		box-shadow: 0 10px 30px rgba(47, 128, 237, 0.15);
-		padding: 10px;
-		box-sizing: border-box;
+	}
+
+	.score-ring {
+		width: 100%;
+		height: 100%;
+		transform: rotate(-90deg);
+	}
+
+	.ring-track {
+		fill: none;
+		stroke: #f1f3f5;
+		stroke-width: 8;
+	}
+
+	.ring-progress {
+		fill: none;
+		stroke: #58a68d;
+		stroke-width: 8;
+		stroke-linecap: round;
+		transition: stroke-dashoffset 0.6s ease-out;
 	}
 
 	.score-content {
-		width: 100%;
-		height: 100%;
-		background: rgba(255, 255, 255, 0.85);
-		backdrop-filter: blur(4px);
-		border-radius: 50%;
+		position: absolute;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -134,18 +156,10 @@
 	}
 
 	.score-value {
-		font-size: 48px;
-		font-weight: 800;
-		color: var(--card-blue);
+		font-size: 44px;
+		font-weight: 500;
+		color: #343a40;
 		line-height: 1;
-	}
-
-	.score-label {
-		font-size: 16px;
-		text-transform: uppercase;
-		letter-spacing: 1.5px;
-		color: var(--text-muted);
-		margin-top: 6px;
 	}
 
 	.stats-grid {

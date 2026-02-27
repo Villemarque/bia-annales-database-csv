@@ -4,3 +4,9 @@ export const formatTime = (seconds: number): string => {
 	const secs = seconds % 60;
 	return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
+
+export function entries<T extends Record<PropertyKey, unknown>>(obj: T) {
+  return Object.entries(obj) as {
+    [K in keyof T]-?: [K, T[K]];
+  }[keyof T][];
+}
