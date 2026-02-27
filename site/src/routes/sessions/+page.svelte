@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { pastSessions, deletePastSession } from '$lib/stores/session.svelte';
-	import type { Session, SessionId } from '$lib/types';
+	import type { SessionId } from '$lib/types';
 	import { go } from '$lib/go.svelte';
 	import ScoreRing from '../../components/ScoreRing.svelte';
 
@@ -173,7 +173,10 @@
 
 	.session-card {
 		display: flex;
+		flex-direction: row;
 		background: var(--glass-bg-strong);
+		padding: 0;
+		overflow: hidden;
 	}
 
 	.session-info {
@@ -238,7 +241,7 @@
 		background: transparent;
 		border: none;
 		border-left: 1px solid var(--glass-border);
-		padding: 0 24px;
+		padding: 0 32px;
 		color: var(--text-muted);
 		cursor: pointer;
 		transition: all 0.2s;
