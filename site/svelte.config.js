@@ -8,9 +8,12 @@ const config = {
 	preprocess: vitePreprocess(),
 
 	kit: {
-		adapter: adapter({fallback: "index.html"})
+		adapter: adapter({fallback: "index.html"}),
+		paths: {
+			base: '/bia-annales-database-csv'
+		}
 	},
-	base: '/bia-annales-database-csv'
+
 };
 
 export default config;
