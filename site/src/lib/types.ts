@@ -73,6 +73,7 @@ interface SessionBase<T> {
 
 export type Session = SessionBase<Qid> & {
 	duration_s: number;
+	score: number // denormalised
 };
 
 export interface QuestionWip {

@@ -1,13 +1,16 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
+	import type { PageProps } from './$types';
+
 	import { pastSessions } from '$lib/stores/session.svelte';
 	import { questions } from '$lib/stores/questions';
 	import { formatTime } from '$lib/utils';
 	import type { Session, Attempt } from '$lib/types';
 	import { attempts } from '$lib/stores/attempt';
 
-	const sessionId = $page.params.session_id;
+	let { params }: PageProps = $props();
+
+	const sessionId = params.session_id;
 
 	// typing is a lie, but check is made just after to conform to it
 	let session: Session = $derived($pastSessions.find((s) => s.id === sessionId))!;

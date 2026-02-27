@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { log } from '$lib/log';
 	import { goto } from '$app/navigation';
-	import type { OngoingSession, Attempt, Timestamp, AttemptId, Qid } from '$lib/types';
+	import type { OngoingSession, Attempt, Timestamp, AttemptId, Qid, QuestionWip } from '$lib/types';
 	import { formatTime } from '$lib/utils';
 	import { questions } from '$lib/stores/questions';
 	import { makeAttempt, addAttempt } from '$lib/stores/attempt';
@@ -41,18 +41,14 @@
 
 	function handleSelect(choiceNo: number) {
 		const isStudy = session.kind.is === 'study';
-		if (isStudy && session.questions[currentIndex].selected_choice !== undefined) {
+		if (session.questions[currentIndex].correct_choice !== undefined) {
 			return;
 		}
 
 		session.questions[currentIndex].selected_choice = choiceNo;
 
 		if (isStudy) {
-			const isCorrect = choiceNo === currentQuestionDisplay.answer;
-
-			if (isCorrect) {
-				session.questions[currentIndex].correct_choice = choiceNo;
-			}
+			session.questions[currentIndex].correct_choice = currentQuestionDisplay.answer;
 
 			const attempt = makeAttempt(
 				currentQuestionWip,
@@ -82,21 +78,17 @@
 		goto('/');
 	}
 
-	function shouldShowFeedback(selectedChoice: number | undefined) {
-		return session.kind.is !== 'exam' && selectedChoice !== undefined;
+	function isOptionCorrect(wip: QuestionWip, optionIndex: number) {
+		return (wip.correct_choice !== undefined) && optionIndex === wip.correct_choice;
 	}
 
-	function isOptionCorrect(selectedChoice: number | undefined, optionIndex: number, answerIndex: number) {
-		return shouldShowFeedback(selectedChoice) && optionIndex === answerIndex;
+	function isOptionIncorrect(wip: QuestionWip, optionIndex: number) {
+		return (wip.correct_choice !== undefined) && optionIndex !== wip.correct_choice && optionIndex === wip.selected_choice;
 	}
 
-	function isOptionIncorrect(selectedChoice: number | undefined, optionIndex: number, answerIndex: number) {
-		return shouldShowFeedback(selectedChoice) && selectedChoice === optionIndex && optionIndex !== answerIndex;
-	}
-
-	const questionBtnClass = (selectedChoice: number | undefined, answerIndex: number) => {
-		if (!shouldShowFeedback(selectedChoice)) return '';
-		return selectedChoice === answerIndex ? 'correct' : 'incorrect';
+	const questionBtnClass = (wip: QuestionWip) => {
+		if (wip.correct_choice === undefined) return '';
+		return wip.correct_choice === wip.selected_choice ? 'correct' : 'incorrect';
 	};
 
 	onMount(() => {
@@ -124,15 +116,15 @@
 
 		<div class="question-card">
 			<h2>{currentQuestionDisplay.content}</h2>
-			<div class="options-grid" class:locked={shouldShowFeedback(currentQuestionWip.selected_choice)}>
+			<div class="options-grid" class:locked={currentQuestionWip.correct_choice !== undefined}>
 				{#each currentQuestionDisplay.choices as option, i (i)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<div
 						class="option"
 						class:selected={currentQuestionWip.selected_choice === i}
-						class:correct={isOptionCorrect(currentQuestionWip.selected_choice, i, currentQuestionDisplay.answer)}
-						class:incorrect={isOptionIncorrect(currentQuestionWip.selected_choice, i, currentQuestionDisplay.answer)}
+						class:correct={isOptionCorrect(currentQuestionWip, i)}
+						class:incorrect={isOptionIncorrect(currentQuestionWip, i)}
 						onclick={() => handleSelect(i)}>
 						<span class="option-letter">{letters[i]}</span>
 						<span>{option}</span>
@@ -150,7 +142,7 @@
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
-					class={`response-btn ${questionBtnClass(q.selected_choice, $questions[q.qid].answer)} ${i === currentIndex ? 'current' : ''}`}
+					class={`response-btn ${questionBtnClass(q)} ${i === currentIndex ? 'current' : ''}`}
 					onclick={() => goToQuestion(i)}>
 					{i + 1}
 				</div>

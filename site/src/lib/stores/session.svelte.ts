@@ -82,11 +82,13 @@ export const saveSession = () => {
 		// hack needed here to avoid issues with proxy
 		// and get back a plain value
 		// https://github.com/svecosystem/runed/issues/407
-		const ongoing = JSON.parse(JSON.stringify(sessionState.current));
+		const ongoing: OngoingSession = JSON.parse(JSON.stringify(sessionState.current));
+		const score = ongoing.questions.filter(wip => wip.selected_choice === wip.correct_choice).length;
 		const endedSession: Session = {
 			...ongoing,
 			questions: sessionState.current.questions.map((q) => q.qid),
-			duration_s: sessionDuration.current || 0
+			duration_s: sessionDuration.current || 0,
+			score,
 		};
 		pastSessions.update((current) => {
 			current.unshift(endedSession);
