@@ -9,7 +9,8 @@ const config = {
 
 	kit: {
 		adapter: adapter({fallback: "index.html"})
-	}
+	},
+	base: '/bia-annales-database-csv'
 };
 
 export default config;
