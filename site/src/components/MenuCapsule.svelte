@@ -24,7 +24,6 @@
 		{#each items as item}
 			<li>
 				{#if item.action.tpe == 'href'}
-					// TODO FIXME...
 					<a href={resolve(item.action.href as any)} class="menu-item" class:expanded>
 						{@render menu_item(item.icon, item.label)}
 					</a>

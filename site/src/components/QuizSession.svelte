@@ -7,7 +7,9 @@
 	import { formatTime } from '$lib/utils';
 	import { questions } from '$lib/stores/questions';
 	import { makeAttempt, addAttempt } from '$lib/stores/attempt';
+	import { preferences } from '$lib/stores/preferences.svelte';
 	import { unsafeRandomId } from '$lib/random';
+	import Toggle from '../components/Toggle.svelte';
 
 	let {
 		session = $bindable(),
@@ -30,7 +32,6 @@
 	let currentQuestionWip = $derived(session.questions[currentIndex]);
 	let timeShown = $derived.by(() => {
 		if (session.kind.is === 'exam') {
-			// @ts-ignore - initial_time exists in the type definition but LSP might be stale
 			return session.kind.initial_time - sessionDuration;
 		}
 		return sessionDuration;
@@ -153,6 +154,12 @@
 		</div>
 
 		<div class="sidebar-actions">
+				<div class="toggle-container">
+					<label for="auto-advance-toggle">Question suivante auto</label>
+					<Toggle
+						bind:checked={preferences.current.autoAdvance}
+						onchange={() => console.log("click")} />
+				</div>
 			<button class="sidebar-btn cancel" onclick={cancelSession}>Annuler</button>
 			<button class="sidebar-btn finish" onclick={finishSession}>Terminer</button>
 		</div>
@@ -368,6 +375,22 @@
 		margin-top: 10px;
 		padding-top: 20px;
 		border-top: 1px solid var(--glass-border);
+	}
+
+	.toggle-container {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 12px 10px;
+		font-size: 14px;
+		font-weight: 500;
+		color: var(--text-dark);
+		border-bottom: 1px solid var(--glass-border);
+		margin-bottom: 10px;
+	}
+
+	.toggle-container label {
+		cursor: pointer;
 	}
 
 	.sidebar-btn {

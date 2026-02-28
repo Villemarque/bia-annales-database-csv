@@ -22,7 +22,7 @@ export class Db {
 		const openReq = indexedDB.open(prefix, 2);
 		return new Promise<Db>((resolve) => {
 			openReq.onupgradeneeded = () => {
-				let db = openReq.result;
+				const db = openReq.result;
 				// create all stores
 				for (const storeKey of storeKeys) {
 					if (!db.objectStoreNames.contains(storeKey)) {
@@ -39,7 +39,7 @@ export class Db {
 				alert(blocked);
 			};
 			openReq.onsuccess = function () {
-				let db = openReq.result;
+				const db = openReq.result;
 
 				db.onversionchange = function () {
 					db.close();

@@ -48,10 +48,8 @@ export const pastSessions = readonly(pastSessionsWritable);
 
 // always keep the object in sync with IndexedDB
 pastSessionsWritable.subscribe((value: Session[]) => {
-	log.log('new value past session', value);
 	getDb.then((db: Db) => {
 		for (const session of value) {
-			console.log('SESSION', session);
 			db.stores.session.put(session.id, session);
 		}
 	});

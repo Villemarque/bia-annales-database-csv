@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { go } from '$lib/go.svelte';
-	import { resolve } from '$app/paths';
-	import type { PageProps } from './$types';
 
 	import { pastSessions } from '$lib/stores/session.svelte';
 	import { questions } from '$lib/stores/questions';
-	import type { Session, Attempt } from '$lib/types';
+	import type { Session, Attempt, Question } from '$lib/types';
 	import { attempts } from '$lib/stores/attempt';
 	import ScoreRing from '../../../components/ScoreRing.svelte';
 
@@ -14,14 +12,25 @@
 	const sessionId = params.session_id;
 
 	// typing is a lie, but check is made just after to conform to it
-	let session: Session = $derived($pastSessions.find((s: any) => s.id === sessionId))!;
+	let session: Session = $derived($pastSessions.find((s: Session) => s.id === sessionId))!;
 	if (!session) {
 		go('/');
 	}
 
-	// let sessAtts: Attempt[] = $derived(
-	// 	session.questions.flatMap((qid) => $attempts[qid].filter((q) => q.sessionId == session.id))
-	// );
+	let missedQuestions = $derived.by(() => {
+		const missed: { question: Question; attempt: Attempt }[] = [];
+		for (const qid of session.questions) {
+			const qAttempts = $attempts[qid] || [];
+			const attempt = qAttempts.find((a) => a.sessionId === session.id);
+			if (attempt && !attempt.correct) {
+				const question = $questions[qid];
+				if (question) {
+					missed.push({ question, attempt });
+				}
+			}
+		}
+		return missed;
+	});
 
 	function formatTime(seconds: number) {
 		const hrs = Math.floor(seconds / 3600);
@@ -50,16 +59,39 @@
 			</div>
 		</div>
 		<div class="actions">
-			<a class="primary-btn" href="/">Retour à l'accueil</a>
+			<button class="primary-btn" onclick={() => go('/')}>Retour à l'accueil</button>
 		</div>
 	</div>
+
+	{#if missedQuestions.length > 0}
+		<div class="missed-section">
+			<h2 class="section-title">Questions à revoir</h2>
+			{#each missedQuestions as { question, attempt } (question.qid)}
+				<div class="missed-card">
+					<h3>{question.content}</h3>
+					<div class="options-container">
+						<div class="option incorrect">
+							<span>{question.choices[attempt.selectedChoice]}</span>
+						</div>
+						<div class="option correct">
+							<span>{question.choices[question.answer]}</span>
+						</div>
+					</div>
+				</div>
+			{/each}
+		</div>
+	{/if}
 </div>
 
 <style>
 	.summary-page {
 		display: flex;
-		justify-content: center;
-		align-items: flex-start;
+		flex-direction: column;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 40px;
+		width: 100%;
+		padding-bottom: 60px;
 	}
 
 	.summary-card {
@@ -152,18 +184,127 @@
 		background: var(--card-indigo);
 	}
 
-	.error-container {
-		text-align: center;
-		margin-top: 100px;
-		color: var(--text-muted);
-		background: var(--glass-bg-strong);
-		padding: 40px;
-		border-radius: var(--radius-l);
-		border: 1px solid var(--glass-border);
+	/* Missed Questions Section */
+	.missed-section {
+		width: 100%;
+		max-width: 800px;
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
 	}
 
-	.error-container p {
+	.section-title {
+		font-size: 24px;
+		font-weight: 700;
+		color: var(--text-dark);
+		margin: 0;
+		text-align: center;
+	}
+
+	.missed-card {
+		padding: 30px;
+		border-radius: var(--radius-xl);
+		background: var(--glass-bg-strong);
+		backdrop-filter: blur(28px) saturate(160%);
+		border: 1px solid var(--glass-border);
+		box-shadow: var(--glass-shadow);
+		text-align: left;
+	}
+
+	.missed-card h3 {
+		margin: 0 0 24px;
 		font-size: 20px;
-		margin-bottom: 20px;
+		color: var(--text-dark);
+		line-height: 1.5;
+		font-weight: 600;
+	}
+
+	.options-container {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+	}
+
+	.option {
+		padding: 16px 24px;
+		border-radius: var(--radius-l);
+		display: flex;
+		align-items: center;
+		gap: 16px;
+		font-weight: 500;
+		position: relative;
+	}
+
+	.option.incorrect {
+		background: #f8d7da;
+		border: 1px solid #f5c6cb;
+		color: #721c24;
+	}
+
+	.option.correct {
+		background: #d4edda;
+		border: 1px solid #c3e6cb;
+		color: #155724;
+	}
+
+	.option-letter {
+		font-weight: 700;
+		font-size: 18px;
+	}
+
+	.option-letter.incorrect {
+		color: #721c24;
+	}
+
+	.option-letter.correct {
+		color: #155724;
+	}
+
+	.badge {
+		margin-left: auto;
+		padding: 4px 12px;
+		border-radius: 20px;
+		font-size: 12px;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.5px;
+	}
+
+	.badge-incorrect {
+		background: rgba(220, 53, 69, 0.15);
+		color: #721c24;
+	}
+
+	.badge-correct {
+		background: rgba(40, 167, 69, 0.15);
+		color: #155724;
+	}
+
+	.perfect-score {
+		padding: 30px;
+		border-radius: var(--radius-xl);
+		background: rgba(40, 167, 69, 0.1);
+		border: 1px solid #c3e6cb;
+		color: #155724;
+		text-align: center;
+		font-size: 20px;
+		font-weight: 600;
+		width: 100%;
+		max-width: 800px;
+		backdrop-filter: blur(10px);
+	}
+
+	@media (max-width: 600px) {
+		.option {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 8px;
+			padding: 16px;
+		}
+
+		.badge {
+			margin-left: 0;
+			margin-top: 8px;
+		}
 	}
 </style>
