@@ -1,9 +1,9 @@
 <script lang="ts">
 	let {
-		checked = $bindable(false),
+		checked = $bindable(),
 		onchange
 	}: {
-		checked?: boolean;
+		checked: boolean;
 		onchange?: () => void;
 	} = $props();
 </script>
@@ -26,8 +26,10 @@
 		position: absolute;
 		opacity: 0;
 		cursor: pointer;
-		height: 0;
-		width: 0;
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		z-index: 2; /* Needs to be above the switch to be clickable */
 	}
 
 	.toggle-switch {

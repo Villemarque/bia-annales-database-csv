@@ -154,12 +154,12 @@
 		</div>
 
 		<div class="sidebar-actions">
+			{#if session.kind.is === 'study'}
 				<div class="toggle-container">
 					<label for="auto-advance-toggle">Question suivante auto</label>
-					<Toggle
-						bind:checked={preferences.current.autoAdvance}
-						onchange={() => console.log("click")} />
+					<Toggle bind:checked={preferences.current.autoAdvance} />
 				</div>
+			{/if}
 			<button class="sidebar-btn cancel" onclick={cancelSession}>Annuler</button>
 			<button class="sidebar-btn finish" onclick={finishSession}>Terminer</button>
 		</div>

@@ -337,12 +337,6 @@
 		line-height: 1.4;
 		flex: 1;
 	}
-
-	/* Remove old checkbox styles */
-	/* .checkmark {
-		display: none;
-	} */
-
 	.count-value {
 		font-weight: 700;
 		font-size: 18px;
