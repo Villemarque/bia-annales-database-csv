@@ -3,12 +3,11 @@
 	import { onMount } from 'svelte';
 	import { log } from '$lib/log';
 	import { go } from '$lib/go.svelte';
-	import type { OngoingSession, Attempt, Timestamp, AttemptId, Qid, QuestionWip } from '$lib/types';
+	import type { OngoingSession, Qid, QuestionWip } from '$lib/types';
 	import { formatTime } from '$lib/utils';
 	import { questions } from '$lib/stores/questions';
 	import { makeAttempt, addAttempt } from '$lib/stores/attempt';
 	import { preferences } from '$lib/stores/preferences.svelte';
-	import { unsafeRandomId } from '$lib/random';
 	import Toggle from '../components/Toggle.svelte';
 
 	let {
@@ -41,6 +40,7 @@
 
 	function handleSelect(choiceNo: number) {
 		const isStudy = session.kind.is === 'study';
+		// if correction already shown
 		if (session.questions[currentIndex].correct_choice !== undefined) {
 			return;
 		}
@@ -49,15 +49,20 @@
 
 		if (isStudy) {
 			session.questions[currentIndex].correct_choice = currentQuestionDisplay.answer;
-
-			const attempt = makeAttempt(
-				currentQuestionWip,
-				session,
-				currentQuestionDisplay,
-				durationByQ[currentQuestionWip.qid] || 0
-			);
-			if (attempt) {
-				addAttempt(attempt);
+		}
+		// in study mode, only to the next question if answered correctly
+		if (
+			preferences.current.autoAdvance &&
+			(session.questions[currentIndex].correct_choice === undefined ||
+				session.questions[currentIndex].correct_choice === session.questions[currentIndex].selected_choice)
+		) {
+			const next = session.questions
+				.slice(currentIndex)
+				.concat(session.questions.slice(0, currentIndex))
+				.find((wip) => wip.selected_choice === undefined);
+			if (next) {
+				log.log('next', next);
+				currentIndex = session.questions.findIndex((wip) => wip.qid == next.qid);
 			}
 		}
 	}
@@ -68,8 +73,25 @@
 
 	function finishSession() {
 		log.log('before onSessionFinish');
-		// `onSessionFinish` might erase it, so save before
+		// `onSessionFinish` "might" erase it, so save before
 		const sessionId = session.id;
+
+		for (const wip of session.questions) {
+			// only add attempts to answered questions
+			if (wip.selected_choice !== undefined) {
+				// exam mode
+				// `correct_choice` is needed for good validation
+				// if (wip.correct_choice === undefined) {
+				// 	wip.correct_choice = $questions[wip.qid].answer;
+				// }
+				const attempt = makeAttempt(wip, session, $questions[wip.qid], durationByQ[wip.qid] || 0);
+				if (attempt) {
+					addAttempt(attempt);
+				}
+			}
+		}
+
+		// TODO FIXME at some point mvoe it back here, it's not independent...
 		onSessionFinish();
 		log.log('after onSessionFinish');
 		go(`/sessions/${sessionId}`);
@@ -142,7 +164,7 @@
 	<aside class="responses-sidebar">
 		<h3>Réponses</h3>
 		<div class="response-grid">
-			{#each session.questions as q, i}
+			{#each session.questions as q, i (i)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div

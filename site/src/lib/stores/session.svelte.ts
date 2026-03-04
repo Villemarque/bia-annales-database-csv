@@ -84,7 +84,9 @@ export const saveSession = () => {
 		// and get back a plain value
 		// https://github.com/svecosystem/runed/issues/407
 		const ongoing: OngoingSession = JSON.parse(JSON.stringify(sessionState.current));
-		const score = ongoing.questions.filter((wip) => wip.selected_choice === wip.correct_choice).length;
+		const score = ongoing.questions.filter(
+			(wip) => wip.selected_choice !== undefined && wip.selected_choice === wip.correct_choice
+		).length;
 		const endedSession: Session = {
 			...ongoing,
 			questions: sessionState.current.questions.map((q) => q.qid),

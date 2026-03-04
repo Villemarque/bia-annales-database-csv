@@ -68,7 +68,7 @@ interface SessionBase<T> {
 	name: string;
 	kind: { is: 'exam'; year: number; initial_time: number } | { is: 'study' };
 	created_at: Timestamp;
-	questions: T[];
+	questions: T[]; // denormalised
 }
 
 export type Session = SessionBase<Qid> & {

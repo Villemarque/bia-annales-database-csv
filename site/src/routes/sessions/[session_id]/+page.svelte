@@ -18,11 +18,13 @@
 	}
 
 	let missedQuestions = $derived.by(() => {
-		const missed: { question: Question; attempt: Attempt }[] = [];
+		const missed: { question: Question; attempt?: Attempt }[] = [];
 		for (const qid of session.questions) {
 			const qAttempts = $attempts[qid] || [];
 			const attempt = qAttempts.find((a) => a.sessionId === session.id);
-			if (attempt && !attempt.correct) {
+			// no attempt in case of corruption
+			// or if session finished without answering
+			if (!attempt || !attempt.correct) {
 				const question = $questions[qid];
 				if (question) {
 					missed.push({ question, attempt });
@@ -70,9 +72,13 @@
 				<div class="missed-card">
 					<h3>{question.content}</h3>
 					<div class="options-container">
-						<div class="option incorrect">
-							<span>{question.choices[attempt.selectedChoice]}</span>
-						</div>
+						{#if attempt}
+							<div class="option incorrect">
+								<span>{question.choices[attempt.selectedChoice]}</span>
+							</div>
+						{:else}
+							<span>Pas de réponse donnée</span>
+						{/if}
 						<div class="option correct">
 							<span>{question.choices[question.answer]}</span>
 						</div>
