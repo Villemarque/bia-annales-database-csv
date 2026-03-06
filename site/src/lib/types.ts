@@ -9,6 +9,13 @@ export type IdPrefix =
 	| 'ses' // session
 	| 'att'; // attempt
 
+export type Second = number & { __second__: void };
+export const zeroSecond = 0 as Second;
+export const inc = (s: Second): Second => (s + 1) as Second;
+
+// export const years = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025] as const;
+// export type Year = typoef years[number];
+
 export const Subjects = {
 	METEO: 0 as Subject,
 	AERODYNAMIQUE: 1 as Subject,
@@ -58,7 +65,7 @@ export interface Attempt {
 	selectedChoice: number;
 	correct: boolean; // denormalised
 	timestamp: Timestamp;
-	duration_s: number;
+	duration: Second;
 	// source: 'study' | 'exam';
 	// notes?: string; // ???
 }
@@ -66,24 +73,24 @@ export interface Attempt {
 interface SessionBase<T> {
 	id: SessionId;
 	name: string;
-	kind: { is: 'exam'; year: number; initial_time: number } | { is: 'study' };
-	created_at: Timestamp;
+	kind: { is: 'exam'; year: number; initialTime: Second } | { is: 'study' };
+	createdAt: Timestamp;
 	questions: T[]; // denormalised
 }
 
 export type Session = SessionBase<Qid> & {
-	duration_s: number;
+	duration: Second;
 	score: number;
 };
 
 export interface QuestionWip {
 	qid: Qid;
-	duration_s: number;
-	selected_choice?: number;
-	correct_choice?: number; // if correct is set, then the question is no longer editable
+	duration: Second;
+	selectedChoice?: number;
+	correctChoice?: number; // if correct is set, then the question is no longer editable
 }
 
-// duration_s is notset until the end of the session, so that we can display a timer during the session
+// duration is notset until the end of the session, so that we can display a timer during the session
 // without having to (de)serialise the session object on every tick.
 export type OngoingSession = SessionBase<QuestionWip>;
 

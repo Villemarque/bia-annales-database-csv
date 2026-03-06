@@ -3,7 +3,8 @@
 	import { onMount } from 'svelte';
 	import { log } from '$lib/log';
 	import { go } from '$lib/go.svelte';
-	import type { OngoingSession, Qid, QuestionWip } from '$lib/types';
+	import type { OngoingSession, Qid, QuestionWip, Second } from '$lib/types';
+	import { zeroSecond, inc } from '$lib/types';
 	import { formatTime } from '$lib/utils';
 	import { questions } from '$lib/stores/questions';
 	import { makeAttempt, addAttempt } from '$lib/stores/attempt';
@@ -18,8 +19,8 @@
 		onSessionCancel
 	}: {
 		session: OngoingSession;
-		sessionDuration: number;
-		durationByQ: Record<Qid, number>;
+		sessionDuration: Second;
+		durationByQ: Record<Qid, Second>;
 		onSessionCancel: () => void;
 		onSessionFinish: () => void;
 	} = $props();
@@ -31,7 +32,7 @@
 	let currentQuestionWip = $derived(session.questions[currentIndex]);
 	let timeShown = $derived.by(() => {
 		if (session.kind.is === 'exam') {
-			return session.kind.initial_time - sessionDuration;
+			return session.kind.initialTime - sessionDuration;
 		}
 		return sessionDuration;
 	});
@@ -41,25 +42,25 @@
 	function handleSelect(choiceNo: number) {
 		const isStudy = session.kind.is === 'study';
 		// if correction already shown
-		if (session.questions[currentIndex].correct_choice !== undefined) {
+		if (session.questions[currentIndex].correctChoice !== undefined) {
 			return;
 		}
 
-		session.questions[currentIndex].selected_choice = choiceNo;
+		session.questions[currentIndex].selectedChoice = choiceNo;
 
 		if (isStudy) {
-			session.questions[currentIndex].correct_choice = currentQuestionDisplay.answer;
+			session.questions[currentIndex].correctChoice = currentQuestionDisplay.answer;
 		}
 		// in study mode, only to the next question if answered correctly
 		if (
 			preferences.current.autoAdvance &&
-			(session.questions[currentIndex].correct_choice === undefined ||
-				session.questions[currentIndex].correct_choice === session.questions[currentIndex].selected_choice)
+			(session.questions[currentIndex].correctChoice === undefined ||
+				session.questions[currentIndex].correctChoice === session.questions[currentIndex].selectedChoice)
 		) {
 			const next = session.questions
 				.slice(currentIndex)
 				.concat(session.questions.slice(0, currentIndex))
-				.find((wip) => wip.selected_choice === undefined);
+				.find((wip) => wip.selectedChoice === undefined);
 			if (next) {
 				log.log('next', next);
 				currentIndex = session.questions.findIndex((wip) => wip.qid == next.qid);
@@ -78,13 +79,13 @@
 
 		for (const wip of session.questions) {
 			// only add attempts to answered questions
-			if (wip.selected_choice !== undefined) {
+			if (wip.selectedChoice !== undefined) {
 				// exam mode
-				// `correct_choice` is needed for good validation
-				// if (wip.correct_choice === undefined) {
-				// 	wip.correct_choice = $questions[wip.qid].answer;
+				// `correctChoice` is needed for good validation
+				// if (wip.correctChoice === undefined) {
+				// 	wip.correctChoice = $questions[wip.qid].answer;
 				// }
-				const attempt = makeAttempt(wip, session, $questions[wip.qid], durationByQ[wip.qid] || 0);
+				const attempt = makeAttempt(wip, session, $questions[wip.qid], durationByQ[wip.qid] || zeroSecond);
 				if (attempt) {
 					addAttempt(attempt);
 				}
@@ -103,26 +104,24 @@
 	}
 
 	function isOptionCorrect(wip: QuestionWip, optionIndex: number) {
-		return wip.correct_choice !== undefined && optionIndex === wip.correct_choice;
+		return wip.correctChoice !== undefined && optionIndex === wip.correctChoice;
 	}
 
 	function isOptionIncorrect(wip: QuestionWip, optionIndex: number) {
-		return (
-			wip.correct_choice !== undefined && optionIndex !== wip.correct_choice && optionIndex === wip.selected_choice
-		);
+		return wip.correctChoice !== undefined && optionIndex !== wip.correctChoice && optionIndex === wip.selectedChoice;
 	}
 
 	const questionBtnClass = (wip: QuestionWip) => {
-		if (wip.correct_choice === undefined) return '';
-		return wip.correct_choice === wip.selected_choice ? 'correct' : 'incorrect';
+		if (wip.correctChoice === undefined) return '';
+		return wip.correctChoice === wip.selectedChoice ? 'correct' : 'incorrect';
 	};
 
 	onMount(() => {
 		const timer = setInterval(() => {
-			sessionDuration += 1;
-			durationByQ[currentQuestionWip.qid] = (durationByQ[currentQuestionWip.qid] || 0) + 1;
+			sessionDuration = inc(sessionDuration);
+			durationByQ[currentQuestionWip.qid] = inc(durationByQ[currentQuestionWip.qid] || zeroSecond);
 			// do NOT put this as an $effect
-			if (session.kind.is === 'exam' && timeShown <= session.kind.initial_time - sessionDuration) {
+			if (session.kind.is === 'exam' && timeShown <= session.kind.initialTime - sessionDuration) {
 				finishSession();
 			}
 		}, 1000);
@@ -142,13 +141,13 @@
 
 		<div class="question-card">
 			<h2>{currentQuestionDisplay.content}</h2>
-			<div class="options-grid" class:locked={currentQuestionWip.correct_choice !== undefined}>
+			<div class="options-grid" class:locked={currentQuestionWip.correctChoice !== undefined}>
 				{#each currentQuestionDisplay.choices as option, i (i)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
 					<!-- svelte-ignore a11y_no_static_element_interactions -->
 					<div
 						class="option"
-						class:selected={currentQuestionWip.selected_choice === i}
+						class:selected={currentQuestionWip.selectedChoice === i}
 						class:correct={isOptionCorrect(currentQuestionWip, i)}
 						class:incorrect={isOptionIncorrect(currentQuestionWip, i)}
 						onclick={() => handleSelect(i)}>

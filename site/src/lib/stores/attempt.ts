@@ -15,6 +15,7 @@ import {
 	type Timestamp,
 	type Question,
 	type OngoingSession,
+	type Second,
 	createBySubject
 } from '$lib/types';
 import { parseSubject } from '$lib/subject';
@@ -24,7 +25,6 @@ export const attempts = writable<Record<Qid, Attempt[]>>({}, (set) => {
 	getDb.then((db: Db) => {
 		// {id: Qid, data: Attempt[]}[]
 		db.stores.attempt.getMany().then((attemptsArrayArray) => {
-			log.log('attemptsArray', attemptsArrayArray);
 			const attemptsRecord: Record<Qid, Attempt[]> = {};
 			for (const idbObj of attemptsArrayArray as { id: Qid; data: Attempt[] }[]) {
 				attemptsRecord[idbObj.id] = idbObj.data;
@@ -48,20 +48,20 @@ export const makeAttempt = (
 	from: QuestionWip,
 	session: OngoingSession,
 	q: Question,
-	duration_s: number
+	duration: Second
 ): Attempt | undefined => {
-	if (from.selected_choice === undefined) {
-		log.error(`Cannot make Attempt from QuestionWip with undefined selected_choice! ${JSON.stringify(from)}`);
+	if (from.selectedChoice === undefined) {
+		log.error(`Cannot make Attempt from QuestionWip with undefined selectedChoice! ${JSON.stringify(from)}`);
 		return;
 	}
 	return {
 		id: unsafeRandomId({ prefix: 'att' }) as AttemptId,
 		qid: from.qid,
 		sessionId: session.id,
-		selectedChoice: from.selected_choice,
-		correct: from.selected_choice === q.answer,
+		selectedChoice: from.selectedChoice,
+		correct: from.selectedChoice === q.answer,
 		timestamp: Date.now() as Timestamp,
-		duration_s
+		duration
 	};
 };
 

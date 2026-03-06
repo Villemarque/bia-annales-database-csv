@@ -55,7 +55,7 @@
 					<span class="stat-label">Réponses correctes</span>
 				</div>
 				<div class="stat-item">
-					<span class="stat-value">{formatTime(session.duration_s)}</span>
+					<span class="stat-value">{formatTime(session.duration)}</span>
 					<span class="stat-label">Temps total</span>
 				</div>
 			</div>

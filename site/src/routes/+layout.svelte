@@ -20,6 +20,7 @@
 	const menuItems = [
 		{ icon: '🏠', label: 'Accueil', action: href('/') },
 		{ icon: '✈︎', label: 'Programme', action: href('/quiz') },
+		{ icon: '📅', label: 'Annales', action: href('/annales') },
 		{ icon: '📜', label: 'Sessions', action: href('/sessions') },
 		{ icon: '🔍', label: 'Questions', action: href('/questions') },
 		{ icon: '⚙️', label: 'Paramètres', action: href('/settings') }

@@ -15,8 +15,10 @@ import type {
 	OngoingSession,
 	Session,
 	LocalStorageKey,
-	SessionId
+	SessionId,
+	Second
 } from '$lib/types';
+import { zeroSecond } from '$lib/types';
 import { parseSubject } from '$lib/subject';
 import { attempts } from '$lib/stores/attempt';
 import { PersistedState } from 'runed';
@@ -29,8 +31,8 @@ const durationByQKey = 'sessionDurationByQ' as LocalStorageKey;
 export const sessionState = new PersistedState<OngoingSession | null>(sessionKey, null);
 // if above is defined, assume below belongs to it
 // separate from sessionState for optimisation, see https://github.com/svecosystem/runed/issues/291
-export const sessionDuration = new PersistedState<number>(durationKey, 0);
-export const durationByQ = new PersistedState<Record<Qid, number>>(durationByQKey, {});
+export const sessionDuration = new PersistedState<Second>(durationKey, zeroSecond);
+export const durationByQ = new PersistedState<Record<Qid, Second>>(durationByQKey, {});
 // most recent first
 const pastSessionsWritable = writable<Session[]>([], (set) => {
 	getDb.then((db: Db) => {
@@ -38,7 +40,7 @@ const pastSessionsWritable = writable<Session[]>([], (set) => {
 		db.stores.session.getMany().then((idbArray) => {
 			// sort by most recent first
 			const sessions = (idbArray as { id: SessionId; data: Session }[]).map((obj) => obj.data);
-			sessions.sort((a, b) => b.created_at - a.created_at);
+			sessions.sort((a, b) => b.createdAt - a.createdAt);
 			set(sessions);
 			log.log('(finished) sessions store populated from IndexedDB');
 		});
@@ -55,7 +57,11 @@ pastSessionsWritable.subscribe((value: Session[]) => {
 	});
 });
 
-export const makeNewSession = (name: string, selectedQids: Qid[]) => {
+export const makeNewSession = (
+	name: string,
+	selectedQids: Qid[],
+	mode: 'study' | { year: number; initialTime: Second }
+) => {
 	if (sessionState.current) {
 		log.error(
 			`Overriding ongoing Session ${sessionState.current.id} with a new Session! ${JSON.stringify(sessionState.current)}`
@@ -64,16 +70,14 @@ export const makeNewSession = (name: string, selectedQids: Qid[]) => {
 	sessionState.current = {
 		id: unsafeRandomId({ prefix: 'ses' }) as SessionId, // Simple ID generation
 		name,
-		created_at: Date.now() as Timestamp,
-		kind: {
-			is: 'study'
-		},
+		createdAt: Date.now() as Timestamp,
+		kind: mode === 'study' ? { is: 'study' } : { ...mode, is: 'exam' },
 		questions: selectedQids.map((qid) => ({
 			qid,
-			duration_s: 0
+			duration: zeroSecond
 		}))
 	};
-	sessionDuration.current = 0;
+	sessionDuration.current = zeroSecond;
 };
 
 export const saveSession = () => {
@@ -85,12 +89,12 @@ export const saveSession = () => {
 		// https://github.com/svecosystem/runed/issues/407
 		const ongoing: OngoingSession = JSON.parse(JSON.stringify(sessionState.current));
 		const score = ongoing.questions.filter(
-			(wip) => wip.selected_choice !== undefined && wip.selected_choice === wip.correct_choice
+			(wip) => wip.selectedChoice !== undefined && wip.selectedChoice === wip.correctChoice
 		).length;
 		const endedSession: Session = {
 			...ongoing,
 			questions: sessionState.current.questions.map((q) => q.qid),
-			duration_s: sessionDuration.current || 0,
+			duration: sessionDuration.current || zeroSecond,
 			score
 		};
 		pastSessionsWritable.update((current) => {
@@ -108,7 +112,7 @@ export const cancelSession = () => {
 	log.log(`Cancelling session ${sessionState.current}`);
 	sessionState.current = null;
 	log.log(`After cancelling session ${sessionState.current}`);
-	sessionDuration.current = 0;
+	sessionDuration.current = zeroSecond;
 	durationByQ.current = {};
 };
 

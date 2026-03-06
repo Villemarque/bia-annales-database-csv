@@ -73,7 +73,7 @@
 
 						<div class="session-details">
 							<div class="session-header">
-								<span class="session-date">{formatDate(session.created_at)}</span>
+								<span class="session-date">{formatDate(session.createdAt)}</span>
 								<span class="session-name">{session.name || 'Session sans nom'}</span>
 							</div>
 							<div class="session-stats">
@@ -85,7 +85,7 @@
 								</div>
 								<div class="stat">
 									<span class="label">Durée</span>
-									<span class="value">{formatTime(session.duration_s)}</span>
+									<span class="value">{formatTime(session.duration)}</span>
 								</div>
 							</div>
 						</div>

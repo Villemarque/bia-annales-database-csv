@@ -109,7 +109,7 @@
 		// Select the first N questions based on sliderValue
 		const selectedQids = qids.slice(0, sliderValue);
 
-		makeNewSession(`Quiz ${title}`, selectedQids);
+		makeNewSession(`Quiz ${title}`, selectedQids, 'study');
 		go('/quiz');
 	}
 </script>

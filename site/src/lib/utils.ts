@@ -10,3 +10,7 @@ export function entries<T extends Record<PropertyKey, unknown>>(obj: T) {
 		[K in keyof T]-?: [K, T[K]];
 	}[keyof T][];
 }
+
+export function values<T extends Record<PropertyKey, unknown>>(obj: T) {
+	return Object.values(obj) as T[keyof T][];
+}

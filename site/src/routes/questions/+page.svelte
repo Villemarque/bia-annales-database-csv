@@ -4,7 +4,7 @@
 	import type { Question, Subject, ChapterId, Qid } from '$lib/types';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
-	import {SvelteSet} from 'svelte/reactivity';
+	import { SvelteSet } from 'svelte/reactivity';
 
 	let subjectFilter = $state<string>('');
 	let searchQuery = $state<string>('');
