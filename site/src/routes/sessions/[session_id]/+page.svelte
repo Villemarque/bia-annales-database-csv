@@ -5,14 +5,13 @@
 	import { questions } from '$lib/stores/questions';
 	import type { Session, Attempt, Question } from '$lib/types';
 	import { attempts } from '$lib/stores/attempt';
+	import { formatTime } from '$lib/utils';
 	import ScoreRing from '../../../components/ScoreRing.svelte';
 
 	let { params }: { params: { session_id: string } } = $props();
 
-	const sessionId = params.session_id;
-
 	// typing is a lie, but check is made just after to conform to it
-	let session: Session = $derived($pastSessions.find((s: Session) => s.id === sessionId))!;
+	let session: Session = $derived($pastSessions.find((s: Session) => s.id === params.session_id))!;
 	if (!session) {
 		go('/');
 	}
@@ -34,60 +33,66 @@
 		return missed;
 	});
 
-	function formatTime(seconds: number) {
-		const hrs = Math.floor(seconds / 3600);
-		const mins = Math.floor((seconds % 3600) / 60);
-		const secs = seconds % 60;
-		return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-	}
-
-	let percent = $derived(session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0);
+	let percent = $derived(
+		session && session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0
+	);
+	let isTimedOut = $derived(session && session.kind.is === 'exam' && session.duration >= session.kind.initialTime);
 </script>
 
-<div class="summary-page">
-	<div class="summary-card">
-		<h2>{session.name}</h2>
-		<div class="score-display">
-			<ScoreRing {percent} size={200} strokeWidth={8} />
-			<div class="stats-grid">
-				<div class="stat-item">
-					<span class="stat-value">{session.score} / {session.questions.length}</span>
-					<span class="stat-label">Réponses correctes</span>
+{#if session}
+	<div class="summary-page">
+		<div class="summary-card">
+			<h2>{session.name}</h2>
+			{#if isTimedOut}
+				<div class="timeout-alert">
+					<span class="icon">⏱️</span>
+					<span>Temps écoulé</span>
 				</div>
-				<div class="stat-item">
-					<span class="stat-value">{formatTime(session.duration)}</span>
-					<span class="stat-label">Temps total</span>
-				</div>
-			</div>
-		</div>
-		<div class="actions">
-			<button class="primary-btn" onclick={() => go('/')}>Retour à l'accueil</button>
-		</div>
-	</div>
-
-	{#if missedQuestions.length > 0}
-		<div class="missed-section">
-			<h2 class="section-title">Questions à revoir</h2>
-			{#each missedQuestions as { question, attempt } (question.qid)}
-				<div class="missed-card">
-					<h3>{question.content}</h3>
-					<div class="options-container">
-						{#if attempt}
-							<div class="option incorrect">
-								<span>{question.choices[attempt.selectedChoice]}</span>
-							</div>
-						{:else}
-							<span>Pas de réponse donnée</span>
-						{/if}
-						<div class="option correct">
-							<span>{question.choices[question.answer]}</span>
-						</div>
+			{/if}
+			<div class="score-display">
+				<ScoreRing {percent} size={200} strokeWidth={8} />
+				<div class="stats-grid">
+					<div class="stat-item">
+						<span class="stat-value">{session.score} / {session.questions.length}</span>
+						<span class="stat-label">Réponses correctes</span>
+					</div>
+					<div class="stat-item">
+						<span class="stat-value">{formatTime(session.duration)}</span>
+						<span class="stat-label">Temps total</span>
 					</div>
 				</div>
-			{/each}
+			</div>
+			<div class="actions">
+				<button class="primary-btn" onclick={() => go('/')}>Retour à l'accueil</button>
+			</div>
 		</div>
-	{/if}
-</div>
+
+		{#if missedQuestions.length > 0}
+			<div class="missed-section">
+				<h2 class="section-title">Questions à revoir</h2>
+				{#each missedQuestions as { question, attempt } (question.qid)}
+					<div class="missed-card">
+						<h3>{question.content}</h3>
+						<div class="options-container">
+							{#if attempt}
+								<div class="option incorrect">
+									<span>{question.choices[attempt.selectedChoice]}</span>
+								</div>
+							{:else}
+								<span>Pas de réponse donnée</span>
+							{/if}
+							<div class="option correct">
+								<span>{question.choices[question.answer]}</span>
+							</div>
+						</div>
+					</div>
+				{/each}
+			</div>
+		{/if}
+	</div>
+{:else}
+	<div class="loading">Chargement...</div>
+{/if}
 
 <style>
 	.summary-page {
@@ -116,10 +121,40 @@
 	}
 
 	.summary-card h2 {
-		margin: 0 0 40px;
+		margin: 0 0 20px;
 		font-size: 28px;
 		font-weight: 700;
 		color: var(--text-dark);
+	}
+
+	.timeout-alert {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		background: #fff5f5;
+		color: #c92a2a;
+		padding: 8px 16px;
+		border-radius: 50px;
+		font-weight: 700;
+		font-size: 14px;
+		margin-bottom: 20px;
+		border: 1px solid #ffc9c9;
+		animation: pulse 2s infinite;
+	}
+
+	@keyframes pulse {
+		0% {
+			transform: scale(1);
+			box-shadow: 0 0 0 0 rgba(201, 42, 42, 0.4);
+		}
+		70% {
+			transform: scale(1.02);
+			box-shadow: 0 0 0 10px rgba(201, 42, 42, 0);
+		}
+		100% {
+			transform: scale(1);
+			box-shadow: 0 0 0 0 rgba(201, 42, 42, 0);
+		}
 	}
 
 	.score-display {

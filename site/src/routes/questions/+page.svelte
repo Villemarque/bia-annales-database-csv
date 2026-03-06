@@ -107,7 +107,6 @@
 			'var(--card-red)',
 			'var(--card-pink)'
 		];
-		if (isNaN(id)) return colors[0];
 		return colors[id % colors.length];
 	}
 
