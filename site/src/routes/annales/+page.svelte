@@ -51,11 +51,6 @@
 		// Use the year to deterministically pick a color
 		return gradients[year % gradients.length];
 	}
-
-	function getYearIcon(year: number) {
-		const icons = ['✨', '🌟', '🚀', '🎯', '🏆', '⭐'];
-		return icons[year % icons.length];
-	}
 </script>
 
 <div class="annales-page">
