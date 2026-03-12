@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { questions } from '$lib/stores/questions';
-	import type { Question, Qid, Timestamp, Second } from '$lib/types';
-	import { makeNewSession, sessionState } from '$lib/stores/session.svelte';
+	import type { Question, Qid, Timestamp, Second, ExamSession } from '$lib/types';
+	import { makeNewSession, sessionState, pastSessions, isExamSession } from '$lib/stores/session.svelte';
 	import { unsafeRandomId } from '$lib/random';
 	import { values } from '$lib/utils';
 	import { go } from '$lib/go.svelte';
@@ -14,6 +14,19 @@
 			yearSet.add(q.year);
 		}
 		return Array.from(yearSet).sort((a, b) => b - a);
+	});
+
+	const bestResultByYear: Record<number, number> = $derived.by(() => {
+		const sessions: ExamSession[] = $pastSessions.filter(isExamSession);
+		const bestByYear: Record<number, number> = {};
+		for (const session of sessions) {
+			const year = session.kind.year;
+			const score = session.score;
+			if (bestByYear[year] === undefined || score > bestByYear[year]) {
+				bestByYear[year] = score;
+			}
+		}
+		return bestByYear;
 	});
 
 	function handleYearClick(year: number) {

@@ -16,7 +16,8 @@ import type {
 	Session,
 	LocalStorageKey,
 	SessionId,
-	Second
+	Second,
+	ExamSession
 } from '$lib/types';
 import { zeroSecond } from '$lib/types';
 import { parseSubject } from '$lib/subject';
@@ -47,6 +48,10 @@ const pastSessionsWritable = writable<Session[]>([], (set) => {
 	});
 });
 export const pastSessions = readonly(pastSessionsWritable);
+
+export const isExamSession = (session: Session): session is ExamSession => {
+	return session.kind.is === 'exam';
+};
 
 // always keep the object in sync with IndexedDB
 pastSessionsWritable.subscribe((value: Session[]) => {

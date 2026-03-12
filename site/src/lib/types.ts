@@ -70,18 +70,30 @@ export interface Attempt {
 	// notes?: string; // ???
 }
 
-interface SessionBase<T> {
+type SessionKind = 'exam' | 'study';
+
+type SessionKindData = {
+	exam: { is: 'exam'; year: number; initialTime: Second };
+	study: { is: 'study' };
+};
+
+type SessionKindOf<K extends SessionKind> = SessionKindData[K];
+
+interface SessionBase<T, K extends SessionKind = SessionKind> {
 	id: SessionId;
 	name: string;
-	kind: { is: 'exam'; year: number; initialTime: Second } | { is: 'study' };
+	kind: SessionKindOf<K>;
 	createdAt: Timestamp;
 	questions: T[]; // denormalised
 }
 
-export type Session = SessionBase<Qid> & {
+export type Session<K extends SessionKind = SessionKind> = SessionBase<Qid, K> & {
 	duration: Second;
 	score: number;
 };
+
+export type ExamSession = Session<'exam'>;
+export type StudySession = Session<'study'>;
 
 export interface QuestionWip {
 	qid: Qid;
