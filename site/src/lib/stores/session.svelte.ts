@@ -9,6 +9,7 @@ import type {
 	Attempt,
 	Qid,
 	Subject,
+	Question,
 	ChapterId,
 	Timestamp,
 	QuestionsByChapter,
@@ -21,7 +22,8 @@ import type {
 } from '$lib/types';
 import { zeroSecond } from '$lib/types';
 import { parseSubject } from '$lib/subject';
-import { attempts } from '$lib/stores/attempt';
+import { isDefined } from '$lib/utils';
+import { attempts, makeAttempt, addAttempts } from '$lib/stores/attempt';
 import { PersistedState } from 'runed';
 
 const sessionKey = 'ongoingSession' as LocalStorageKey;
@@ -85,20 +87,28 @@ export const makeNewSession = (
 	sessionDuration.current = zeroSecond;
 };
 
-export const saveSession = () => {
+export const saveSession = (questions: Record<Qid, Question>) => {
 	if (sessionState.current === null) {
 		log.error('Trying to end a session when there is no ongoing session!');
 	} else {
 		// hack needed here to avoid issues with proxy
 		// and get back a plain value
 		// https://github.com/svecosystem/runed/issues/407
+		//
+		// also in the unlikely case that the sessionState is mutated after the start
+		// we want to make sure we are working with a consistent snapshot of the sessionState
 		const ongoing: OngoingSession = JSON.parse(JSON.stringify(sessionState.current));
-		const score = ongoing.questions.filter(
-			(wip) => wip.selectedChoice !== undefined && wip.selectedChoice === wip.correctChoice
-		).length;
+
+		// an attempt is made, only if the question was answered
+		const attempts: Attempt[] = ongoing.questions
+			.map((wip) => makeAttempt(wip, ongoing, questions[wip.qid], durationByQ.current[wip.qid] || zeroSecond))
+			.filter(isDefined);
+		addAttempts(attempts);
+		const score = attempts.reduce((acc, attempt) => acc + (attempt.correct ? 1 : 0), 0);
+
 		const endedSession: Session = {
 			...ongoing,
-			questions: sessionState.current.questions.map((q) => q.qid),
+			questions: ongoing.questions.map((q) => q.qid),
 			duration: sessionDuration.current || zeroSecond,
 			score
 		};

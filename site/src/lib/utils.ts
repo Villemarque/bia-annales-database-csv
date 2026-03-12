@@ -14,3 +14,5 @@ export function entries<T extends Record<PropertyKey, unknown>>(obj: T) {
 export function values<T extends Record<PropertyKey, unknown>>(obj: T) {
 	return Object.values(obj) as T[keyof T][];
 }
+
+export const isDefined = <T>(v: T | undefined): v is T => v !== undefined;

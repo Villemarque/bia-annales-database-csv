@@ -5,6 +5,7 @@
 	import { unsafeRandomId } from '$lib/random';
 	import { values } from '$lib/utils';
 	import { go } from '$lib/go.svelte';
+	import ScoreRing from '../../components/ScoreRing.svelte';
 
 	// Derive unique years from the questions store, sort descending
 	const years = $derived.by(() => {
@@ -16,14 +17,16 @@
 		return Array.from(yearSet).sort((a, b) => b - a);
 	});
 
-	const bestResultByYear: Record<number, number> = $derived.by(() => {
+	const bestResultByYear: Record<number, { score: number; nbQuestions: number }> = $derived.by(() => {
 		const sessions: ExamSession[] = $pastSessions.filter(isExamSession);
-		const bestByYear: Record<number, number> = {};
+		const bestByYear: Record<number, { score: number; nbQuestions: number }> = {};
 		for (const session of sessions) {
 			const year = session.kind.year;
 			const score = session.score;
-			if (bestByYear[year] === undefined || score > bestByYear[year]) {
-				bestByYear[year] = score;
+			// TODO FIXME, for now does not take into account english or not.
+			const nbQuestions = session.questions.length;
+			if (bestByYear[year] === undefined || score > bestByYear[year].score) {
+				bestByYear[year] = { score, nbQuestions };
 			}
 		}
 		return bestByYear;
@@ -82,6 +85,14 @@
 				onclick={() => handleYearClick(year)}
 				role="button"
 				style:animation-delay="{i * 0.05}s">
+				{#if bestResultByYear[year] !== undefined}
+					<div class="best-score">
+						<ScoreRing
+							percent={(bestResultByYear[year].score / bestResultByYear[year].nbQuestions) * 100}
+							size={64}
+							strokeWidth={5} />
+					</div>
+				{/if}
 				<div class="card-content">
 					<h2 class="year-title">{year}</h2>
 					<span class="action-text">Commencer l'examen <span class="arrow">→</span></span>
@@ -172,19 +183,23 @@
 		height: 100%;
 	}
 
-	.icon-wrapper {
-		font-size: 2.5rem;
-		margin-bottom: 16px;
-		background: rgba(255, 255, 255, 0.2);
-		width: 64px;
-		height: 64px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 20px;
-		backdrop-filter: blur(10px);
-		-webkit-backdrop-filter: blur(10px);
-		border: 1px solid rgba(255, 255, 255, 0.1);
+	.best-score {
+		position: absolute;
+		top: 20px;
+		right: 20px;
+		z-index: 2;
+	}
+
+	.best-score :global(.ring-track) {
+		stroke: rgba(255, 255, 255, 0.25);
+	}
+
+	.best-score :global(.ring-progress) {
+		stroke: white;
+	}
+
+	.best-score :global(.ring-value) {
+		color: white;
 	}
 
 	.year-title {

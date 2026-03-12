@@ -51,7 +51,7 @@ export const makeAttempt = (
 	duration: Second
 ): Attempt | undefined => {
 	if (from.selectedChoice === undefined) {
-		log.error(`Cannot make Attempt from QuestionWip with undefined selectedChoice! ${JSON.stringify(from)}`);
+		// `Cannot make Attempt from QuestionWip with undefined selectedChoice! ${JSON.stringify(from)}`
 		return;
 	}
 	return {
@@ -65,12 +65,14 @@ export const makeAttempt = (
 	};
 };
 
-export const addAttempt = (attempt: Attempt) => {
+export const addAttempts = (attemptsArray: Attempt[]) => {
 	attempts.update((current) => {
-		const qid = attempt.qid;
-		const attemptsForQid = current[qid] || [];
-		attemptsForQid.push(attempt);
-		current[qid] = attemptsForQid;
+		for (const attempt of attemptsArray) {
+			const qid = attempt.qid;
+			const attemptsForQid = current[qid] || [];
+			attemptsForQid.push(attempt);
+			current[qid] = attemptsForQid;
+		}
 		return current;
 	});
 };

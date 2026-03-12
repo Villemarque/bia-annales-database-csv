@@ -7,7 +7,6 @@
 	import { zeroSecond, inc } from '$lib/types';
 	import { formatTime } from '$lib/utils';
 	import { questions } from '$lib/stores/questions';
-	import { makeAttempt, addAttempt } from '$lib/stores/attempt';
 	import { preferences } from '$lib/stores/preferences.svelte';
 	import Toggle from '../components/Toggle.svelte';
 
@@ -76,22 +75,6 @@
 		log.log('before onSessionFinish');
 		// `onSessionFinish` "might" erase it, so save before
 		const sessionId = session.id;
-
-		for (const wip of session.questions) {
-			// only add attempts to answered questions
-			if (wip.selectedChoice !== undefined) {
-				// exam mode
-				// `correctChoice` is needed for good validation
-				// if (wip.correctChoice === undefined) {
-				// 	wip.correctChoice = $questions[wip.qid].answer;
-				// }
-				const attempt = makeAttempt(wip, session, $questions[wip.qid], durationByQ[wip.qid] || zeroSecond);
-				if (attempt) {
-					addAttempt(attempt);
-				}
-			}
-		}
-
 		// TODO FIXME at some point mvoe it back here, it's not independent...
 		onSessionFinish();
 		log.log('after onSessionFinish');
@@ -121,7 +104,7 @@
 			sessionDuration = inc(sessionDuration);
 			durationByQ[currentQuestionWip.qid] = inc(durationByQ[currentQuestionWip.qid] || zeroSecond);
 			// do NOT put this as an $effect
-			if (session.kind.is === 'exam' && timeShown <= session.kind.initialTime - sessionDuration) {
+			if (session.kind.is === 'exam' && session.kind.initialTime <= sessionDuration) {
 				finishSession();
 			}
 		}, 1000);
