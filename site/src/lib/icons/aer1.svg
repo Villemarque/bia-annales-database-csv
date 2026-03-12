@@ -1,0 +1,253 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <!-- iOS 26 Dark Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a2a2d" />
+      <stop offset="40%" stop-color="#121213" />
+      <stop offset="100%" stop-color="#050505" />
+    </linearGradient>
+
+    <!-- Glass Edge Highlights -->
+    <linearGradient id="glass-edge" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />
+      <stop offset="25%" stop-color="#ffffff" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <linearGradient id="glass-edge-subtle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <!-- Fuselage Metallic Gradient (Side View) -->
+    <linearGradient id="fuselage-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#cccccc" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#777777" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#222222" stop-opacity="0.9" />
+    </linearGradient>
+
+    <!-- Wing Surface Gradient -->
+    <linearGradient id="wing-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+      <stop offset="50%" stop-color="#999999" stop-opacity="0.7" />
+      <stop offset="100%" stop-color="#444444" stop-opacity="0.8" />
+    </linearGradient>
+
+    <!-- Glass Panel for cutaway interior -->
+    <linearGradient id="glass-panel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.03" />
+    </linearGradient>
+
+    <!-- Structural Rib Gradient -->
+    <linearGradient id="rib-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.6" />
+      <stop offset="100%" stop-color="#888888" stop-opacity="0.3" />
+    </linearGradient>
+
+    <!-- Depth Filters -->
+    <filter id="shadow-extreme" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="35" stdDeviation="25" flood-color="#000000" flood-opacity="0.8" />
+    </filter>
+
+    <filter id="shadow-heavy" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="15" stdDeviation="15" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+
+    <filter id="shadow-light" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.4" />
+    </filter>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <!-- Cutaway clip path for internal structure reveal -->
+    <clipPath id="cutaway-clip">
+      <path d="M 200,320 L 500,320 L 500,480 L 200,480 Z" />
+    </clipPath>
+  </defs>
+
+  <!-- iOS App Icon Squircle Base -->
+  <rect x="20" y="20" width="760" height="760" rx="170" fill="url(#bg-grad)" />
+  <rect x="22" y="22" width="756" height="756" rx="168" fill="none" stroke="url(#glass-edge-subtle)" stroke-width="2" />
+
+  <!-- Subtle Background Blueprint Grid -->
+  <g stroke="#ffffff" stroke-opacity="0.03" stroke-width="1">
+    <line x1="100" y1="200" x2="700" y2="200" />
+    <line x1="100" y1="300" x2="700" y2="300" />
+    <line x1="100" y1="400" x2="700" y2="400" />
+    <line x1="100" y1="500" x2="700" y2="500" />
+    <line x1="100" y1="600" x2="700" y2="600" />
+    <line x1="200" y1="150" x2="200" y2="650" />
+    <line x1="300" y1="150" x2="300" y2="650" />
+    <line x1="400" y1="150" x2="400" y2="650" />
+    <line x1="500" y1="150" x2="500" y2="650" />
+    <line x1="600" y1="150" x2="600" y2="650" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 1: Tail Section                      -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-light)">
+    <!-- Vertical Stabilizer -->
+    <path d="M 600,380 L 660,240 L 680,240 L 680,380 Z" fill="url(#fuselage-grad)" stroke="url(#glass-edge-subtle)" stroke-width="1.5" />
+    <!-- Horizontal Stabilizer -->
+    <path d="M 620,370 L 710,330 L 720,340 L 700,380 L 620,400 Z" fill="url(#wing-grad)" stroke="url(#glass-edge)" stroke-width="1.5" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 2: Rear Fuselage (Solid Section)     -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-heavy)">
+    <!-- Tapering rear fuselage -->
+    <path d="M 500,340 L 680,365 L 680,405 L 500,430 Z" fill="url(#fuselage-grad)" stroke="url(#glass-edge)" stroke-width="2" />
+    <!-- Fuselage top highlight -->
+    <line x1="510" y1="342" x2="675" y2="367" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.3" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 3: Wing (extends from fuselage)      -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-extreme)">
+    <!-- Main wing shape -->
+    <path d="M 200,370 L 120,400 L 120,420 L 200,415 L 480,395 L 520,380 L 480,375 Z" fill="url(#wing-grad)" stroke="url(#glass-edge)" stroke-width="2" />
+    <!-- Wing top glare -->
+    <path d="M 210,372 L 475,377" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" opacity="0.5" filter="url(#glow)" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 4: Main Fuselage Body (Outer Skin)   -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-extreme)">
+    <!-- Full fuselage outline -->
+    <path d="M 100,400 C 80,380 90,350 120,335 L 200,320 L 500,330 L 500,440 L 200,450 L 120,440 C 90,430 80,415 100,400 Z" fill="url(#fuselage-grad)" stroke="url(#glass-edge)" stroke-width="2.5" />
+
+    <!-- Fuselage top reflection -->
+    <path d="M 130,338 L 490,332" stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.4" filter="url(#glow)" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 5: Cutaway Window (Internal View)    -->
+  <!-- ========================================== -->
+  <!-- Dashed cutaway boundary lines -->
+  <g stroke="#ffffff" stroke-width="2" stroke-dasharray="8 6" opacity="0.6">
+    <line x1="210" y1="325" x2="210" y2="445" />
+    <line x1="480" y1="332" x2="480" y2="438" />
+  </g>
+
+  <!-- Cutaway interior (transparent panel showing ribs) -->
+  <path d="M 210,325 L 480,332 L 480,438 L 210,445 Z" fill="url(#glass-panel)" stroke="none" />
+
+  <!-- Internal Structural Ribs (Formers / Bulkheads) -->
+  <g stroke="url(#rib-grad)" stroke-width="3" stroke-linecap="round" fill="none">
+    <!-- Rib frames (vertical structural members) -->
+    <path d="M 260,328 L 260,447" opacity="0.5" />
+    <path d="M 310,329 L 310,445" opacity="0.5" />
+    <path d="M 360,330 L 360,443" opacity="0.5" />
+    <path d="M 410,331 L 410,441" opacity="0.5" />
+    <path d="M 450,332 L 450,439" opacity="0.5" />
+  </g>
+
+  <!-- Longerons (horizontal stringers) -->
+  <g stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" opacity="0.3">
+    <line x1="215" y1="345" x2="475" y2="345" />
+    <line x1="215" y1="365" x2="475" y2="365" />
+    <line x1="215" y1="405" x2="475" y2="405" />
+    <line x1="215" y1="425" x2="475" y2="425" />
+  </g>
+
+  <!-- Cross-bracing inside (diagonal tension wires) -->
+  <g stroke="#ffffff" stroke-width="1" opacity="0.15">
+    <line x1="260" y1="328" x2="310" y2="445" />
+    <line x1="310" y1="329" x2="260" y2="447" />
+    <line x1="360" y1="330" x2="410" y2="441" />
+    <line x1="410" y1="331" x2="360" y2="443" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 6: Cockpit / Nose Section            -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-heavy)">
+    <!-- Windscreen -->
+    <path d="M 120,335 L 100,365 L 90,385 L 100,405 L 120,440 L 140,440 L 140,335 Z" fill="#111111" stroke="url(#glass-edge)" stroke-width="2" />
+    <!-- Windscreen inner reflection -->
+    <path d="M 115,345 L 105,370 L 100,385" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.25" />
+
+    <!-- Nose cowling -->
+    <path d="M 100,365 C 70,375 70,395 100,405 L 90,385 Z" fill="#333333" stroke="#666666" stroke-width="1.5" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 7: Propeller                         -->
+  <!-- ========================================== -->
+  <g transform="translate(78, 385)" filter="url(#shadow-heavy)">
+    <!-- Spinner -->
+    <ellipse cx="0" cy="0" rx="12" ry="10" fill="#555555" stroke="#888888" stroke-width="1.5" />
+    <!-- Blade Up -->
+    <path d="M -4,-10 C -8,-50 -3,-90 0,-110 C 3,-90 8,-50 4,-10 Z" fill="url(#rib-grad)" stroke="#ffffff" stroke-width="1" opacity="0.7" />
+    <!-- Blade Down -->
+    <path d="M -4,10 C -8,50 -3,90 0,110 C 3,90 8,50 4,10 Z" fill="url(#rib-grad)" stroke="#ffffff" stroke-width="1" opacity="0.7" />
+    <!-- Hub highlight -->
+    <circle cx="-3" cy="-2" r="4" fill="#ffffff" opacity="0.4" filter="url(#glow)" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 8: Dimension Lines & Labels (Blueprint feel) -->
+  <!-- ========================================== -->
+  <g stroke="#ffffff" stroke-width="1" opacity="0.2">
+    <!-- Wingspan measurement line -->
+    <line x1="120" y1="510" x2="530" y2="510" stroke-dasharray="4 4" />
+    <line x1="120" y1="500" x2="120" y2="520" />
+    <line x1="530" y1="500" x2="530" y2="520" />
+
+    <!-- Height measurement line -->
+    <line x1="710" y1="240" x2="710" y2="410" stroke-dasharray="4 4" />
+    <line x1="700" y1="240" x2="720" y2="240" />
+    <line x1="700" y1="410" x2="720" y2="410" />
+  </g>
+
+  <!-- Small annotation dots at structural points -->
+  <g fill="#ffffff" opacity="0.35">
+    <circle cx="260" cy="328" r="4" />
+    <circle cx="310" cy="329" r="4" />
+    <circle cx="360" cy="330" r="4" />
+    <circle cx="410" cy="331" r="4" />
+    <circle cx="450" cy="332" r="4" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 9: Landing Gear                      -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-light)">
+    <!-- Main gear strut -->
+    <line x1="300" y1="450" x2="300" y2="540" stroke="#666666" stroke-width="8" stroke-linecap="round" />
+    <!-- Wheel -->
+    <ellipse cx="300" cy="550" rx="20" ry="24" fill="#111111" stroke="#555555" stroke-width="3" />
+    <circle cx="300" cy="550" r="6" fill="#888888" />
+
+    <!-- Nose gear strut -->
+    <line x1="130" y1="440" x2="140" y2="530" stroke="#666666" stroke-width="6" stroke-linecap="round" />
+    <!-- Nose wheel -->
+    <ellipse cx="142" cy="540" rx="14" ry="18" fill="#111111" stroke="#555555" stroke-width="2.5" />
+    <circle cx="142" cy="540" r="4" fill="#888888" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- FINAL: iOS 26 Spatial Glare & Polish       -->
+  <!-- ========================================== -->
+  <path 
+    d="M 20,250 C 20,100 100,20 250,20 L 550,20 C 680,20 780,100 780,250 C 780,380 480,520 370,520 C 220,520 20,380 20,250 Z" 
+    fill="#ffffff" 
+    opacity="0.03" 
+    pointer-events="none" 
+  />
+
+  <!-- Vignette Edge -->
+  <rect x="20" y="20" width="760" height="760" rx="170" fill="none" stroke="#000000" stroke-width="8" opacity="0.35" pointer-events="none" />
+</svg>

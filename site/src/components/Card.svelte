@@ -29,7 +29,13 @@
 </script>
 
 <div class="basecard subject-card" onclick={handleClick} role="button" tabindex="0">
-	<div class="icon">{icon}</div>
+	<div class="icon" class:has-svg={icon.endsWith('.svg')}>
+		{#if icon.endsWith('.svg')}
+			<img src={icon} alt="" class="icon-svg" />
+		{:else}
+			{icon}
+		{/if}
+	</div>
 	<h3>{title}</h3>
 	<p>{desc}</p>
 	{#if totalQuestions > 0}
@@ -129,5 +135,18 @@
 		align-items: center;
 		justify-content: center;
 		font-weight: 700;
+		overflow: hidden;
+	}
+
+	.icon.has-svg {
+		background: none;
+		padding: 0;
+	}
+
+	.icon-svg {
+		width: 100%;
+		height: 100%;
+		border-radius: 14px;
+		display: block;
 	}
 </style>

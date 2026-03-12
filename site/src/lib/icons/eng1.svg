@@ -1,0 +1,286 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <!-- iOS 26 Dark Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2a2a2d" />
+      <stop offset="40%" stop-color="#111112" />
+      <stop offset="100%" stop-color="#040404" />
+    </linearGradient>
+
+    <!-- Glass Edge Highlights -->
+    <linearGradient id="glass-edge" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+      <stop offset="25%" stop-color="#ffffff" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <linearGradient id="glass-edge-subtle" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <!-- Headband Metallic Gradient -->
+    <linearGradient id="band-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#cccccc" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#666666" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#222222" stop-opacity="0.9" />
+    </linearGradient>
+
+    <!-- Earpad Gradient (deep, volumetric) -->
+    <linearGradient id="earpad-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#999999" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#444444" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#111111" stop-opacity="0.95" />
+    </linearGradient>
+
+    <!-- Earpad Inner (Cushion) -->
+    <linearGradient id="cushion-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#555555" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#1a1a1a" stop-opacity="0.9" />
+    </linearGradient>
+
+    <!-- Microphone Boom Gradient -->
+    <linearGradient id="mic-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#aaaaaa" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#333333" stop-opacity="0.9" />
+    </linearGradient>
+
+    <!-- Waveform Gradient (fading outward) -->
+    <linearGradient id="wave-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.7" />
+      <stop offset="60%" stop-color="#ffffff" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.0" />
+    </linearGradient>
+
+    <!-- Glass Panel -->
+    <linearGradient id="glass-panel" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.02" />
+    </linearGradient>
+
+    <!-- Depth Filters -->
+    <filter id="shadow-extreme" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="35" stdDeviation="25" flood-color="#000000" flood-opacity="0.8" />
+    </filter>
+
+    <filter id="shadow-heavy" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="15" stdDeviation="15" flood-color="#000000" flood-opacity="0.65" />
+    </filter>
+
+    <filter id="shadow-mid" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+
+    <filter id="shadow-light" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.3" />
+    </filter>
+
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+
+    <filter id="glow-soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- iOS App Icon Squircle Base -->
+  <rect x="20" y="20" width="760" height="760" rx="170" fill="url(#bg-grad)" />
+  <rect x="22" y="22" width="756" height="756" rx="168" fill="none" stroke="url(#glass-edge-subtle)" stroke-width="2" />
+
+  <!-- ========================================== -->
+  <!-- LAYER 1: Background Radio Frequency Grid   -->
+  <!-- ========================================== -->
+  <g stroke="#ffffff" stroke-opacity="0.03" stroke-width="1">
+    <!-- Horizontal freq lines -->
+    <line x1="80" y1="200" x2="720" y2="200" />
+    <line x1="80" y1="300" x2="720" y2="300" />
+    <line x1="80" y1="400" x2="720" y2="400" />
+    <line x1="80" y1="500" x2="720" y2="500" />
+    <line x1="80" y1="600" x2="720" y2="600" />
+  </g>
+
+  <!-- Background broadcast waves (subtle concentric arcs) -->
+  <g fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.06">
+    <path d="M 400,400 m -300,0 a 300,300 0 0,1 600,0" />
+    <path d="M 400,400 m -250,0 a 250,250 0 0,1 500,0" />
+    <path d="M 400,400 m -200,0 a 200,200 0 0,1 400,0" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 2: Headband                          -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-heavy)">
+    <!-- Main headband arc -->
+    <path 
+      d="M 210,400 C 210,200 310,130 400,130 C 490,130 590,200 590,400" 
+      fill="none" 
+      stroke="url(#band-grad)" 
+      stroke-width="22" 
+      stroke-linecap="round" 
+    />
+    <!-- Headband inner edge highlight -->
+    <path 
+      d="M 215,400 C 215,205 312,136 400,136 C 488,136 585,205 585,400" 
+      fill="none" 
+      stroke="url(#glass-edge)" 
+      stroke-width="2" 
+    />
+    <!-- Headband top glare -->
+    <path 
+      d="M 310,155 C 350,140 450,140 490,155" 
+      fill="none" 
+      stroke="#ffffff" 
+      stroke-width="3" 
+      stroke-linecap="round" 
+      opacity="0.4" 
+      filter="url(#glow-soft)" 
+    />
+
+    <!-- Adjustment sliders (small details on each side) -->
+    <!-- Left slider -->
+    <rect x="200" y="310" width="16" height="50" rx="8" fill="#333333" stroke="#666666" stroke-width="1.5" />
+    <line x1="208" y1="320" x2="208" y2="350" stroke="#888888" stroke-width="2" stroke-linecap="round" opacity="0.5" />
+    <!-- Right slider -->
+    <rect x="584" y="310" width="16" height="50" rx="8" fill="#333333" stroke="#666666" stroke-width="1.5" />
+    <line x1="592" y1="320" x2="592" y2="350" stroke="#888888" stroke-width="2" stroke-linecap="round" opacity="0.5" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 3: Left Ear Cup                      -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-extreme)">
+    <!-- Outer shell -->
+    <rect x="145" y="360" width="130" height="160" rx="40" fill="url(#earpad-grad)" stroke="url(#glass-edge)" stroke-width="2.5" />
+    <!-- Inner cushion ring -->
+    <rect x="165" y="380" width="90" height="120" rx="30" fill="url(#cushion-grad)" stroke="url(#glass-edge-subtle)" stroke-width="1.5" />
+    <!-- Speaker mesh (concentric circles) -->
+    <circle cx="210" cy="440" r="30" fill="none" stroke="#555555" stroke-width="1.5" opacity="0.4" />
+    <circle cx="210" cy="440" r="18" fill="none" stroke="#555555" stroke-width="1" opacity="0.3" />
+    <circle cx="210" cy="440" r="6" fill="#444444" />
+    <!-- Top glare -->
+    <path d="M 170,370 Q 210,362 250,370" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.35" filter="url(#glow-soft)" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 4: Right Ear Cup                     -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-extreme)">
+    <!-- Outer shell -->
+    <rect x="525" y="360" width="130" height="160" rx="40" fill="url(#earpad-grad)" stroke="url(#glass-edge)" stroke-width="2.5" />
+    <!-- Inner cushion ring -->
+    <rect x="545" y="380" width="90" height="120" rx="30" fill="url(#cushion-grad)" stroke="url(#glass-edge-subtle)" stroke-width="1.5" />
+    <!-- Speaker mesh -->
+    <circle cx="590" cy="440" r="30" fill="none" stroke="#555555" stroke-width="1.5" opacity="0.4" />
+    <circle cx="590" cy="440" r="18" fill="none" stroke="#555555" stroke-width="1" opacity="0.3" />
+    <circle cx="590" cy="440" r="6" fill="#444444" />
+    <!-- Top glare -->
+    <path d="M 550,370 Q 590,362 630,370" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.35" filter="url(#glow-soft)" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 5: Microphone Boom                   -->
+  <!-- ========================================== -->
+  <g filter="url(#shadow-mid)">
+    <!-- Boom arm (curved from left earpad down) -->
+    <path 
+      d="M 175,490 C 170,550 190,600 240,640 C 270,660 310,665 340,650" 
+      fill="none" 
+      stroke="url(#mic-grad)" 
+      stroke-width="10" 
+      stroke-linecap="round" 
+    />
+    <!-- Boom arm highlight -->
+    <path 
+      d="M 177,495 C 172,550 192,598 240,636" 
+      fill="none" 
+      stroke="#ffffff" 
+      stroke-width="1.5" 
+      opacity="0.3" 
+    />
+
+    <!-- Microphone capsule -->
+    <g transform="translate(345, 640) rotate(-25)" filter="url(#shadow-light)">
+      <!-- Mic body -->
+      <rect x="-18" y="-28" width="36" height="56" rx="18" fill="url(#earpad-grad)" stroke="url(#glass-edge)" stroke-width="2" />
+      <!-- Mic grille lines -->
+      <g stroke="#666666" stroke-width="1" opacity="0.5">
+        <line x1="-10" y1="-15" x2="10" y2="-15" />
+        <line x1="-12" y1="-8" x2="12" y2="-8" />
+        <line x1="-12" y1="-1" x2="12" y2="-1" />
+        <line x1="-12" y1="6" x2="12" y2="6" />
+        <line x1="-10" y1="13" x2="10" y2="13" />
+      </g>
+      <!-- Mic highlight -->
+      <path d="M -8,-24 Q 0,-30 8,-24" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.35" />
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 6: Sound / Radio Waves from Mic      -->
+  <!-- ========================================== -->
+  <!-- Broadcast waves emanating from microphone -->
+  <g transform="translate(370, 620)" fill="none" stroke-linecap="round" filter="url(#glow-soft)">
+    <!-- Inner wave -->
+    <path d="M 15,-15 C 30,-30 30,-50 15,-65" stroke="#ffffff" stroke-width="3" opacity="0.5" />
+    <!-- Mid wave -->
+    <path d="M 30,-10 C 55,-30 55,-55 30,-75" stroke="#ffffff" stroke-width="2.5" opacity="0.35" />
+    <!-- Outer wave -->
+    <path d="M 48,-5 C 80,-28 80,-58 48,-82" stroke="#ffffff" stroke-width="2" opacity="0.2" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- LAYER 7: Frequency / Waveform Display      -->
+  <!-- ========================================== -->
+  <!-- Small floating UI pill showing audio waveform (glassmorphic HUD element) -->
+  <g transform="translate(400, 240)" filter="url(#shadow-mid)">
+    <!-- Glass pill background -->
+    <rect x="-100" y="-22" width="200" height="44" rx="22" fill="url(#glass-panel)" stroke="#ffffff" stroke-width="1.5" stroke-opacity="0.3" />
+    
+    <!-- Audio waveform bars (centered) -->
+    <g fill="#ffffff" opacity="0.7">
+      <rect x="-75" y="-4" width="4" height="8" rx="2" />
+      <rect x="-63" y="-8" width="4" height="16" rx="2" />
+      <rect x="-51" y="-12" width="4" height="24" rx="2" />
+      <rect x="-39" y="-6" width="4" height="12" rx="2" />
+      <rect x="-27" y="-14" width="4" height="28" rx="2" />
+      <rect x="-15" y="-10" width="4" height="20" rx="2" />
+      <rect x="-3" y="-16" width="4" height="32" rx="2" />
+      <rect x="9" y="-12" width="4" height="24" rx="2" />
+      <rect x="21" y="-8" width="4" height="16" rx="2" />
+      <rect x="33" y="-14" width="4" height="28" rx="2" />
+      <rect x="45" y="-10" width="4" height="20" rx="2" />
+      <rect x="57" y="-6" width="4" height="12" rx="2" />
+      <rect x="69" y="-4" width="4" height="8" rx="2" />
+    </g>
+  </g>
+
+  <!-- Small frequency label pill -->
+  <g transform="translate(400, 290)" opacity="0.3">
+    <rect x="-40" y="-10" width="80" height="20" rx="10" fill="#333333" stroke="#ffffff" stroke-width="1" stroke-opacity="0.2" />
+    <!-- Simulated text lines -->
+    <line x1="-25" y1="0" x2="25" y2="0" stroke="#ffffff" stroke-width="2" stroke-linecap="round" opacity="0.5" />
+  </g>
+
+  <!-- ========================================== -->
+  <!-- FINAL: iOS 26 Spatial Glare & Polish       -->
+  <!-- ========================================== -->
+  <path 
+    d="M 20,250 C 20,100 100,20 250,20 L 550,20 C 680,20 780,100 780,250 C 780,380 480,520 370,520 C 220,520 20,380 20,250 Z" 
+    fill="#ffffff" 
+    opacity="0.03" 
+    pointer-events="none" 
+  />
+
+  <!-- Vignette Edge -->
+  <rect x="20" y="20" width="760" height="760" rx="170" fill="none" stroke="#000000" stroke-width="8" opacity="0.35" pointer-events="none" />
+</svg>

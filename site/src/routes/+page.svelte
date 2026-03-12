@@ -5,6 +5,12 @@
 	import { log } from '$lib/log';
 	import { attempts } from '$lib/stores/attempt';
 	import { type Subject, Subjects, QBCtoList, type Attempt } from '$lib/types';
+	import aer1 from '$lib/icons/aer1.svg';
+	import aero1 from '$lib/icons/aero1.svg';
+	import cb1 from '$lib/icons/cb1.svg';
+	import nav1 from '$lib/icons/nav1.svg';
+	import hst1 from '$lib/icons/hst1.svg';
+	import eng1 from '$lib/icons/eng1.svg';
 
 	// for SEO, and faster initial load
 	// only prerendered at build time
@@ -14,42 +20,42 @@
 	const cards = [
 		{
 			subjectId: Subjects.AERONEF,
-			icon: '✈︎',
+			icon: aer1,
 			color: 'var(--card-indigo)',
 			title: 'Connaissance des Aéronefs',
 			desc: 'Structure et systèmes avion.'
 		},
 		{
 			subjectId: Subjects.AERODYNAMIQUE,
-			icon: '〰︎',
+			icon: aero1,
 			color: 'var(--card-blue)',
 			title: 'Aérodynamique',
 			desc: 'Forces et équilibres en vol.'
 		},
 		{
 			subjectId: Subjects.METEO,
-			icon: '☁︎',
+			icon: cb1,
 			color: 'var(--card-green)',
 			title: 'Météorologie',
 			desc: 'Phénomènes atmosphériques.'
 		},
 		{
 			subjectId: Subjects.NAVIGATION,
-			icon: '🧭',
+			icon: nav1,
 			color: 'var(--card-orange)',
 			title: 'Navigation / Réglementation',
-			desc: 'Orientation et règles de l’air.'
+			desc: "Orientation et règles de l'air."
 		},
 		{
 			subjectId: Subjects.HISTOIRE,
-			icon: '⏳',
+			icon: hst1,
 			color: 'var(--card-red)',
 			title: 'Histoire',
-			desc: 'Évolution de l’aviation.'
+			desc: "Évolution de l'aviation."
 		},
 		{
 			subjectId: Subjects.ANGLAIS,
-			icon: 'EN',
+			icon: eng1,
 			color: 'var(--card-pink)',
 			title: 'Anglais',
 			desc: 'Communication aéronautique.'

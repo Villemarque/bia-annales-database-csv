@@ -1,0 +1,23 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="glassGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.05"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="15" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <path d="M512 180L180 440V820C180 842.091 197.909 860 220 860H804C826.091 860 844 842.091 844 820V440L512 180Z" 
+        stroke="black" stroke-width="48" stroke-linejoin="round" stroke-linecap="round"/>
+  
+  <path d="M720 340V220H780V390" stroke="black" stroke-width="48" stroke-linecap="round"/>
+
+  <path d="M512 380L340 520V720C340 731.046 348.954 740 360 740H664C675.046 740 684 731.046 684 720V520L512 380Z" 
+        stroke="black" stroke-width="32" stroke-linejoin="round" opacity="0.7"/>
+  
+  <path d="M512 520L440 580V660H584V580L512 520Z" 
+        fill="black" fill-opacity="0.1" stroke="black" stroke-width="20" />
+</svg>
