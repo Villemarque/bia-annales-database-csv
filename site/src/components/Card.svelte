@@ -28,16 +28,11 @@
 	}
 </script>
 
-<div class="basecard subject-card" onclick={handleClick} role="button" tabindex="0">
-	<div class="icon" class:has-svg={icon.endsWith('.svg')}>
-		{#if icon.endsWith('.svg')}
-			<img src={icon} alt="" class="icon-svg" />
-		{:else}
-			{icon}
-		{/if}
+<div class="basecard subject-card" title={desc} onclick={handleClick} role="button" tabindex="0">
+	<div class="card-top">
+		<img src={icon} alt="" class="icon-svg" />
+		<h3>{title}</h3>
 	</div>
-	<h3>{title}</h3>
-	<p>{desc}</p>
 	{#if totalQuestions > 0}
 		<div class="stats" title="Réponses correctes · Questions vues · Total">
 			<div class="progress">
@@ -59,30 +54,41 @@
 	.subject-card {
 		color: white;
 		background: var(--card-bg-color);
+		padding: 16px;
 	}
-	.card:hover {
-		transform: translateY(-8px) scale(1.02);
-	}
-	.card:focus-visible {
-		outline: 3px solid rgba(255, 255, 255, 0.5);
-		outline-offset: 2px;
-	}
-	.subject-card h3 {
-		margin: 16px 0 8px;
-		font-size: 18px;
-	}
-	.subject-card p {
-		margin: 0;
-		font-size: 14px;
-		opacity: 0.9;
-		flex-grow: 1;
-	}
-	.stats {
-		margin-top: 20px;
+
+	/* ---- Top row: icon + title side by side ---- */
+	.card-top {
 		display: flex;
 		align-items: center;
-		gap: 12px;
+		gap: 14px;
+		flex: 1;
 	}
+
+	.icon-svg {
+		width: 100px;
+		height: 100px;
+		border-radius: 18px;
+		flex-shrink: 0;
+		display: block;
+	}
+
+	.card-top h3 {
+		margin: 0;
+		font-size: 16px;
+		font-weight: 600;
+		line-height: 1.3;
+	}
+
+	/* ---- Stats bar ---- */
+	.stats {
+		margin-top: auto;
+		padding-top: 14px;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
 	.count {
 		font-size: 11px;
 		font-weight: 500;
@@ -91,18 +97,22 @@
 		align-items: center;
 		gap: 3px;
 	}
+
 	.val.answered {
 		color: rgba(255, 255, 255, 1);
 		font-weight: 700;
 	}
+
 	.val.seen,
 	.val.total {
 		color: rgba(255, 255, 255, 0.7);
 	}
+
 	.sep {
 		color: rgba(255, 255, 255, 0.3);
 		font-weight: 400;
 	}
+
 	.progress {
 		height: 4px;
 		background: rgba(0, 0, 0, 0.15);
@@ -111,6 +121,7 @@
 		position: relative;
 		overflow: hidden;
 	}
+
 	.bar {
 		position: absolute;
 		top: 0;
@@ -118,35 +129,14 @@
 		left: 0;
 		transition: width 0.3s ease;
 	}
+
 	.bar.seen {
 		background: rgba(255, 255, 255, 0.3);
 		z-index: 1;
 	}
+
 	.bar.answered {
 		background: rgba(255, 255, 255, 0.9);
 		z-index: 2;
-	}
-	.icon {
-		width: 46px;
-		height: 46px;
-		border-radius: 14px;
-		background: rgba(255, 255, 255, 0.25);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-weight: 700;
-		overflow: hidden;
-	}
-
-	.icon.has-svg {
-		background: none;
-		padding: 0;
-	}
-
-	.icon-svg {
-		width: 100%;
-		height: 100%;
-		border-radius: 14px;
-		display: block;
 	}
 </style>
