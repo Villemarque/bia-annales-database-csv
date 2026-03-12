@@ -16,22 +16,24 @@
 		go('/');
 	}
 
-	let missedQuestions = $derived.by(() => {
-		const missed: { question: Question; attempt?: Attempt }[] = [];
+	let viewMode: 'missed' | 'all' = $state('missed');
+
+	let allSessionQuestions = $derived.by(() => {
+		const all: { question: Question; attempt?: Attempt }[] = [];
 		for (const qid of session.questions) {
 			const qAttempts = $attempts[qid] || [];
 			const attempt = qAttempts.find((a) => a.sessionId === session.id);
-			// no attempt in case of corruption
-			// or if session finished without answering
-			if (!attempt || !attempt.correct) {
-				const question = $questions[qid];
-				if (question) {
-					missed.push({ question, attempt });
-				}
+			const question = $questions[qid];
+			if (question) {
+				all.push({ question, attempt });
 			}
 		}
-		return missed;
+		return all;
 	});
+
+	let missedQuestions = $derived(allSessionQuestions.filter(({ attempt }) => !attempt || !attempt.correct));
+
+	let displayedQuestions = $derived(viewMode === 'missed' ? missedQuestions : allSessionQuestions);
 
 	let percent = $derived(
 		session && session.questions.length > 0 ? (session.score / session.questions.length) * 100 : 0
@@ -67,23 +69,42 @@
 			</div>
 		</div>
 
-		{#if missedQuestions.length > 0}
-			<div class="missed-section">
-				<h2 class="section-title">Questions à revoir</h2>
-				{#each missedQuestions as { question, attempt } (question.qid)}
-					<div class="missed-card">
+		{#if session.questions.length > 0}
+			<div class="questions-section">
+				<div class="view-toggle">
+					<button class="toggle-btn" class:active={viewMode === 'missed'} onclick={() => (viewMode = 'missed')}>
+						Questions à revoir ({missedQuestions.length})
+					</button>
+					<button class="toggle-btn" class:active={viewMode === 'all'} onclick={() => (viewMode = 'all')}>
+						Toutes les questions ({allSessionQuestions.length})
+					</button>
+				</div>
+				{#each displayedQuestions as { question, attempt } (question.qid)}
+					<div class="question-card">
+						{#if attempt}
+							<span class="question-duration">{formatTime(attempt.duration)}</span>
+						{/if}
 						<h3>{question.content}</h3>
 						<div class="options-container">
 							{#if attempt}
-								<div class="option incorrect">
-									<span>{question.choices[attempt.selectedChoice]}</span>
-								</div>
+								{#if attempt.correct}
+									<div class="option correct">
+										<span>{question.choices[attempt.selectedChoice]}</span>
+									</div>
+								{:else}
+									<div class="option incorrect">
+										<span>{question.choices[attempt.selectedChoice]}</span>
+									</div>
+									<div class="option correct">
+										<span>{question.choices[question.answer]}</span>
+									</div>
+								{/if}
 							{:else}
-								<span>Pas de réponse donnée</span>
+								<span class="no-answer">Pas de réponse donnée</span>
+								<div class="option correct">
+									<span>{question.choices[question.answer]}</span>
+								</div>
 							{/if}
-							<div class="option correct">
-								<span>{question.choices[question.answer]}</span>
-							</div>
 						</div>
 					</div>
 				{/each}
@@ -225,8 +246,8 @@
 		background: var(--card-indigo);
 	}
 
-	/* Missed Questions Section */
-	.missed-section {
+	/* Questions Section */
+	.questions-section {
 		width: 100%;
 		max-width: 800px;
 		display: flex;
@@ -234,15 +255,46 @@
 		gap: 24px;
 	}
 
-	.section-title {
-		font-size: 24px;
-		font-weight: 700;
-		color: var(--text-dark);
-		margin: 0;
-		text-align: center;
+	.view-toggle {
+		display: flex;
+		align-self: center;
+		background: var(--glass-bg-strong);
+		backdrop-filter: blur(20px);
+		border: 1px solid var(--glass-border);
+		border-radius: 50px;
+		padding: 4px;
+		gap: 4px;
+		box-shadow: var(--glass-shadow);
 	}
 
-	.missed-card {
+	.toggle-btn {
+		padding: 10px 20px;
+		border: none;
+		border-radius: 50px;
+		background: transparent;
+		color: var(--text-muted);
+		font-weight: 600;
+		font-size: 14px;
+		cursor: pointer;
+		transition:
+			background 0.25s,
+			color 0.25s,
+			box-shadow 0.25s;
+		white-space: nowrap;
+	}
+
+	.toggle-btn:hover {
+		color: var(--text-dark);
+	}
+
+	.toggle-btn.active {
+		background: white;
+		color: var(--text-dark);
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	}
+
+	.question-card {
+		position: relative;
 		padding: 30px;
 		border-radius: var(--radius-xl);
 		background: var(--glass-bg-strong);
@@ -252,12 +304,31 @@
 		text-align: left;
 	}
 
-	.missed-card h3 {
+	.question-card h3 {
 		margin: 0 0 24px;
 		font-size: 20px;
 		color: var(--text-dark);
 		line-height: 1.5;
 		font-weight: 600;
+		padding-right: 80px;
+	}
+
+	.question-duration {
+		position: absolute;
+		top: 28px;
+		right: 28px;
+		font-size: 13px;
+		font-weight: 600;
+		color: var(--text-muted);
+		background: rgba(0, 0, 0, 0.04);
+		padding: 4px 12px;
+		border-radius: 20px;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.no-answer {
+		font-style: italic;
+		color: var(--text-muted);
 	}
 
 	.options-container {
@@ -288,64 +359,26 @@
 		color: #155724;
 	}
 
-	.option-letter {
-		font-weight: 700;
-		font-size: 18px;
-	}
-
-	.option-letter.incorrect {
-		color: #721c24;
-	}
-
-	.option-letter.correct {
-		color: #155724;
-	}
-
-	.badge {
-		margin-left: auto;
-		padding: 4px 12px;
-		border-radius: 20px;
-		font-size: 12px;
-		font-weight: 700;
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
-
-	.badge-incorrect {
-		background: rgba(220, 53, 69, 0.15);
-		color: #721c24;
-	}
-
-	.badge-correct {
-		background: rgba(40, 167, 69, 0.15);
-		color: #155724;
-	}
-
-	.perfect-score {
-		padding: 30px;
-		border-radius: var(--radius-xl);
-		background: rgba(40, 167, 69, 0.1);
-		border: 1px solid #c3e6cb;
-		color: #155724;
-		text-align: center;
-		font-size: 20px;
-		font-weight: 600;
-		width: 100%;
-		max-width: 800px;
-		backdrop-filter: blur(10px);
-	}
-
 	@media (max-width: 600px) {
+		.view-toggle {
+			flex-direction: column;
+			border-radius: var(--radius-l);
+		}
+
+		.toggle-btn {
+			border-radius: var(--radius-l);
+		}
+
+		.question-card h3 {
+			padding-right: 0;
+			margin-top: 36px;
+		}
+
 		.option {
 			flex-direction: column;
 			align-items: flex-start;
 			gap: 8px;
 			padding: 16px;
-		}
-
-		.badge {
-			margin-left: 0;
-			margin-top: 8px;
 		}
 	}
 </style>

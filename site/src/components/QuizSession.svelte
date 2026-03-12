@@ -101,8 +101,11 @@
 
 	onMount(() => {
 		const timer = setInterval(() => {
-			sessionDuration = inc(sessionDuration);
-			durationByQ[currentQuestionWip.qid] = inc(durationByQ[currentQuestionWip.qid] || zeroSecond);
+			// time spent looking at an answer is not taken into account
+			if (currentQuestionWip.correctChoice === undefined) {
+				sessionDuration = inc(sessionDuration);
+				durationByQ[currentQuestionWip.qid] = inc(durationByQ[currentQuestionWip.qid] || zeroSecond);
+			}
 			// do NOT put this as an $effect
 			if (session.kind.is === 'exam' && session.kind.initialTime <= sessionDuration) {
 				finishSession();
