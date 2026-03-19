@@ -34,23 +34,23 @@
 </svelte:head>
 
 <div class="app" class:sidebar-expanded={sidebarExpanded}>
-	<div class="nav-col">
-		<div class="hamburger-wrapper">
-			<MenuCapsule expanded={sidebarExpanded} items={ham_item} />
-		</div>
-		<div class="menu-wrapper">
-			<MenuCapsule expanded={sidebarExpanded} items={menuItems} />
-		</div>
+	<div class="hamburger-wrapper">
+		<MenuCapsule expanded={sidebarExpanded} items={ham_item} />
+	</div>
+	<div class="menu-wrapper">
+		<MenuCapsule expanded={sidebarExpanded} items={menuItems} />
 	</div>
 
-	<div class="main-col">
+	<div class="header-wrapper">
 		<Header />
-		<main class="content-wrapper">
-			<div class="content">
-				{@render children()}
-			</div>
-		</main>
 	</div>
+
+	<main class="content-wrapper">
+		<div class="content">
+			{@render children()}
+		</div>
+	</main>
+
 	<Footer />
 </div>
 
@@ -85,7 +85,12 @@
 
 	.app {
 		display: grid;
+		grid-template-areas:
+			'hamburger header'
+			'menu content'
+			'footer footer';
 		grid-template-columns: 80px 1fr;
+		grid-template-rows: var(--header-height) 1fr auto;
 		min-height: 100vh;
 		transition: grid-template-columns 0.2s ease;
 	}
@@ -94,24 +99,27 @@
 		grid-template-columns: 220px 1fr;
 	}
 
-	.nav-col {
-		display: grid;
-		grid-template-rows: var(--header-height) 1fr;
+	.hamburger-wrapper {
+		grid-area: hamburger;
 		position: sticky;
 		top: 0;
-	}
-
-	.hamburger-wrapper {
+		z-index: 100;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		/* Height implicit from grid row */
 	}
 
 	.menu-wrapper {
+		grid-area: menu;
+		position: sticky;
+		top: var(--header-height);
+		z-index: 100;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		padding-top: var(--gap-main);
+		align-self: start; /* Don't stretch to fill vertical space if content is short */
 	}
 
 	.sidebar-expanded .hamburger-wrapper,
@@ -119,18 +127,19 @@
 		padding-left: 16px;
 	}
 
-	.main-col {
-		display: flex;
-		flex-direction: column;
+	.header-wrapper {
+		grid-area: header;
 		min-width: 0;
 	}
 
 	.content-wrapper {
+		grid-area: content;
 		display: flex;
 		flex-direction: column;
 		flex: 1;
 		gap: var(--gap-main);
 		padding-top: var(--gap-main);
+		min-width: 0;
 	}
 
 	.content {
@@ -139,7 +148,7 @@
 	}
 
 	.app :global(.footer) {
-		grid-column: 1 / -1;
+		grid-area: footer;
 	}
 
 	@media (max-width: 900px) {
@@ -147,30 +156,24 @@
 			display: block;
 		}
 
-		.nav-col {
+		.hamburger-wrapper {
 			position: fixed;
-			left: 16px;
 			top: 24px;
+			left: 16px;
+			width: auto;
 			height: auto;
-			z-index: 100;
-			display: flex;
-			flex-direction: column;
-			gap: 16px;
-			background: none;
-		}
-
-		.hamburger-wrapper,
-		.menu-wrapper {
 			padding: 0 !important;
 			justify-content: flex-start;
 		}
 
-		.main-col {
-			margin-left: 0;
-		}
-
-		.content {
-			padding: 0 20px 40px;
-		}
+/*/*		.menu-wrapper {
+			position: fixed;
+			top: 92px; /* 24px + 52px + 16px gap */
+			left: 16px;
+			width: auto;
+			height: auto;
+			padding: 0 !important;
+			justify-content: flex-start;
+		}*/*/
 	}
 </style>
