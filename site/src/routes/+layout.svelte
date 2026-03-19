@@ -52,7 +52,7 @@
 	</main>
 
 	<div class="footer-wrapper">
-	<Footer />
+		<Footer />
 	</div>
 </div>
 
@@ -148,14 +148,14 @@
 
 	@media (max-width: 900px) {
 		.app {
-    grid-template-areas:
-      "hamburger header"
-      "content content"
-      "footer footer";
-  	}
-  		.menu-wrapper {
-  			display: none;
-  		}	
+			grid-template-areas:
+				'hamburger header'
+				'content content'
+				'footer footer';
+		}
+		.menu-wrapper {
+			display: none;
+		}
 		.sidebar-expanded .menu-wrapper {
 			position: fixed;
 			top: 120px;
@@ -165,7 +165,6 @@
 			padding: 0 !important;
 			justify-content: flex-start;
 			display: flex;
-			
 		}
-}
+	}
 </style>

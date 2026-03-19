@@ -1,6 +1,13 @@
+<script lang="ts">
+	import biaLogo from '$lib/icons/bia-logo.svg';
+</script>
+
 <div class="header-card">
 	<div class="header-content">
-		<div class="title">BIA Aérien Ambassadeurs Avenir</div>
+		<div class="title">
+			<img src={biaLogo} alt="BIA" class="bia-logo" />
+			Aérien Ambassadeurs Avenir
+		</div>
 	</div>
 </div>
 
@@ -27,11 +34,25 @@
 		color: var(--text-dark);
 		letter-spacing: -0.02em;
 		line-height: 1.2;
+		display: flex;
+		align-items: center;
+		gap: 12px;
+	}
+
+	.bia-logo {
+		height: 48px;
+		width: auto;
+		margin-bottom: 4px;
 	}
 
 	@media (max-width: 600px) {
 		.title {
 			font-size: 22px;
+			gap: 8px;
+		}
+
+		.bia-logo {
+			height: 36px;
 		}
 	}
 </style>

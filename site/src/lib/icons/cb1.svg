@@ -63,11 +63,7 @@
     </filter>
   </defs>
 
-  <!-- iOS Icon Squircle Background -->
-  <rect x="20" y="20" width="760" height="760" rx="170" fill="url(#bg-grad)" />
-  
-  <!-- Outer Frame Highlight -->
-  <rect x="22" y="22" width="756" height="756" rx="168" fill="none" stroke="url(#stroke-dim)" stroke-width="2" />
+
 
   <!-- Environmental Elements: Heavy Rain Lines -->
   <g stroke="#ffffff" stroke-opacity="0.15" stroke-width="6" stroke-linecap="round" filter="url(#shadow-light)">
@@ -131,10 +127,5 @@
     stroke-linejoin="round"
   />
 
-  <!-- High-end Gloss Reflection on the Squircle (Spatial glass overlay) -->
-  <path 
-    d="M 20,190 C 20,80 80,20 190,20 L 610,20 C 720,20 780,80 780,190 C 780,300 500,450 400,450 C 300,450 20,300 20,190 Z" 
-    fill="#ffffff" 
-    opacity="0.03" 
-  />
+
 </svg>
