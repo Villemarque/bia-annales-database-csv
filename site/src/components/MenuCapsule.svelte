@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { ResolvedPathname } from '$app/types';
-	import { resolve } from '$app/paths';
+	import { resolve } from '$lib/go';
 	import type { Component } from 'svelte';
 	let {
 		expanded = false,
@@ -18,7 +18,11 @@
 {#snippet menu_item(icon: string | Component, label: string)}
 	<div class="icon-circle">
 		{#if typeof icon === 'string'}
-			{icon}
+			{#if icon.includes('.')}
+				<img src={icon} alt={label} class="icon-img" />
+			{:else}
+				{icon}
+			{/if}
 		{:else}
 			{@const Icon = icon}
 			<Icon {expanded} />
@@ -108,6 +112,12 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 18px;
+		color: black;
+	}
+
+	.icon-img {
+		width: 24px;
+		height: 24px;
 	}
 
 	.label {

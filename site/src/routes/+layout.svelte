@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { LayoutProps } from './$types';
 	import type { ResolvedPathname } from '$app/types';
+	import { sessionState } from '$lib/stores/session.svelte';
+	import { isDefined } from '$lib/utils';
 	import './layout.css'; // for reusable CSS components
 
 	import favicon from '$lib/assets/favicon.svg';
@@ -8,6 +10,15 @@
 	import MenuCapsule from '../components/MenuCapsule.svelte';
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
+
+	import HomeIcon from '$lib/icons/home.svg';
+	import BookIcon from '$lib/icons/Book.svelte';
+	import PlaneIcon from '$lib/icons/Plane.svelte';
+	import PlayIcon from '$lib/icons/play.svg';
+	import CalendarIcon from '$lib/icons/Calendar.svelte';
+	import ScrollIcon from '$lib/icons/Scroll.svelte';
+	import SearchIcon from '$lib/icons/Search.svelte';
+	import SettingsIcon from '$lib/icons/Settings.svelte';
 
 	let { children }: LayoutProps = $props();
 
@@ -17,14 +28,15 @@
 	const href = (path: ResolvedPathname): { tpe: 'href'; href: ResolvedPathname } => ({ tpe: 'href', href: path });
 	const onToggleF = (fn: () => void): { tpe: 'toggle'; onToggle: () => void } => ({ tpe: 'toggle', onToggle: fn });
 
-	const menuItems = [
-		{ icon: '🏠', label: 'Accueil', action: href('/') },
-		{ icon: '✈︎', label: 'Programme', action: href('/quiz') },
-		{ icon: '📅', label: 'Annales', action: href('/annales') },
-		{ icon: '📜', label: 'Sessions', action: href('/sessions') },
-		{ icon: '🔍', label: 'Questions', action: href('/questions') },
-		{ icon: '⚙️', label: 'Paramètres', action: href('/settings') }
-	];
+	const menuItems = $derived.by(() => [
+		{ icon: HomeIcon, label: 'Accueil', action: href('/') },
+		{ icon: BookIcon, label: 'Matières', action: href('/subjects' as any) },
+		sessionState.current ? { icon: PlayIcon, label: 'Reprendre', action: href('/quiz') } : undefined,
+		{ icon: CalendarIcon, label: 'Annales', action: href('/annales') },
+		{ icon: ScrollIcon, label: 'Sessions', action: href('/sessions') },
+		{ icon: SearchIcon, label: 'Questions', action: href('/questions') },
+		{ icon: SettingsIcon, label: 'Paramètres', action: href('/settings') }
+	].filter(isDefined));
 
 	const ham_item = [{ icon: HamburgerIcon, label: 'Menu', action: onToggleF(toggleSidebar) }];
 </script>

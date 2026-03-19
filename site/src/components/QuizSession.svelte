@@ -2,7 +2,7 @@
 	// should this be a component or page?
 	import { onMount } from 'svelte';
 	import { log } from '$lib/log';
-	import { go } from '$lib/go.svelte';
+	import { go } from '$lib/go';
 	import type { OngoingSession, Qid, QuestionWip, Second } from '$lib/types';
 	import { zeroSecond, inc } from '$lib/types';
 	import { formatTime } from '$lib/utils';

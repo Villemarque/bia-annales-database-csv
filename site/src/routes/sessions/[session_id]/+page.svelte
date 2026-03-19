@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { go } from '$lib/go.svelte';
+	import { go } from '$lib/go';
 
 	import { pastSessions } from '$lib/stores/session.svelte';
 	import { questions } from '$lib/stores/questions';

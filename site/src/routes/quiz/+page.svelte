@@ -3,7 +3,7 @@
 	import type { OngoingSession, Qid } from '$lib/types';
 	import QuizSession from '../../components/QuizSession.svelte';
 	import { sessionState, sessionDuration, durationByQ, saveSession, cancelSession } from '$lib/stores/session.svelte';
-	import { go } from '$lib/go.svelte';
+	import { go } from '$lib/go';
 	import { questions } from '$lib/stores/questions';
 
 	if (sessionState.current === null) {

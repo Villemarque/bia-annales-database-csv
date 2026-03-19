@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { go } from '$lib/go.svelte';
+	import { go } from '$lib/go';
 	import {
 		Chapters,
 		type Subject,

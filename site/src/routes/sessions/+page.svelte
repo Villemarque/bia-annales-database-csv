@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { pastSessions, deletePastSession } from '$lib/stores/session.svelte';
 	import type { SessionId } from '$lib/types';
-	import { go } from '$lib/go.svelte';
+	import { go } from '$lib/go';
 	import ScoreRing from '../../components/ScoreRing.svelte';
 
 	function formatTime(seconds: number) {

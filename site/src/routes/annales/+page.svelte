@@ -4,7 +4,7 @@
 	import { makeNewSession, sessionState, pastSessions, isExamSession } from '$lib/stores/session.svelte';
 	import { unsafeRandomId } from '$lib/random';
 	import { values } from '$lib/utils';
-	import { go } from '$lib/go.svelte';
+	import { go } from '$lib/go';
 	import ScoreRing from '../../components/ScoreRing.svelte';
 
 	// Derive unique years from the questions store, sort descending
