@@ -51,7 +51,9 @@
 		</div>
 	</main>
 
+	<div class="footer-wrapper">
 	<Footer />
+	</div>
 </div>
 
 <style>
@@ -71,7 +73,7 @@
 		--text-muted: rgba(0, 0, 0, 0.6);
 		--radius-xl: 22px;
 		--header-height: 104px; /* Matches Header.svelte padding + title height roughly */
-		--gap-main: 15px;
+		--gap-main: 16px;
 		font-family: 'Open Sans', sans-serif;
 	}
 
@@ -89,14 +91,11 @@
 			'hamburger header'
 			'menu content'
 			'footer footer';
-		grid-template-columns: 80px 1fr;
-		grid-template-rows: var(--header-height) 1fr auto;
+		grid-template-columns: auto 1fr;
+		grid-template-rows: auto 1fr auto;
+		gap: var(--gap-main);
 		min-height: 100vh;
 		transition: grid-template-columns 0.2s ease;
-	}
-
-	.app.sidebar-expanded {
-		grid-template-columns: 220px 1fr;
 	}
 
 	.hamburger-wrapper {
@@ -113,18 +112,16 @@
 	.menu-wrapper {
 		grid-area: menu;
 		position: sticky;
-		top: var(--header-height);
 		z-index: 100;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		padding-top: var(--gap-main);
 		align-self: start; /* Don't stretch to fill vertical space if content is short */
 	}
 
-	.sidebar-expanded .hamburger-wrapper,
-	.sidebar-expanded .menu-wrapper {
-		padding-left: 16px;
+	.hamburger-wrapper,
+	.menu-wrapper {
+		padding-left: var(--gap-main);
 	}
 
 	.header-wrapper {
@@ -137,8 +134,6 @@
 		display: flex;
 		flex-direction: column;
 		flex: 1;
-		gap: var(--gap-main);
-		padding-top: var(--gap-main);
 		min-width: 0;
 	}
 
@@ -147,33 +142,30 @@
 		min-width: 0;
 	}
 
-	.app :global(.footer) {
+	.footer-wrapper {
 		grid-area: footer;
 	}
 
 	@media (max-width: 900px) {
 		.app {
-			display: block;
-		}
-
-		.hamburger-wrapper {
+    grid-template-areas:
+      "hamburger header"
+      "content content"
+      "footer footer";
+  	}
+  		.menu-wrapper {
+  			display: none;
+  		}	
+		.sidebar-expanded .menu-wrapper {
 			position: fixed;
-			top: 24px;
+			top: 120px;
 			left: 16px;
 			width: auto;
 			height: auto;
 			padding: 0 !important;
 			justify-content: flex-start;
+			display: flex;
+			
 		}
-
-/*/*		.menu-wrapper {
-			position: fixed;
-			top: 92px; /* 24px + 52px + 16px gap */
-			left: 16px;
-			width: auto;
-			height: auto;
-			padding: 0 !important;
-			justify-content: flex-start;
-		}*/*/
-	}
+}
 </style>
