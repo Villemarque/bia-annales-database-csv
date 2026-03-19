@@ -1,21 +1,29 @@
 <script lang="ts">
 	import type { ResolvedPathname } from '$app/types';
 	import { resolve } from '$app/paths';
+	import type { Component } from 'svelte';
 	let {
 		expanded = false,
 		items = []
 	}: {
 		expanded?: boolean;
 		items?: Array<{
-			icon: string;
+			icon: string | Component;
 			label: string;
 			action: { tpe: 'href'; href: ResolvedPathname } | { tpe: 'toggle'; onToggle: () => void };
 		}>;
 	} = $props();
 </script>
 
-{#snippet menu_item(icon: string, label: string)}
-	<div class="icon-circle">{icon}</div>
+{#snippet menu_item(icon: string | Component, label: string)}
+	<div class="icon-circle">
+		{#if typeof icon === 'string'}
+			{icon}
+		{:else}
+			{@const Icon = icon}
+			<Icon {expanded} />
+		{/if}
+	</div>
 	<span class="label">{label}</span>
 {/snippet}
 

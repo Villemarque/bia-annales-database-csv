@@ -4,7 +4,7 @@
 	import './layout.css'; // for reusable CSS components
 
 	import favicon from '$lib/assets/favicon.svg';
-	import HamburgerButton from '../components/HamburgerButton.svelte';
+	import HamburgerIcon from '../components/HamburgerIcon.svelte';
 	import MenuCapsule from '../components/MenuCapsule.svelte';
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
@@ -26,7 +26,7 @@
 		{ icon: '⚙️', label: 'Paramètres', action: href('/settings') }
 	];
 
-	const ham_item = [{ icon: '☰', label: 'Menu', action: onToggleF(toggleSidebar) }];
+	const ham_item = [{ icon: HamburgerIcon, label: 'Menu', action: onToggleF(toggleSidebar) }];
 </script>
 
 <svelte:head>
