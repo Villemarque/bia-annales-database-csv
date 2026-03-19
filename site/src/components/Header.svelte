@@ -40,7 +40,7 @@
 	}
 
 	.bia-logo {
-		height: 48px;
+		height: 32px;
 		width: auto;
 		margin-bottom: 4px;
 	}
