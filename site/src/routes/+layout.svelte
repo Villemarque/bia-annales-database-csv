@@ -4,7 +4,7 @@
 	import './layout.css'; // for reusable CSS components
 
 	import favicon from '$lib/assets/favicon.svg';
-	import HamburgerButton from '../components/HamburgerButton.svelte';
+	import LogoHamburger from '../components/LogoHamburger.svelte';
 	import MenuCapsule from '../components/MenuCapsule.svelte';
 	import Header from '../components/Header.svelte';
 	import Footer from '../components/Footer.svelte';
@@ -15,7 +15,6 @@
 	const toggleSidebar = () => (sidebarExpanded = !sidebarExpanded);
 
 	const href = (path: ResolvedPathname): { tpe: 'href'; href: ResolvedPathname } => ({ tpe: 'href', href: path });
-	const onToggleF = (fn: () => void): { tpe: 'toggle'; onToggle: () => void } => ({ tpe: 'toggle', onToggle: fn });
 
 	const menuItems = [
 		{ icon: '🏠', label: 'Accueil', action: href('/') },
@@ -25,8 +24,6 @@
 		{ icon: '🔍', label: 'Questions', action: href('/questions') },
 		{ icon: '⚙️', label: 'Paramètres', action: href('/settings') }
 	];
-
-	const ham_item = [{ icon: '☰', label: 'Menu', action: onToggleF(toggleSidebar) }];
 </script>
 
 <svelte:head>
@@ -36,7 +33,7 @@
 <div class="app" class:sidebar-expanded={sidebarExpanded}>
 	<div class="nav-col">
 		<div class="hamburger-wrapper">
-			<MenuCapsule expanded={sidebarExpanded} items={ham_item} />
+			<LogoHamburger expanded={sidebarExpanded} ontoggle={toggleSidebar} />
 		</div>
 		<div class="menu-wrapper">
 			<MenuCapsule expanded={sidebarExpanded} items={menuItems} />

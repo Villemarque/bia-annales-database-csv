@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="300" height="300">
+  <defs>
+    <style>
+      .m-shape {
+        fill: none;
+        stroke: #000000;
+        /* Thick strokes with rounded caps mimic the bold styling of the original logo */
+        stroke-width: 6.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .m-fade {
+        fill: #000000;
+      }
+      .m-text {
+        font-family: Arial, sans-serif;
+        font-size: 6px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+      }
+    </style>
+    
+    <path id="tpath" d="M 5 65 C 0 25 35 2 60 8 C 85 12 95 30 95 55" />
+  </defs>
+
+  <g class="m-fade">
+    <text class="m-text">
+      <textPath href="#tpath" startOffset="3%">AÉRIEN&#160;&#160;&#160;AMBASSADEURS&#160;&#160;&#160;AVENIR</textPath>
+    </text>
+    
+    <path d="M 58 52.5 L 66 50.5 M 71 49 L 79 47 M 84 45.5 L 87 44.5" 
+          stroke="#000000" stroke-width="2" stroke-linecap="round" />
+    
+    <path d="M 85 45.5 L 89 44 L 88 40 L 90 39.5 L 92 43 L 96 41.5 C 97 41 98 41.5 98 42.5 C 98 43 97 43.5 96 44 L 92 45.5 L 93 49 L 91 49 L 89 46 L 85 47 Z" />
+    
+    <animate attributeName="opacity" dur="4s" repeatCount="indefinite"
+             keyTimes="0; 0.2; 0.45; 0.7; 0.9; 1"
+             values="1; 1; 0; 0; 1; 1" />
+  </g>
+
+  <path class="m-shape" d="M 18 85 L 35 25">
+    <animate attributeName="d" dur="4s" repeatCount="indefinite"
+             keyTimes="0; 0.2; 0.45; 0.7; 0.9; 1"
+             values="M 18 85 L 35 25;
+                     M 18 85 L 35 25;
+                     M 20 25 L 80 25;
+                     M 20 25 L 80 25;
+                     M 18 85 L 35 25;
+                     M 18 85 L 35 25"
+             calcMode="spline"
+             keySplines="0 0 1 1; 0.4 0 0.2 1; 0 0 1 1; 0.4 0 0.2 1; 0 0 1 1" />
+  </path>
+
+  <path class="m-shape" d="M 12 65 L 53 54">
+    <animate attributeName="d" dur="4s" repeatCount="indefinite"
+             keyTimes="0; 0.2; 0.45; 0.7; 0.9; 1"
+             values="M 12 65 L 53 54;
+                     M 12 65 L 53 54;
+                     M 20 50 L 80 50;
+                     M 20 50 L 80 50;
+                     M 12 65 L 53 54;
+                     M 12 65 L 53 54"
+             calcMode="spline"
+             keySplines="0 0 1 1; 0.4 0 0.2 1; 0 0 1 1; 0.4 0 0.2 1; 0 0 1 1" />
+  </path>
+
+  <path class="m-shape" d="M 35 20 L 60 95">
+    <animate attributeName="d" dur="4s" repeatCount="indefinite"
+             keyTimes="0; 0.2; 0.45; 0.7; 0.9; 1"
+             values="M 35 20 L 60 95;
+                     M 35 20 L 60 95;
+                     M 20 75 L 80 75;
+                     M 20 75 L 80 75;
+                     M 35 20 L 60 95;
+                     M 35 20 L 60 95"
+             calcMode="spline"
+             keySplines="0 0 1 1; 0.4 0 0.2 1; 0 0 1 1; 0.4 0 0.2 1; 0 0 1 1" />
+  </path>
+</svg>
