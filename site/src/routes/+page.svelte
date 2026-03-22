@@ -19,7 +19,7 @@
 	<div class="content-grid">
 		<section class="content-section glass-panel" id="cours">
 			<div class="section-header">
-				<h2>📚 Les Cours</h2>
+				<h2>Les Cours</h2>
 			</div>
 			<div class="section-body">
 				<p>
@@ -57,7 +57,7 @@
 
 		<section class="content-section glass-panel" id="nous-connaitre">
 			<div class="section-header">
-				<h2>👥 Nous Connaître</h2>
+				<h2>Nous Connaître</h2>
 			</div>
 			<div class="section-body">
 				<p>
@@ -77,18 +77,6 @@
 						<span class="year">2022</span>
 						<p>L’association prend son indépendance pour s’ouvrir à tous. Le profil des professeurs bénévoles se diversifie (pilotes, PNC, ingénieurs, dispatcheurs, etc.).</p>
 					</div>
-				</div>
-
-				<div class="partners-box">
-					<h3>Nos Partenaires</h3>
-					<p>
-						En parallèle des cours de BIA, notre association se diversifie via des partenariats avec :
-					</p>
-					<ul class="partners-list">
-						<li><a href="https://unmorceaudecielbleu.wixsite.com/unmorceaudecielbleu" target="_blank">Un morceau de ciel bleu</a></li>
-						<li><a href="https://www.ecole-air-espace.fr" target="_blank">L'Ecole de l'air et de l'espace</a></li>
-						<li><a href="https://www.ffa-aero.fr/FR/Federation_Aeronautique.awp" target="_blank">Fédération Française Aéronautique</a></li>
-					</ul>
 				</div>
 			</div>
 		</section>
