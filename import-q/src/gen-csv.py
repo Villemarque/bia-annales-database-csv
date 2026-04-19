@@ -150,13 +150,22 @@ def open_csv_with_fieldnames() -> Tuple[list[str], Iterable[any]]:
     old_fields: list[str] = list(reader.fieldnames)  # type: ignore
     return old_fields, rows
 
+def cap_bool(v):
+    # Only convert actual booleans (not truthy values like 1, "yes", etc.)
+    if isinstance(v, bool):
+        return "TRUE" if v else "FALSE"
+    return v
+
 
 def write_csv(fieldnames, rows) -> None:
     with open(THE_CSV, "w", newline="", encoding="utf-8") as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=CSV_DELIMITER)
         writer.writeheader()
         for row in rows:
-            writer.writerow(row)
+            writer.writerows(
+        {k: cap_bool(v) for k, v in row.items()}
+        for row in rows
+    )
 
 
 def add_subject_to_csv(_):
