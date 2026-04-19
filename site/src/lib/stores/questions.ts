@@ -47,10 +47,10 @@ const timeoutFor = (s: number) =>
 	});
 
 const maybeBool = (s: string): boolean | undefined => {
-	switch (s.trim()) {
-		case 'True':
+	switch (s.trim().toUpperCase()) {
+		case 'TRUE':
 			return true;
-		case 'False':
+		case 'FALSE':
 			return false;
 		case '':
 			return undefined;
