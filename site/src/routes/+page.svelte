@@ -7,7 +7,7 @@
 <div class="page-container">
 	<section class="hero glass-panel">
 		<h1>BIA par Aérien Ambassadeurs Avenir</h1>
-		<p class="subtitle">Cours à distance par visioconférence, gratuit, pour tous.</p>
+		<p class="subtitle">Cours à distance par visioconférence, gratuit, pour tous !</p>
 		<div class="actions">
 			<a href={resolve('/subjects' as any)} class="btn primary">Accéder aux Matières</a>
 			<a href="https://asso-triple-a.org/" target="_blank" rel="noopener noreferrer" class="btn secondary">
