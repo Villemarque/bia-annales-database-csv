@@ -1,4 +1,4 @@
-qid	year	subject	no_subject	no	content_verbatim	content_fixed	choice_b	choice_b	choice_c	choice_d	answer	chapter	attachment_link	mixed_choices
+qid	year	subject	no_subject	no	content_verbatim	content_fixed	choice_a	choice_b	choice_c	choice_d	answer	chapter	attachment_link	mixed_choices
 Yj7CK9dX	2015	0	0	0	Le nuage figurant sur la photographie ci-contre est un :	Le nuage figurant sur la photographie est un :	cirrus	nimbostratus	stratus	cumulonimbus	3	8	2015-000	TRUE
 AD9rHOa1	2015	0	1	1	Une rue de nuages est une particularité météorologique que l'on rencontre :		les jours où il n'y a pas de vent	les jours où il y a du vent	uniquement en montagne	toujours parallèlement aux vallées	1	8		TRUE
 uehTliAl	2015	0	2	2	Le mistral est un vent qui souffle globalement :		du nord vers le sud	du sud vers le nord	de l'est vers l'ouest	de l'ouest vers l'est	0	9		TRUE

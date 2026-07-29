@@ -38,7 +38,8 @@ from cache import CACHE
 # Constants #
 #############
 
-THE_CSV = SCRIPT_DIR.parent.parent / "annales-bia.csv"
+THE_TSV = SCRIPT_DIR.parent.parent / "site" / "static" / "annales-bia.tsv"
+THE_CSV = THE_TSV
 
 ########
 # Logs #
@@ -251,14 +252,85 @@ def export_csv(engine):
         writer.writeheader()
         for d in dicts:
             del d["created_at"]
-            for v in d.values():
+            for (k, v) in d.items():
                 if isinstance(v, str):
                     assert CSV_DELIMITER not in v, (
                         f"Value contains delimiter {CSV_DELIMITER}: {v} for {d}"
                     )
+                # We want to write actual booleans as TRUE/FALSE, not 1/0 or yes/no
+                if isinstance(v, bool):
+                    d[k] = "TRUE" if v else "FALSE"
             writer.writerow(d)
 
     print("Exported consolidated_questions.csv")
+
+
+def import_tsv(engine):
+    if not THE_TSV.exists():
+        log.error(f"TSV file not found at {THE_TSV}")
+        return
+
+    questions = []
+    with open(THE_TSV, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter=CSV_DELIMITER)
+        for row in reader:
+            if not row or not row.get("qid"):
+                continue
+            qid = row["qid"].strip()
+            if not qid:
+                continue
+
+            year = int(row["year"])
+            subject = int(row["subject"])
+            no_subject = int(row["no_subject"])
+            no = int(row["no"])
+            content_verbatim = row["content_verbatim"]
+            content_fixed = row["content_fixed"] if row.get("content_fixed") else None
+            choice_a = row["choice_a"]
+            choice_b = row["choice_b"]
+            choice_c = row["choice_c"]
+            choice_d = row["choice_d"]
+            answer = int(row["answer"])
+            chapter = row["chapter"] if row.get("chapter") else None
+            attachment_link = (
+                row["attachment_link"] if row.get("attachment_link") else None
+            )
+
+            mixed_choices = None
+            if row.get("mixed_choices"):
+                mc_str = row["mixed_choices"].strip().upper()
+                if mc_str == "TRUE":
+                    mixed_choices = True
+                elif mc_str == "FALSE":
+                    mixed_choices = False
+
+            q = ConsolidatedQuestion(
+                qid=qid,
+                year=year,
+                subject=subject,
+                no_subject=no_subject,
+                no=no,
+                content_verbatim=content_verbatim,
+                content_fixed=content_fixed,
+                choice_a=choice_a,
+                choice_b=choice_b,
+                choice_c=choice_c,
+                choice_d=choice_d,
+                answer=answer,
+                chapter=chapter,
+                attachment_link=attachment_link,
+                mixed_choices=mixed_choices,
+            )
+            questions.append(q)
+
+    with Session(engine) as session:
+        ConsolidatedQuestion.__table__.drop(engine, checkfirst=True)
+        ConsolidatedQuestion.__table__.create(engine, checkfirst=True)
+        for q in questions:
+            session.add(q)
+        session.commit()
+
+    print(f"Imported {len(questions)} consolidated questions from TSV into database.")
 
 
 def gen_and_export(engine):
@@ -273,6 +345,7 @@ def main() -> None:
 
     commands = {
         "gen-consolidated": gen_consolidated,
+        "import-tsv": import_tsv,
         "export-csv": export_csv,
         "gen+export": gen_and_export,
         "add_subject_to_csv": add_subject_to_csv,
