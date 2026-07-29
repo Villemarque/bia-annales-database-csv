@@ -74,7 +74,8 @@ class AfQuestion(SQLModel, table=True):
 class ConsolidatedQuestion(SQLModel, table=True):
     qid: str = Field(primary_key=True)
     year: int = Field(nullable=False)
-    label: str = Field(nullable=False)  # 1.1, 2.3, etc F.XX for English
+    subject: int = Field(nullable=False)
+    no_subject: int = Field(nullable=False)
     no: int = Field(nullable=False)  # 0-based in the year
     content_verbatim: str = Field(max_length=1024, nullable=False)
     content_fixed: Optional[str] = Field(max_length=1024)

@@ -87,10 +87,12 @@ def gen_consolidated(engine):
                 if leven >= 5 or len(annale.content) >= (len(af.content) + 5):
                     fixed = af.content
 
+            subject_no, question_no = from_label_subject_and_no(annale.question_number)
             c = ConsolidatedQuestion(
                 qid=gen_unique_id(),
                 year=annale.year,
-                label=annale.question_number,
+                subject=subject_no,
+                no_subject=question_no,
                 no=i,
                 content_verbatim=annale.content,
                 content_fixed=fixed,
@@ -225,7 +227,8 @@ def export_csv(engine):
     fieldnames = [
         "qid",
         "year",
-        "label",
+        "subject",
+        "no_subject",
         "no",
         "content_verbatim",
         "content_fixed",
