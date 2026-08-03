@@ -3,6 +3,7 @@
 
 *.db
 cache/
+.ruff-cache
 
 # throwaway mockups
 designs/

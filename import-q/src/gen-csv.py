@@ -26,6 +26,7 @@ from sqlalchemy import and_
 from models import (
     AfQuestion,
     AnnaleQuestion,
+    PdfQuestion,
     create_engine,
     AnnaleToAfMapping,
     gen_unique_id,
@@ -111,6 +112,60 @@ def gen_consolidated(engine):
             session.add(c)
             i += 1
         session.commit()
+
+
+def gen_consolidated_pdf(engine):
+    with Session(engine) as session:
+        statement = select(PdfQuestion)
+        pdf_questions = session.exec(statement).all()
+        results = sorted(pdf_questions, key=annale_label_to_ord)
+        print("Total PDF questions retrieved:", len(results))
+
+    generated_questions = []
+    current_year = None
+    i = 0
+    for pdf in results:
+        if current_year is None or current_year != pdf.year:
+            current_year = pdf.year
+            i = 0
+
+        subject_no, question_no = from_label_subject_and_no(pdf.question_number)
+        c = ConsolidatedQuestion(
+            qid=gen_unique_id(),
+            year=pdf.year,
+            subject=subject_no,
+            no_subject=question_no,
+            no=i,
+            content_verbatim=pdf.content,
+            content_fixed=None,
+            choice_a=pdf.choice_a,
+            choice_b=pdf.choice_b,
+            choice_c=pdf.choice_c,
+            choice_d=pdf.choice_d,
+            answer=pdf.answer if pdf.answer is not None else 0,
+            chapter=None,
+            attachment_link=None,
+            mixed_choices=None,
+        )
+        generated_questions.append(c)
+        i += 1
+
+    with Session(engine) as session:
+        existing = session.exec(select(ConsolidatedQuestion)).all()
+        existing_year_no = {(cq.year, cq.no) for cq in existing}
+
+        added_count = 0
+        for c in generated_questions:
+            key = (c.year, c.no)
+            if key in existing_year_no:
+                continue
+
+            session.add(c)
+            existing_year_no.add(key)
+            added_count += 1
+
+        session.commit()
+        print(f"Added {added_count} new consolidated questions from PDF.")
 
 
 def annale_label_to_ord(annale) -> Tuple[int, int, int]:
@@ -345,6 +400,7 @@ def main() -> None:
 
     commands = {
         "gen-consolidated": gen_consolidated,
+        "gen-consolidated-pdf": gen_consolidated_pdf,
         "import-tsv": import_tsv,
         "export-csv": export_csv,
         "gen+export": gen_and_export,
