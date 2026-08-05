@@ -28,9 +28,10 @@ def select_directory(title="Select Directory"):
     try:
         import tkinter as tk
         from tkinter import filedialog
+
         root = tk.Tk()
         root.withdraw()
-        root.attributes('-topmost', True)
+        root.attributes("-topmost", True)
         folder = filedialog.askdirectory(title=title)
         root.destroy()
         if folder:
@@ -39,9 +40,13 @@ def select_directory(title="Select Directory"):
         pass
 
     # 2. Try macOS osascript (AppleScript Finder folder picker)
-    if sys.platform == 'darwin':
+    if sys.platform == "darwin":
         try:
-            cmd = ['osascript', '-e', f'POSIX path of (choose folder with prompt "{title}")']
+            cmd = [
+                "osascript",
+                "-e",
+                f'POSIX path of (choose folder with prompt "{title}")',
+            ]
             res = subprocess.run(cmd, capture_output=True, text=True)
             if res.returncode == 0 and res.stdout.strip():
                 return res.stdout.strip()
@@ -49,18 +54,18 @@ def select_directory(title="Select Directory"):
             pass
 
     # 3. Try Linux zenity / kdialog
-    if sys.platform.startswith('linux'):
-        if shutil.which('zenity'):
+    if sys.platform.startswith("linux"):
+        if shutil.which("zenity"):
             try:
-                cmd = ['zenity', '--file-selection', '--directory', f'--title={title}']
+                cmd = ["zenity", "--file-selection", "--directory", f"--title={title}"]
                 res = subprocess.run(cmd, capture_output=True, text=True)
                 if res.returncode == 0 and res.stdout.strip():
                     return res.stdout.strip()
             except Exception:
                 pass
-        if shutil.which('kdialog'):
+        if shutil.which("kdialog"):
             try:
-                cmd = ['kdialog', '--getexistingdirectory', '.', f'--title={title}']
+                cmd = ["kdialog", "--getexistingdirectory", ".", f"--title={title}"]
                 res = subprocess.run(cmd, capture_output=True, text=True)
                 if res.returncode == 0 and res.stdout.strip():
                     return res.stdout.strip()
@@ -68,15 +73,17 @@ def select_directory(title="Select Directory"):
                 pass
 
     # 4. Try Windows PowerShell folder picker dialog
-    if sys.platform == 'win32':
+    if sys.platform == "win32":
         try:
             ps_script = (
-                'Add-Type -AssemblyName System.Windows.Forms; '
-                '$dialog = New-Object System.Windows.Forms.FolderBrowserDialog; '
+                "Add-Type -AssemblyName System.Windows.Forms; "
+                "$dialog = New-Object System.Windows.Forms.FolderBrowserDialog; "
                 f'$dialog.Description = "{title}"; '
-                'if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) { $dialog.SelectedPath }'
+                "if ($dialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) { $dialog.SelectedPath }"
             )
-            res = subprocess.run(['powershell', '-Command', ps_script], capture_output=True, text=True)
+            res = subprocess.run(
+                ["powershell", "-Command", ps_script], capture_output=True, text=True
+            )
             if res.returncode == 0 and res.stdout.strip():
                 return res.stdout.strip()
         except Exception:
@@ -844,32 +851,32 @@ HTML_PAGE = r"""<!DOCTYPE html>
 
 class MagickTunerHandler(BaseHTTPRequestHandler):
     def send_json(self, data, status=200):
-        body = json.dumps(data).encode('utf-8')
+        body = json.dumps(data).encode("utf-8")
         self.send_response(status)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Content-Length', str(len(body)))
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
 
     def send_error_json(self, message, status=400):
-        self.send_json({'error': message}, status=status)
+        self.send_json({"error": message}, status=status)
 
     def do_GET(self):
         parsed_url = urlparse(self.path)
         path = parsed_url.path
         query = parse_qs(parsed_url.query)
 
-        if path == '/' or path == '/index.html':
-            body = HTML_PAGE.encode('utf-8')
+        if path == "/" or path == "/index.html":
+            body = HTML_PAGE.encode("utf-8")
             self.send_response(200)
-            self.send_header('Content-Type', 'text/html; charset=utf-8')
-            self.send_header('Content-Length', str(len(body)))
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(body)))
             self.end_headers()
             self.wfile.write(body)
             return
 
-        if path == '/api/images':
-            dirs = query.get('dir', [''])
+        if path == "/api/images":
+            dirs = query.get("dir", [""])
             dir_path_str = dirs[0]
             if not dir_path_str:
                 self.send_error_json("Directory path is required.")
@@ -877,23 +884,27 @@ class MagickTunerHandler(BaseHTTPRequestHandler):
 
             dir_path = pathlib.Path(dir_path_str).expanduser().resolve()
             if not dir_path.is_dir():
-                self.send_error_json(f"Directory non-existent or invalid: {dir_path_str}")
+                self.send_error_json(
+                    f"Directory non-existent or invalid: {dir_path_str}"
+                )
                 return
 
             images = []
             for item in sorted(dir_path.iterdir()):
-                if item.is_file() and item.suffix.lower() == '.png':
-                    images.append({
-                        'name': item.name,
-                        'path': str(item),
-                        'size': item.stat().st_size
-                    })
+                if item.is_file() and item.suffix.lower() == ".png":
+                    images.append(
+                        {
+                            "name": item.name,
+                            "path": str(item),
+                            "size": item.stat().st_size,
+                        }
+                    )
 
-            self.send_json({'images': images})
+            self.send_json({"images": images})
             return
 
-        if path == '/api/original':
-            paths = query.get('path', [''])
+        if path == "/api/original":
+            paths = query.get("path", [""])
             img_path_str = paths[0]
             if not img_path_str:
                 self.send_error_json("Path is required.")
@@ -905,21 +916,21 @@ class MagickTunerHandler(BaseHTTPRequestHandler):
                 return
 
             try:
-                with open(img_path, 'rb') as f:
+                with open(img_path, "rb") as f:
                     content = f.read()
                 self.send_response(200)
-                self.send_header('Content-Type', 'image/png')
-                self.send_header('Content-Length', str(len(content)))
+                self.send_header("Content-Type", "image/png")
+                self.send_header("Content-Length", str(len(content)))
                 self.end_headers()
                 self.wfile.write(content)
             except Exception as e:
                 self.send_error_json(f"Error reading file: {e}", status=500)
             return
 
-        if path == '/api/preview':
-            paths = query.get('path', [''])
-            qualities = query.get('quality', ['10'])
-            samplings = query.get('sampling_factor', ['4:4:4'])
+        if path == "/api/preview":
+            paths = query.get("path", [""])
+            qualities = query.get("quality", ["10"])
+            samplings = query.get("sampling_factor", ["4:4:4"])
 
             img_path_str = paths[0]
             quality = qualities[0]
@@ -931,48 +942,58 @@ class MagickTunerHandler(BaseHTTPRequestHandler):
 
             img_path = pathlib.Path(img_path_str)
             if not img_path.is_file():
-                self.send_error_json(f"Image file not found: {img_path_str}", status=404)
+                self.send_error_json(
+                    f"Image file not found: {img_path_str}", status=404
+                )
                 return
 
             orig_size = img_path.stat().st_size
 
-            with tempfile.NamedTemporaryFile(suffix='.jpeg', delete=False) as tmp_file:
+            with tempfile.NamedTemporaryFile(suffix=".jpeg", delete=False) as tmp_file:
                 tmp_output = tmp_file.name
 
             try:
                 # Execution pattern: magick "$input" -sampling-factor 4:4:4 -quality 10 "$output"
                 cmd = [
-                    'magick',
+                    "magick",
                     str(img_path),
-                    '-sampling-factor', sampling_factor,
-                    '-quality', str(quality),
-                    tmp_output
+                    "-sampling-factor",
+                    sampling_factor,
+                    "-quality",
+                    str(quality),
+                    tmp_output,
                 ]
 
                 res = subprocess.run(cmd, capture_output=True, text=True)
                 if res.returncode != 0:
-                    err_msg = res.stderr.strip() or f"magick exited with code {res.returncode}"
+                    err_msg = (
+                        res.stderr.strip()
+                        or f"magick exited with code {res.returncode}"
+                    )
                     self.send_error_json(f"Magick error: {err_msg}", status=500)
                     return
 
                 comp_size = os.path.getsize(tmp_output)
-                with open(tmp_output, 'rb') as f:
+                with open(tmp_output, "rb") as f:
                     jpeg_bytes = f.read()
 
                 self.send_response(200)
-                self.send_header('Content-Type', 'image/jpeg')
-                self.send_header('Content-Length', str(len(jpeg_bytes)))
-                self.send_header('X-Original-Size', str(orig_size))
-                self.send_header('X-Compressed-Size', str(comp_size))
-                self.send_header('Access-Control-Expose-Headers', 'X-Original-Size, X-Compressed-Size')
-                self.send_header('Cache-Control', 'no-cache')
+                self.send_header("Content-Type", "image/jpeg")
+                self.send_header("Content-Length", str(len(jpeg_bytes)))
+                self.send_header("X-Original-Size", str(orig_size))
+                self.send_header("X-Compressed-Size", str(comp_size))
+                self.send_header(
+                    "Access-Control-Expose-Headers",
+                    "X-Original-Size, X-Compressed-Size",
+                )
+                self.send_header("Cache-Control", "no-cache")
                 self.end_headers()
                 self.wfile.write(jpeg_bytes)
 
             except FileNotFoundError:
                 self.send_error_json(
                     "Command 'magick' not found. Please ensure ImageMagick is installed and in your PATH.",
-                    status=500
+                    status=500,
                 )
             except Exception as e:
                 self.send_error_json(f"Unexpected error: {e}", status=500)
@@ -990,41 +1011,41 @@ class MagickTunerHandler(BaseHTTPRequestHandler):
         parsed_url = urlparse(self.path)
         path = parsed_url.path
 
-        if path == '/api/select-dir':
-            content_length = int(self.headers.get('Content-Length', 0))
+        if path == "/api/select-dir":
+            content_length = int(self.headers.get("Content-Length", 0))
             payload = {}
             if content_length > 0:
                 try:
                     post_data = self.rfile.read(content_length)
-                    payload = json.loads(post_data.decode('utf-8'))
+                    payload = json.loads(post_data.decode("utf-8"))
                 except Exception:
                     pass
-            title = payload.get('title', 'Select Directory')
+            title = payload.get("title", "Select Directory")
             folder = select_directory(title=title)
             if folder:
-                self.send_json({'path': folder})
+                self.send_json({"path": folder})
             else:
-                self.send_json({'path': None, 'cancelled': True})
+                self.send_json({"path": None, "cancelled": True})
             return
 
-        if path == '/api/batch':
-            content_length = int(self.headers.get('Content-Length', 0))
+        if path == "/api/batch":
+            content_length = int(self.headers.get("Content-Length", 0))
             if content_length == 0:
                 self.send_error_json("Empty request payload.")
                 return
 
             try:
                 post_data = self.rfile.read(content_length)
-                payload = json.loads(post_data.decode('utf-8'))
+                payload = json.loads(post_data.decode("utf-8"))
             except Exception as e:
                 self.send_error_json(f"Invalid JSON payload: {e}")
                 return
 
-            input_dir_str = payload.get('input_dir', '').strip()
-            output_dir_str = payload.get('output_dir', '').strip()
-            suffix = payload.get('suffix', '_minified.jpeg')
-            quality = str(payload.get('quality', 10))
-            sampling_factor = payload.get('sampling_factor', '4:4:4')
+            input_dir_str = payload.get("input_dir", "").strip()
+            output_dir_str = payload.get("output_dir", "").strip()
+            suffix = payload.get("suffix", "_minified.jpeg")
+            quality = str(payload.get("quality", 10))
+            sampling_factor = payload.get("sampling_factor", "4:4:4")
 
             if not output_dir_str:
                 self.send_error_json("Output directory is mandatory.")
@@ -1047,7 +1068,14 @@ class MagickTunerHandler(BaseHTTPRequestHandler):
                 self.send_error_json(f"Failed to create output directory: {e}")
                 return
 
-            img_files = [f for f in sorted(input_dir.iterdir()) if f.is_file() and f.suffix.lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.tif', '.bmp', '.gif'))]
+            img_files = [
+                f
+                for f in sorted(input_dir.iterdir())
+                if f.is_file()
+                and f.suffix.lower().endswith(
+                    (".png", ".jpg", ".jpeg", ".tiff", ".tif", ".bmp", ".gif")
+                )
+            ]
             if not img_files:
                 self.send_error_json("No PNG images found in input directory.")
                 return
@@ -1062,18 +1090,22 @@ class MagickTunerHandler(BaseHTTPRequestHandler):
                 out_path = output_dir / out_filename
 
                 cmd = [
-                    'magick',
+                    "magick",
                     str(img_file),
-                    '-sampling-factor', sampling_factor,
-                    '-quality', quality,
-                    str(out_path)
+                    "-sampling-factor",
+                    sampling_factor,
+                    "-quality",
+                    quality,
+                    str(out_path),
                 ]
 
                 try:
                     res = subprocess.run(cmd, capture_output=True, text=True)
                     if res.returncode != 0:
                         err_msg = res.stderr.strip() or f"code {res.returncode}"
-                        self.send_error_json(f"Magick error on {img_file.name}: {err_msg}", status=500)
+                        self.send_error_json(
+                            f"Magick error on {img_file.name}: {err_msg}", status=500
+                        )
                         return
 
                     total_orig_bytes += img_file.stat().st_size
@@ -1083,19 +1115,25 @@ class MagickTunerHandler(BaseHTTPRequestHandler):
                     self.send_error_json("Command 'magick' not found.", status=500)
                     return
                 except Exception as e:
-                    self.send_error_json(f"Error processing {img_file.name}: {e}", status=500)
+                    self.send_error_json(
+                        f"Error processing {img_file.name}: {e}", status=500
+                    )
                     return
 
             savings_pct = 0.0
             if total_orig_bytes > 0:
-                savings_pct = round(((total_orig_bytes - total_comp_bytes) / total_orig_bytes) * 100, 1)
+                savings_pct = round(
+                    ((total_orig_bytes - total_comp_bytes) / total_orig_bytes) * 100, 1
+                )
 
-            self.send_json({
-                'processed': processed_count,
-                'total_orig_bytes': total_orig_bytes,
-                'total_comp_bytes': total_comp_bytes,
-                'savings_percent': savings_pct
-            })
+            self.send_json(
+                {
+                    "processed": processed_count,
+                    "total_orig_bytes": total_orig_bytes,
+                    "total_comp_bytes": total_comp_bytes,
+                    "savings_percent": savings_pct,
+                }
+            )
             return
 
         self.send_error_json("Endpoint not found", status=404)
@@ -1107,10 +1145,10 @@ def open_browser(port):
 
 
 def run_server(port=DEFAULT_PORT):
-    server_address = ('', port)
+    server_address = ("", port)
     httpd = ThreadingHTTPServer(server_address, MagickTunerHandler)
     print(f"🚀 PNG to JPEG Magick Tuner running on http://localhost:{port}")
-    
+
     # Automatically open in browser upon launch
     threading.Timer(0.5, open_browser, args=(port,)).start()
 
@@ -1121,7 +1159,7 @@ def run_server(port=DEFAULT_PORT):
         httpd.server_close()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     port = DEFAULT_PORT
     if len(sys.argv) > 1:
         try:

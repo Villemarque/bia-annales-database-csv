@@ -208,6 +208,7 @@ def open_csv_with_fieldnames() -> Tuple[list[str], Iterable[any]]:
     old_fields: list[str] = list(reader.fieldnames)  # type: ignore
     return old_fields, rows
 
+
 def cap_bool(v):
     # Only convert actual booleans (not truthy values like 1, "yes", etc.)
     if isinstance(v, bool):
@@ -220,10 +221,7 @@ def write_csv(fieldnames, rows) -> None:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=CSV_DELIMITER)
         writer.writeheader()
         for row in rows:
-            writer.writerows(
-        {k: cap_bool(v) for k, v in row.items()}
-        for row in rows
-    )
+            writer.writerows({k: cap_bool(v) for k, v in row.items()} for row in rows)
 
 
 def add_subject_to_csv(_):
@@ -266,7 +264,7 @@ def change_chapters_to_number_csv(_):
     new_fields = deepcopy(old_fields)
     for row in rows:
         if row["chapter"] != "":
-            if row["chapter"] in ["5.", "6."]: # We do not split those into chapters
+            if row["chapter"] in ["5.", "6."]:  # We do not split those into chapters
                 row["chapter"] = None
             else:
                 row["chapter"] = CHAPTERS[row["chapter"]]
@@ -307,7 +305,7 @@ def export_csv(engine):
         writer.writeheader()
         for d in dicts:
             del d["created_at"]
-            for (k, v) in d.items():
+            for k, v in d.items():
                 if isinstance(v, str):
                     assert CSV_DELIMITER not in v, (
                         f"Value contains delimiter {CSV_DELIMITER}: {v} for {d}"

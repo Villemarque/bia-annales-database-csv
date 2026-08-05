@@ -18,6 +18,7 @@ from typing import List, Literal
 
 from rapidjson import Decoder, PM_COMMENTS, PM_TRAILING_COMMAS  # more lenient
 from dotenv import load_dotenv
+from sqlalchemy.exc import IntegrityError
 from sqlmodel import Session
 
 logging.getLogger("pypdf").setLevel(logging.ERROR)
@@ -49,7 +50,20 @@ GEMINI_MODEL = "gemini-3.6-flash"
 ###########
 
 Year = Literal[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
-YEARS: list[Year] = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
+YEARS: list[Year] = [
+    2015,
+    2016,
+    2017,
+    2018,
+    2019,
+    2020,
+    2021,
+    2022,
+    2023,
+    2024,
+    2025,
+    2026,
+]
 
 ANNALES_PDF_DIR = SCRIPT_DIR.parent.parent / "annales-pdf"
 print("ANNALES_PDF_DIR", ANNALES_PDF_DIR)
@@ -297,7 +311,29 @@ def parse_questions(y: Year) -> List[PdfQuestion]:
     return res
 
 
-@CACHE.memoize(name="disambiguate_answer_v1")
+def _stable_cache_arg(arg):
+    if isinstance(arg, PdfQuestion):
+        return ("PdfQuestion", arg.question_id)
+    return arg
+
+
+def memoize_stable(name):
+    def decorator(func):
+        cached = CACHE.memoize(name=name)(func)
+        orig_key = cached.__cache_key__
+
+        def __cache_key__(*args, **kwargs):
+            args = tuple(_stable_cache_arg(a) for a in args)
+            kwargs = {k: _stable_cache_arg(v) for k, v in kwargs.items()}
+            return orig_key(*args, **kwargs)
+
+        cached.__cache_key__ = __cache_key__
+        return cached
+
+    return decorator
+
+
+@memoize_stable("disambiguate_answer_v3")
 def prompt_user_answer(
     q: PdfQuestion, past: tuple[str, bool], ai: tuple[str, bool]
 ) -> str:
@@ -309,7 +345,9 @@ def prompt_user_answer(
     print(f"Past answer (correction): {past[0].upper()}")
     print(f"AI answer (exam pass):    {ai[0].upper()}")
     while True:
-        choice = input("Which is correct? [a/b/c/d, Enter = keep past] ").strip().lower()
+        choice = (
+            input("Which is correct? [a/b/c/d, Enter = keep past] ").strip().lower()
+        )
         if choice == "":
             return past[0]
         if choice in "abcd":
@@ -330,7 +368,7 @@ def process_questions_answer(add_db: bool, answer_json: bool):
         print("parsed answer", answers)
         log.info(f"Processing year {y} (AI answer pass)...")
         ai_answers = parse_answers_ai(questions)
-        if y != 2026: # DEBUG, only care about 2026, others checked manually beforehand
+        if y != 2026:  # DEBUG, only care about 2026, others checked manually beforehand
             ai_answers = {}
         print("parsed ai answer", ai_answers)
         with Session(engine) as session:
@@ -361,9 +399,11 @@ def process_questions_answer(add_db: bool, answer_json: bool):
                         )
                 if add_db:
                     session.add(q)
-            if add_db:
-                session.commit()
-                log.info(f"Inserted questions from year {y} into database.")
+                    try:
+                        session.commit()
+                    except IntegrityError:
+                        session.rollback()
+                        log.warning(f"Duplicate question {q.question_id}, skipping.")
 
 
 def main():
