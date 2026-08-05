@@ -38,6 +38,8 @@ load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 assert GEMINI_API_KEY is not None, "GEMINI_API_KEY environment variable must be set"
 
+GEMINI_MODEL = "gemini-3.6-flash"
+
 ########
 # Logs #
 ########
@@ -46,8 +48,8 @@ assert GEMINI_API_KEY is not None, "GEMINI_API_KEY environment variable must be 
 # Classes #
 ###########
 
-Year = Literal[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
-YEARS: list[Year] = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025]
+Year = Literal[2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
+YEARS: list[Year] = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025, 2026]
 
 ANNALES_PDF_DIR = SCRIPT_DIR.parent.parent / "annales-pdf"
 print("ANNALES_PDF_DIR", ANNALES_PDF_DIR)
@@ -108,6 +110,23 @@ Avec "question_id" le format "année-numéro_de_question" (ex: "2015-1.1").
 
 Commence ta réponse par le JSON et ne fournis que le JSON, sans texte additionnel."""
 
+A_PROMPT_AI = """Voici un sujet d'examen (sans correction). Détermine la bonne réponse de
+chaque question, uniquement à partir de tes connaissances.
+
+Exemple de format de sortie JSON :
+[
+  {{
+    question_id: "2015-1.1",
+    answer: "a", # a, b, c ou d
+    issue: false, # true si la question ou la réponse présente un problème
+  }},
+  ...
+]
+Avec "question_id" le format "année-numéro_de_question" (ex: "2015-1.1").
+{prefix_explication}
+
+Commence ta réponse par le JSON et ne fournis que le JSON, sans texte additionnel."""
+
 
 # here the questions in JSON are cached
 # ignore by default the prompt, to delete it, increase version number
@@ -115,7 +134,7 @@ Commence ta réponse par le JSON et ne fournis que le JSON, sans texte additionn
 def parse_pdf_raw(filepath: Path, prompt: str) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
     response = client.models.generate_content(
-        model="gemini-3-flash-preview",
+        model=GEMINI_MODEL,
         contents=[
             types.Part.from_bytes(
                 data=filepath.read_bytes(),
@@ -135,7 +154,7 @@ def parse_pdf_raw(filepath: Path, prompt: str) -> str:
 def parse_pdf_pro_raw(filepath: Path, prompt: str) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
     response = client.models.generate_content(
-        model="gemini-3-pro-preview",
+        model=GEMINI_MODEL,
         contents=[
             types.Part.from_bytes(
                 data=filepath.read_bytes(),
@@ -155,7 +174,7 @@ def parse_pdf_pro_raw(filepath: Path, prompt: str) -> str:
 def parse_pdf_pro_raw_json(filepath: Path, prompt: str) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
     response = client.models.generate_content(
-        model="gemini-3-pro-preview",
+        model=GEMINI_MODEL,
         contents=[
             types.Part.from_bytes(
                 data=filepath.read_bytes(),
@@ -163,6 +182,31 @@ def parse_pdf_pro_raw_json(filepath: Path, prompt: str) -> str:
             ),
             prompt,
         ],
+    )
+    print(response)
+    txt = response.text
+    assert txt is not None, "No text returned from Gemini API"
+    return txt
+
+
+def render_exam(questions: list[PdfQuestion]) -> str:
+    lines = []
+    for q in questions:
+        lines.append(f"{q.question_id}. {q.content}")
+        lines.append(f"  A) {q.choice_a}")
+        lines.append(f"  B) {q.choice_b}")
+        lines.append(f"  C) {q.choice_c}")
+        lines.append(f"  D) {q.choice_d}")
+    return "\n".join(lines)
+
+
+# here the AI answers are cached
+@CACHE.memoize(name="parse_exam_answers_ai_v1", ignore=(1,))
+def parse_exam_answers_ai(exam: str, prompt: str) -> str:
+    client = genai.Client(api_key=GEMINI_API_KEY)
+    response = client.models.generate_content(
+        model=GEMINI_MODEL,
+        contents=[exam, prompt],
     )
     print(response)
     txt = response.text
@@ -209,6 +253,18 @@ def parse_answers_csv(y: Year) -> dict[str, tuple[str, bool]]:
     return res
 
 
+def parse_answers_ai(questions: list[PdfQuestion]) -> dict[str, tuple[str, bool]]:
+    raw_output = parse_exam_answers_ai(render_exam(questions), A_PROMPT_AI)
+    parsed_output = parse_json_llm(raw_output)
+    res = {}
+    for row in parsed_output:
+        question_id = row["question_id"]
+        answer = row["answer"].strip().lower()
+        issue = row["issue"]
+        res[question_id] = (answer, issue)
+    return res
+
+
 def answer_to_int(answer: str) -> int:
     mapping = {"a": 0, "b": 1, "c": 2, "d": 3}
     return mapping[answer.lower()]
@@ -241,6 +297,26 @@ def parse_questions(y: Year) -> List[PdfQuestion]:
     return res
 
 
+@CACHE.memoize(name="disambiguate_answer_v1")
+def prompt_user_answer(
+    q: PdfQuestion, past: tuple[str, bool], ai: tuple[str, bool]
+) -> str:
+    choices = (q.choice_a, q.choice_b, q.choice_c, q.choice_d)
+    print(f"\n--- Answer conflict for {q.question_id} ---")
+    print(f"Content: {q.content}")
+    for i, choice in enumerate(choices):
+        print(f"  {chr(ord('A') + i)}) {choice}")
+    print(f"Past answer (correction): {past[0].upper()}")
+    print(f"AI answer (exam pass):    {ai[0].upper()}")
+    while True:
+        choice = input("Which is correct? [a/b/c/d, Enter = keep past] ").strip().lower()
+        if choice == "":
+            return past[0]
+        if choice in "abcd":
+            return choice
+        print("Invalid input, try again.")
+
+
 def process_questions_answer(add_db: bool, answer_json: bool):
     engine = create_engine()
     for y in YEARS:
@@ -252,11 +328,25 @@ def process_questions_answer(add_db: bool, answer_json: bool):
         else:
             answers = parse_answers_csv(y)
         print("parsed answer", answers)
+        log.info(f"Processing year {y} (AI answer pass)...")
+        ai_answers = parse_answers_ai(questions)
+        if y != 2026: # DEBUG, only care about 2026, others checked manually beforehand
+            ai_answers = {}
+        print("parsed ai answer", ai_answers)
         with Session(engine) as session:
             for q in questions:
                 # if session.get(PdfQuestion, q.question_id) is not None:
                 #   continue
                 answer = answers.get(q.question_id, None)
+                ai = ai_answers.get(q.question_id, None)
+                if (
+                    answer is not None
+                    and ai is not None
+                    and answer[0].lower() != ai[0].lower()
+                ):
+                    answer = (prompt_user_answer(q, answer, ai), answer[1])
+                elif answer is None and ai is not None:
+                    answer = ai
                 assert answer is not None, (
                     f"No answer found for question_id {q.question_id}"
                 )
