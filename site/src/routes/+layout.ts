@@ -9,7 +9,7 @@ export const ssr = false; // SPA for PWA
 
 export const load: LayoutLoad = async ({ fetch }) => {
 	console.log('Loading questions in +layout.ts');
-	await fetch(asset('/annales-bia.csv')).then((response) =>
+	await fetch(asset('/annales-bia.tsv')).then((response) =>
 		response.text().then((csv) => {
 			init(csv);
 		})

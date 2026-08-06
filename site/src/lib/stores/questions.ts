@@ -73,11 +73,50 @@ const parseChapters = (s: string, subject: Subject): ChapterId[] => {
 	return s.split(',').map(parseChapterId(subject));
 };
 
+const parseTsv = (text: string): string[][] => {
+	const rows: string[][] = [];
+	let row: string[] = [];
+	let field = '';
+	let inQuotes = false;
+	for (let i = 0; i < text.length; i++) {
+		const c = text[i];
+		if (inQuotes) {
+			if (c === '"') {
+				if (text[i + 1] === '"') {
+					field += '"';
+					i++;
+				} else {
+					inQuotes = false;
+				}
+			} else {
+				field += c;
+			}
+		} else if (c === '"' && field === '') {
+			inQuotes = true;
+		} else if (c === '\t') {
+			row.push(field);
+			field = '';
+		} else if (c === '\n') {
+			row.push(field);
+			rows.push(row);
+			row = [];
+			field = '';
+		} else {
+			field += c;
+		}
+	}
+	if (field !== '' || row.length > 0) {
+		row.push(field);
+		rows.push(row);
+	}
+	return rows;
+};
+
 export const loadQuestions = (csv: string): void => {
 	// we only write to the store once all values parsed, to avoid trigeering derived each time
 	const acc: Record<Qid, Question> = {};
-	// \t separated values
-	const lines = csv.split('\n').slice(1); // remove header
+	// \t separated values, quoted fields may span multiple lines
+	const lines = parseTsv(csv).slice(1); // remove header
 	for (const [i, line] of lines.entries()) {
 		const [
 			qidMaybe,
@@ -95,7 +134,7 @@ export const loadQuestions = (csv: string): void => {
 			chapters,
 			attachment_link,
 			mixed_choices
-		] = line.split('\t');
+		] = line;
 		const content = content_fixed || content_verbatim;
 		const qid = notEmpty(qidMaybe) as Qid;
 		const subject = parseSubject(subjectMaybe);
