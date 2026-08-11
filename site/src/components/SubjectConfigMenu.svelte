@@ -10,7 +10,6 @@
 		QBCtoList,
 		type OngoingSession
 	} from '$lib/types';
-	import { log } from '$lib/log';
 	import { attempts } from '$lib/stores/attempt';
 	import { questionsBySubject } from '$lib/stores/questions';
 	import { makeNewSession } from '$lib/stores/session.svelte';
@@ -27,10 +26,12 @@
 		onClose: () => void;
 	} = $props();
 
-	const subjectChapters = ChaptersBySubject[subjectId];
+	const subjectChapters = $derived(ChaptersBySubject[subjectId]);
 
 	const hasRest = $derived($questionsBySubject[subjectId]?.rest?.length > 0);
 
+	// component remounts per subject, seed selection once
+	// svelte-ignore state_referenced_locally
 	let chaptersState = $state<ChaptersState>({
 		onlyNew: true,
 		selected: subjectChapters.map((c) => c.id),
@@ -59,15 +60,6 @@
 			includeRest: true
 		})
 	);
-
-	// DEBUG
-	for (const qid of QBCtoList($questionsBySubject[subjectId])) {
-		// test if in questionsCountByChapter
-		const inPotential = QBCtoList(questionsCountByChapter).includes(qid);
-		if (!inPotential) {
-			log.log('not potential question', subjectId, qid);
-		}
-	}
 
 	let totalAvailable = $derived(potentialQuestions.length);
 
@@ -114,13 +106,12 @@
 	}
 </script>
 
-<div class="overlay" onclick={onClose} role="presentation">
-	<div
-		class="menu"
-		onclick={(e) => e.stopPropagation()}
-		role="dialog"
-		aria-modal="true"
-		aria-label="Configuration du quiz">
+<div
+	class="overlay"
+	onclick={(e) => e.target === e.currentTarget && onClose()}
+	onkeydown={(e) => e.key === 'Escape' && onClose()}
+	role="presentation">
+	<div class="menu" role="dialog" tabindex="-1" aria-modal="true" aria-label="Configuration du quiz">
 		<div class="header">
 			<h2>{title}</h2>
 			<button class="close-btn" onclick={onClose} aria-label="Fermer">✕</button>

@@ -40,14 +40,14 @@
 						{@render menu_item(item.icon, item.label)}
 					</a>
 				{:else if item.action.tpe == 'toggle'}
-					<a
+					<button
+						type="button"
 						onclick={item.action.onToggle}
-						role="button"
 						class="menu-item"
 						class:expanded
 						aria-label="Toggle Navigation">
 						{@render menu_item(item.icon, item.label)}
-					</a>
+					</button>
 				{/if}
 			</li>
 		{/each}
@@ -91,6 +91,10 @@
 		padding: 0;
 		text-decoration: none;
 		transition: background 0.2s ease;
+		background: none;
+		border: none;
+		font: inherit;
+		color: inherit;
 	}
 
 	.expanded .menu-item {

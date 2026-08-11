@@ -28,7 +28,7 @@
 	}
 </script>
 
-<div class="basecard subject-card" title={desc} onclick={handleClick} role="button" tabindex="0">
+<button type="button" class="basecard subject-card" title={desc} onclick={handleClick}>
 	<div class="card-top">
 		<img src={icon} alt="" class="icon-svg" />
 		<h3>{title}</h3>
@@ -48,13 +48,15 @@
 			</div>
 		</div>
 	{/if}
-</div>
+</button>
 
 <style>
 	.subject-card {
 		color: white;
 		background: var(--card-bg-color);
 		padding: 16px;
+		font: inherit;
+		width: 100%;
 	}
 
 	/* ---- Top row: icon + title side by side ---- */

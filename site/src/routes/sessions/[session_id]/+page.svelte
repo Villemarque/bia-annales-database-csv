@@ -12,9 +12,11 @@
 
 	// typing is a lie, but check is made just after to conform to it
 	let session: Session = $derived($pastSessions.find((s: Session) => s.id === params.session_id))!;
-	if (!session) {
-		go('/');
-	}
+	$effect(() => {
+		if (!session) {
+			go('/');
+		}
+	});
 
 	let viewMode: 'missed' | 'all' = $state('missed');
 

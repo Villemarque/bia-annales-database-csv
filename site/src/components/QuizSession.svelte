@@ -445,12 +445,6 @@
 		text-align: center;
 	}
 
-	.summary-card h2 {
-		margin: 0 0 40px;
-		font-size: 24px;
-		font-weight: 700;
-	}
-
 	.score-display {
 		display: flex;
 		flex-direction: column;

@@ -25,17 +25,22 @@
 				<p>
 					Les cours sont donnés en <strong>visioconférence</strong> à partir du mois
 					<strong>d’octobre</strong> jusqu’à <strong>la date de l’examen</strong>, suivant les
-					<strong>périodes scolaires</strong> de la <strong>zone C</strong> (Paris). Durant les vacances
-					scolaires des cours de révisions peuvent être proposés.
+					<strong>périodes scolaires</strong> de la <strong>zone C</strong> (Paris). Durant les vacances scolaires des cours
+					de révisions peuvent être proposés.
 				</p>
-				
+
 				<div class="highlight-box">
 					<h3>Pourquoi nous rejoindre ?</h3>
 					<ul class="benefits-list">
 						<li>🌍 Le format en visioconférence permet de suivre les cours dans le monde entier</li>
-						<li>✈️ Nos professeurs, directement issus du secteur aérien, peuvent aider pour l'orientation professionnelle</li>
+						<li>
+							✈️ Nos professeurs, directement issus du secteur aérien, peuvent aider pour l'orientation professionnelle
+						</li>
 						<li>📝 Notre site d'annales mis à disposition, pour bien se préparer à l'examen</li>
-						<li>🤝 Partenariat avec la <a href="https://www.ffa-aero.fr/FR/Federation_Aeronautique.awp" target="_blank">Fédération Française Aéronautique</a></li>
+						<li>
+							🤝 Partenariat avec la <a href="https://www.ffa-aero.fr/FR/Federation_Aeronautique.awp" target="_blank"
+								>Fédération Française Aéronautique</a>
+						</li>
 						<li>🎓 Cours adaptés à tous les profils (jeunes et adultes)</li>
 						<li>🌿 Sensibilisation à l'impact environnemental de l'aérien</li>
 					</ul>
@@ -61,21 +66,32 @@
 			</div>
 			<div class="section-body">
 				<p>
-					Créée en décembre 2020, notre association loi 1901 <strong>« Aérien Ambassadeurs Avenir »</strong> (Triple A) a pour objectifs de partager notre passion pour l'aéronautique avec la jeunesse, de susciter des vocations et de développer une conscience environnementale.
+					Créée en décembre 2020, notre association loi 1901 <strong>« Aérien Ambassadeurs Avenir »</strong> (Triple A) a
+					pour objectifs de partager notre passion pour l'aéronautique avec la jeunesse, de susciter des vocations et de développer
+					une conscience environnementale.
 				</p>
-				
+
 				<div class="timeline">
 					<div class="timeline-item">
 						<span class="year">2020</span>
-						<p>Alors que la France se confine, Air France souhaite proposer aux enfants de ses salariés des cours en ligne pour se former au BIA.</p>
+						<p>
+							Alors que la France se confine, Air France souhaite proposer aux enfants de ses salariés des cours en
+							ligne pour se former au BIA.
+						</p>
 					</div>
 					<div class="timeline-item">
 						<span class="year">Création</span>
-						<p>L’association « Triple A » est créée, composée d’employés d’Air France, de Cadets Air France, et d'Elèves Pilotes de Ligne (EPL) de l’ENAC. Plus de 900 élèves formés sur 2 ans.</p>
+						<p>
+							L’association « Triple A » est créée, composée d’employés d’Air France, de Cadets Air France, et d'Elèves
+							Pilotes de Ligne (EPL) de l’ENAC. Plus de 900 élèves formés sur 2 ans.
+						</p>
 					</div>
 					<div class="timeline-item">
 						<span class="year">2022</span>
-						<p>L’association prend son indépendance pour s’ouvrir à tous. Le profil des professeurs bénévoles se diversifie (pilotes, PNC, ingénieurs, dispatcheurs, etc.).</p>
+						<p>
+							L’association prend son indépendance pour s’ouvrir à tous. Le profil des professeurs bénévoles se
+							diversifie (pilotes, PNC, ingénieurs, dispatcheurs, etc.).
+						</p>
 					</div>
 				</div>
 			</div>
@@ -106,7 +122,7 @@
 	.hero {
 		text-align: center;
 		padding: 48px 24px;
-		background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.4));
+		background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.4));
 	}
 
 	h1 {
@@ -114,6 +130,7 @@
 		margin: 0 0 0.5rem 0;
 		background: var(--card-blue);
 		-webkit-background-clip: text;
+		background-clip: text;
 		-webkit-text-fill-color: transparent;
 		font-weight: 800;
 	}
@@ -151,13 +168,15 @@
 		border-radius: 14px;
 		text-decoration: none;
 		font-weight: 700;
-		transition: transform 0.2s, box-shadow 0.2s;
+		transition:
+			transform 0.2s,
+			box-shadow 0.2s;
 		font-size: 1rem;
 	}
 
 	.btn:hover {
 		transform: translateY(-2px);
-		box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 	}
 
 	.btn.primary {
@@ -194,7 +213,7 @@
 	.section-header {
 		margin-bottom: 24px;
 		padding-bottom: 16px;
-		border-bottom: 2px solid rgba(0,0,0,0.05);
+		border-bottom: 2px solid rgba(0, 0, 0, 0.05);
 	}
 
 	.section-body {
@@ -228,7 +247,7 @@
 		position: relative;
 		line-height: 1.5;
 	}
-	
+
 	.benefits-list li:last-child {
 		margin-bottom: 0;
 	}
@@ -237,14 +256,14 @@
 		background: var(--bg-grey);
 		padding: 20px;
 		border-radius: 16px;
-		border: 1px solid rgba(0,0,0,0.05);
+		border: 1px solid rgba(0, 0, 0, 0.05);
 	}
 
 	.time-slot {
 		display: flex;
 		justify-content: space-between;
 		padding: 12px 0;
-		border-bottom: 1px solid rgba(0,0,0,0.1);
+		border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 		font-weight: 600;
 	}
 
@@ -270,7 +289,7 @@
 		margin-bottom: 24px;
 		border-left: 2px solid #cbd5e0;
 	}
-	
+
 	.timeline-item:last-child {
 		margin-bottom: 0;
 		border-left: 2px solid transparent; /* Stop the line */
@@ -296,22 +315,6 @@
 		font-size: 0.85rem;
 		font-weight: bold;
 		color: var(--text-dark);
-		margin-bottom: 8px;
-	}
-
-	.partners-box {
-		margin-top: auto;
-		padding-top: 16px;
-		border-top: 2px solid rgba(0,0,0,0.05);
-	}
-
-	.partners-list {
-		list-style: none;
-		padding: 0;
-		margin: 16px 0 0 0;
-	}
-
-	.partners-list li {
 		margin-bottom: 8px;
 	}
 

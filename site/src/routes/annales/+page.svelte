@@ -130,6 +130,7 @@
 		margin: 0 0 12px 0;
 		background: linear-gradient(135deg, var(--text-dark) 0%, #4a5568 100%);
 		-webkit-background-clip: text;
+		background-clip: text;
 		-webkit-text-fill-color: transparent;
 		letter-spacing: -1px;
 	}
