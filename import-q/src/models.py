@@ -91,6 +91,13 @@ class ConsolidatedQuestion(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
+class ImageDedupDecision(SQLModel, table=True):
+    pair_key: str = Field(primary_key=True)
+    decision: str = Field(nullable=False)  # "canonical" or "reject"
+    canonical: Optional[str] = Field(default=None)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+
 class AnnaleQuestion(SQLModel, table=True):
     question_id: str = Field(primary_key=True)  # year-question_number
     year: int = Field()

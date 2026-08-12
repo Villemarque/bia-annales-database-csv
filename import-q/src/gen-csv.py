@@ -33,6 +33,7 @@ from models import (
     AnnaleToAfMapping,
     gen_unique_id,
     ConsolidatedQuestion,
+    ImageDedupDecision,
 )
 from check_imgs import (
     ANNALES_IMG_DIR,
@@ -405,7 +406,7 @@ def gen_and_export(engine):
     export_csv(engine)
 
 
-Decision = dict[str, str]
+Decision = dict[str, object]
 
 
 def dedup_cache_key(key: str) -> str:
@@ -425,6 +426,91 @@ def clear_decisions() -> None:
     for cache_key in list(DECISIONS):
         if isinstance(cache_key, str) and cache_key.startswith(DEDUP_PREFIX):
             del DECISIONS[cache_key]
+
+
+def all_decisions() -> list[tuple[str, Decision]]:
+    res = []
+    for cache_key in list(DECISIONS):
+        if not isinstance(cache_key, str) or not cache_key.startswith(DEDUP_PREFIX):
+            continue
+        value = DECISIONS.get(cache_key)
+        if isinstance(value, dict):
+            res.append((cache_key[len(DEDUP_PREFIX) :], value))
+    return sorted(res)
+
+
+def update_tsv_attachment_links(updates: dict[str, str]) -> int:
+    if not updates:
+        return 0
+    with open(THE_TSV, "r", newline="", encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=CSV_DELIMITER)
+        rows = list(reader)
+        fieldnames: list[str] = list(reader.fieldnames)  # type: ignore[assignment]
+    changed = 0
+    for row in rows:
+        link = row.get("attachment_link")
+        if link and link in updates:
+            row["attachment_link"] = updates[link]
+            changed += 1
+    with open(THE_TSV, "w", newline="", encoding="utf-8") as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=CSV_DELIMITER)
+        writer.writeheader()
+        writer.writerows(rows)
+    return changed
+
+
+def apply_decisions(engine) -> tuple[int, int, int]:
+    tsv_updates: dict[str, str] = {}
+    applied = 0
+    db_rows = 0
+    with Session(engine) as session:
+        for pair_key_, value in all_decisions():
+            if value.get("applied"):
+                continue
+            applied += 1
+            canonical = value.get("canonical")
+            decision_type = value["type"]
+            assert isinstance(canonical, str) or canonical is None
+            assert isinstance(decision_type, str)
+            if decision_type == "canonical" and canonical:
+                names = pair_key_.split("|")
+                assert len(names) == 2, f"Unexpected pair key: {pair_key_}"
+                non_canonical = names[0] if names[1] == canonical else names[1]
+                old_stem = Path(non_canonical).stem
+                new_stem = Path(canonical).stem
+                if old_stem != new_stem:
+                    tsv_updates[old_stem] = new_stem
+                    rows = session.exec(
+                        select(ConsolidatedQuestion).where(
+                            col(ConsolidatedQuestion.attachment_link) == old_stem
+                        )
+                    ).all()
+                    for row in rows:
+                        row.attachment_link = new_stem
+                    session.add_all(rows)
+                    db_rows += len(rows)
+            existing = session.get(ImageDedupDecision, pair_key_)
+            if existing is None:
+                session.add(
+                    ImageDedupDecision(
+                        pair_key=pair_key_,
+                        decision=decision_type,
+                        canonical=canonical,
+                    )
+                )
+            else:
+                existing.decision = decision_type
+                existing.canonical = canonical
+                session.add(existing)
+            value["applied"] = True
+            DECISIONS.set(dedup_cache_key(pair_key_), value)
+        session.commit()
+    tsv_changed = update_tsv_attachment_links(tsv_updates)
+    print(
+        f"Applied {applied} decisions: updated {db_rows} rows in DB, "
+        f"{tsv_changed} rows in TSV"
+    )
+    return applied, db_rows, tsv_changed
 
 
 def build_attachment_map(engine) -> dict[str, list[dict]]:
@@ -519,19 +605,33 @@ button{{padding:.6rem .9rem;border-radius:6px;border:1px solid #d1d5db;cursor:po
 
 def render_done_page(pairs: Sequence[SimilarPair]) -> str:
     rows = []
+    unapplied = 0
     for pair in pairs:
         decision = get_decision(pair_key(pair))
         if decision is None:
             continue
+        applied = decision.get("applied", False)
+        if not applied:
+            unapplied += 1
         label = (
             f"canonical: {decision['canonical']}"
             if decision.get("type") == "canonical"
             else "rejected"
         )
+        if applied:
+            label += " (applied)"
         rows.append(
             f"<li><code>{html.escape(pair_key(pair))}</code> &rarr; "
             f"{html.escape(label)}</li>"
         )
+    if unapplied:
+        apply_html = (
+            "<form method='post' action='/apply'>"
+            f"<button type='submit'>Save {unapplied} decisions to database + TSV</button>"
+            "</form>"
+        )
+    else:
+        apply_html = "<p class='muted'>All decisions applied to database and TSV.</p>"
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -540,12 +640,15 @@ def render_done_page(pairs: Sequence[SimilarPair]) -> str:
 <style>
 body{{font-family:system-ui,sans-serif;margin:1.5rem;color:#1f2937}}
 code{{background:#f3f4f6;padding:.1rem .3rem;border-radius:4px}}
+.muted{{color:#9ca3af}}
+button{{padding:.6rem .9rem;border-radius:6px;border:1px solid #d1d5db;cursor:pointer;font-size:.9rem}}
 </style>
 </head>
 <body>
 <h1>All pairs reviewed</h1>
 <p class="muted">{len(rows)} decisions recorded.</p>
 <ul>{''.join(rows)}</ul>
+{apply_html}
 <form method="post" action="/reset"><button type="submit">Reset all decisions</button></form>
 </body>
 </html>"""
@@ -560,6 +663,7 @@ def convert_to_png(path: Path) -> bytes:
 
 
 class ReviewState:
+    engine: object
     pairs: list[SimilarPair]
     attachment_map: dict[str, list[dict]]
     name_to_path: dict[str, Path]
@@ -567,10 +671,12 @@ class ReviewState:
 
     def __init__(
         self,
+        engine,
         pairs: list[SimilarPair],
         attachment_map: dict[str, list[dict]],
         name_to_path: dict[str, Path],
     ) -> None:
+        self.engine = engine
         self.pairs = pairs
         self.attachment_map = attachment_map
         self.name_to_path = name_to_path
@@ -637,6 +743,10 @@ class DedupReviewHandler(BaseHTTPRequestHandler):
             clear_decisions()
             self._redirect("/")
             return
+        if path == "/apply":
+            apply_decisions(self.state.engine)
+            self._redirect("/")
+            return
         self._send(b"Not found", 404, "text/plain")
 
     def _serve_image(self, name: str) -> None:
@@ -683,6 +793,7 @@ def review_image_duplicates(engine, args) -> None:
     name_to_path = {p.a.name: p.a.path for p in pairs}
     name_to_path.update({p.b.name: p.b.path for p in pairs})
     DedupReviewHandler.state = ReviewState(
+        engine=engine,
         pairs=pairs,
         attachment_map=attachment_map,
         name_to_path=name_to_path,
