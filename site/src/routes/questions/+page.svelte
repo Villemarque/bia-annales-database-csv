@@ -2,6 +2,7 @@
 	import { questions } from '$lib/stores/questions';
 	import { Subjects, ChaptersById } from '$lib/types';
 	import type { Question, Subject, ChapterId, Qid } from '$lib/types';
+	import { imageUrl } from '$lib/images';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { SvelteSet } from 'svelte/reactivity';
@@ -180,7 +181,7 @@
 										{#if q.attachment_link}
 											<div class="annexes">
 												<img
-													src="/figures/{q.attachment_link}.png"
+													src={imageUrl(q.attachment_link)}
 													alt="Annexe {q.attachment_link}"
 													class="annexe-img"
 													loading="lazy" />

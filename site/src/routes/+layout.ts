@@ -2,6 +2,7 @@ import { asset } from '$app/paths';
 import type { LayoutLoad } from './$types';
 
 import { init } from '$lib/init';
+import { checkImagesExist } from '$lib/images';
 
 export const ssr = false; // SPA for PWA
 // TODO FIXME can this be actived back?
@@ -14,5 +15,6 @@ export const load: LayoutLoad = async ({ fetch }) => {
 			init(csv);
 		})
 	);
+	void checkImagesExist();
 	return {};
 };

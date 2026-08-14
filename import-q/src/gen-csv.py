@@ -8,22 +8,15 @@ from __future__ import annotations
 
 import argparse
 import csv
-import html
-import io
 
 import Levenshtein
 
 from copy import deepcopy
 from argparse import RawTextHelpFormatter
-from pathlib import Path
-from typing import Tuple, Sequence, Iterable
+from typing import Tuple, Iterable
 
-from fastapi import FastAPI, Form
-from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from sqlmodel import Session, select, col
 from sqlalchemy import and_
-
-from PIL import Image, ImageOps
 
 from models import (
     AfQuestion,
@@ -33,17 +26,14 @@ from models import (
     AnnaleToAfMapping,
     gen_unique_id,
     ConsolidatedQuestion,
-    ImageDedupDecision,
 )
-from check_imgs import (
-    ANNALES_IMG_DIR,
-    SimilarPair,
-    Fingerprint,
-    find_duplicate_groups,
-    pair_key,
+from dedup import (
+    DEDUP_PORT,
+    DEDUP_THRESHOLD,
+    DEDUP_SSIM_THRESHOLD,
+    review_image_duplicates,
 )
 from log import SCRIPT_DIR, log
-from cache import DECISIONS
 
 #############
 # Constants #
@@ -51,11 +41,6 @@ from cache import DECISIONS
 
 THE_TSV = SCRIPT_DIR.parent.parent / "site" / "static" / "annales-bia.tsv"
 THE_CSV = THE_TSV
-
-DEDUP_PREFIX = "image-dedup:"
-DEDUP_PORT = 8001
-DEDUP_THRESHOLD = 10
-DEDUP_SSIM_THRESHOLD = 0.9
 
 ########
 # Logs #
@@ -406,366 +391,10 @@ def gen_and_export(engine):
     export_csv(engine)
 
 
-Decision = dict[str, object]
-
-
-def dedup_cache_key(key: str) -> str:
-    return f"{DEDUP_PREFIX}{key}"
-
-
-def get_decision(key: str) -> Decision | None:
-    value = DECISIONS.get(dedup_cache_key(key))
-    return value if isinstance(value, dict) else None
-
-
-def set_decision(key: str, decision: Decision) -> None:
-    DECISIONS.set(dedup_cache_key(key), decision)
-
-
-def clear_decisions() -> None:
-    for cache_key in list(DECISIONS):
-        if isinstance(cache_key, str) and cache_key.startswith(DEDUP_PREFIX):
-            del DECISIONS[cache_key]
-
-
-def all_decisions() -> list[tuple[str, Decision]]:
-    res = []
-    for cache_key in list(DECISIONS):
-        if not isinstance(cache_key, str) or not cache_key.startswith(DEDUP_PREFIX):
-            continue
-        value = DECISIONS.get(cache_key)
-        if isinstance(value, dict):
-            res.append((cache_key[len(DEDUP_PREFIX) :], value))
-    return sorted(res)
-
-
-def update_tsv_attachment_links(updates: dict[str, str]) -> int:
-    if not updates:
-        return 0
-    with open(THE_TSV, "r", newline="", encoding="utf-8") as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=CSV_DELIMITER)
-        rows = list(reader)
-        fieldnames: list[str] = list(reader.fieldnames)  # type: ignore[assignment]
-    changed = 0
-    for row in rows:
-        link = row.get("attachment_link")
-        if link and link in updates:
-            row["attachment_link"] = updates[link]
-            changed += 1
-    with open(THE_TSV, "w", newline="", encoding="utf-8") as csvfile:
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames, delimiter=CSV_DELIMITER)
-        writer.writeheader()
-        writer.writerows(rows)
-    return changed
-
-
-def apply_decisions(engine) -> tuple[int, int, int]:
-    tsv_updates: dict[str, str] = {}
-    applied = 0
-    db_rows = 0
-    with Session(engine) as session:
-        for pair_key_, value in all_decisions():
-            if value.get("applied"):
-                continue
-            applied += 1
-            canonical = value.get("canonical")
-            decision_type = value["type"]
-            assert isinstance(canonical, str) or canonical is None
-            assert isinstance(decision_type, str)
-            if decision_type == "canonical" and canonical:
-                names = pair_key_.split("|")
-                assert len(names) == 2, f"Unexpected pair key: {pair_key_}"
-                non_canonical = names[0] if names[1] == canonical else names[1]
-                old_stem = Path(non_canonical).stem
-                new_stem = Path(canonical).stem
-                if old_stem != new_stem:
-                    tsv_updates[old_stem] = new_stem
-                    rows = session.exec(
-                        select(ConsolidatedQuestion).where(
-                            col(ConsolidatedQuestion.attachment_link) == old_stem
-                        )
-                    ).all()
-                    for row in rows:
-                        row.attachment_link = new_stem
-                    session.add_all(rows)
-                    db_rows += len(rows)
-            existing = session.get(ImageDedupDecision, pair_key_)
-            if existing is None:
-                session.add(
-                    ImageDedupDecision(
-                        pair_key=pair_key_,
-                        decision=decision_type,
-                        canonical=canonical,
-                    )
-                )
-            else:
-                existing.decision = decision_type
-                existing.canonical = canonical
-                session.add(existing)
-            value["applied"] = True
-            DECISIONS.set(dedup_cache_key(pair_key_), value)
-        session.commit()
-    tsv_changed = update_tsv_attachment_links(tsv_updates)
-    print(
-        f"Applied {applied} decisions: updated {db_rows} rows in DB, "
-        f"{tsv_changed} rows in TSV"
-    )
-    return applied, db_rows, tsv_changed
-
-
-def build_attachment_map(engine) -> dict[str, list[dict]]:
-    with Session(engine) as session:
-        rows = session.exec(select(ConsolidatedQuestion)).all()
-    res: dict[str, list[dict]] = {}
-    for q in rows:
-        if not q.attachment_link:
-            continue
-        res.setdefault(q.attachment_link, []).append(
-            {
-                "qid": q.qid,
-                "year": q.year,
-                "no": q.no,
-                "content": q.content_verbatim,
-            }
-        )
-    for lst in res.values():
-        lst.sort(key=lambda r: (r["year"], r["no"]))
-    return res
-
-
-def questions_for_image(attachment_map: dict[str, list[dict]], name: str) -> list[dict]:
-    return attachment_map.get(Path(name).stem, [])
-
-
-def render_questions(questions: list[dict]) -> str:
-    if not questions:
-        return "<p class='muted'>No question references this image.</p>"
-    items = []
-    for q in questions:
-        content = html.escape(q["content"])[:120]
-        items.append(
-            f"<li><strong>{q['year']} #{q['no'] + 1}</strong> &mdash; {content}</li>"
-        )
-    return "<ul>" + "".join(items) + "</ul>"
-
-
-def render_pair_page(pair: SimilarPair, attachment_map: dict[str, list[dict]]) -> str:
-    key = pair_key(pair)
-    a_qs = questions_for_image(attachment_map, pair.a.name)
-    b_qs = questions_for_image(attachment_map, pair.b.name)
-
-    def panel(image: Fingerprint, questions: list[dict]) -> str:
-        return (
-            f"<div class='panel'><h2>{html.escape(image.name)}</h2>"
-            f"<img src='/img/{image.name}' alt='{html.escape(image.name)}'>"
-            f"<p class='muted'>{image.size[0]} &times; {image.size[1]} px</p>"
-            f"{render_questions(questions)}</div>"
-        )
-
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Review duplicate images</title>
-<style>
-body{{font-family:system-ui,sans-serif;margin:1.5rem;color:#1f2937;max-width:1200px}}
-header{{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e5e7eb;padding-bottom:.5rem;margin-bottom:1rem}}
-.meta{{color:#6b7280;font-size:.9rem}}
-.pair{{display:grid;grid-template-columns:1fr 1fr;gap:1rem}}
-.panel{{border:1px solid #d1d5db;border-radius:8px;padding:1rem;background:#fafafa}}
-.panel img{{max-width:100%;height:auto;border:1px solid #e5e7eb;background:#fff}}
-.panel ul{{font-size:.85rem;padding-left:1.2rem}}
-.actions{{display:flex;gap:.5rem;margin-top:1rem}}
-button{{padding:.6rem .9rem;border-radius:6px;border:1px solid #d1d5db;cursor:pointer;font-size:.9rem}}
-.reject{{background:#fee2e2}}
-.canonical{{background:#dcfce7}}
-.muted{{color:#9ca3af}}
-</style>
-</head>
-<body>
-<header>
-  <div><strong>Duplicate image review</strong> &mdash; ssim={pair.ssim:.3f}, dist={pair.dist}</div>
-  <form method="post" action="/reset"><button type="submit" class="muted">Reset all decisions</button></form>
-</header>
-<div class="pair">
-  {panel(pair.a, a_qs)}
-  {panel(pair.b, b_qs)}
-</div>
-<div class="actions">
-  <form method="post" action="/decision">
-    <input type="hidden" name="key" value="{html.escape(key)}">
-    <button type="submit" name="decision" value="canonical:{pair.a.name}" class="canonical">A is canonical</button>
-    <button type="submit" name="decision" value="canonical:{pair.b.name}" class="canonical">B is canonical</button>
-    <button type="submit" name="decision" value="reject" class="reject">Reject (not a duplicate)</button>
-  </form>
-</div>
-</body>
-</html>"""
-
-
-def render_done_page(pairs: Sequence[SimilarPair]) -> str:
-    rows = []
-    unapplied = 0
-    for pair in pairs:
-        decision = get_decision(pair_key(pair))
-        if decision is None:
-            continue
-        applied = decision.get("applied", False)
-        if not applied:
-            unapplied += 1
-        label = (
-            f"canonical: {decision['canonical']}"
-            if decision.get("type") == "canonical"
-            else "rejected"
-        )
-        if applied:
-            label += " (applied)"
-        rows.append(
-            f"<li><code>{html.escape(pair_key(pair))}</code> &rarr; "
-            f"{html.escape(label)}</li>"
-        )
-    if unapplied:
-        apply_html = (
-            "<form method='post' action='/apply'>"
-            f"<button type='submit'>Save {unapplied} decisions to database + TSV</button>"
-            "</form>"
-        )
-    else:
-        apply_html = "<p class='muted'>All decisions applied to database and TSV.</p>"
-    return f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<title>Duplicate review complete</title>
-<style>
-body{{font-family:system-ui,sans-serif;margin:1.5rem;color:#1f2937}}
-code{{background:#f3f4f6;padding:.1rem .3rem;border-radius:4px}}
-.muted{{color:#9ca3af}}
-button{{padding:.6rem .9rem;border-radius:6px;border:1px solid #d1d5db;cursor:pointer;font-size:.9rem}}
-</style>
-</head>
-<body>
-<h1>All pairs reviewed</h1>
-<p class="muted">{len(rows)} decisions recorded.</p>
-<ul>{''.join(rows)}</ul>
-{apply_html}
-<form method="post" action="/reset"><button type="submit">Reset all decisions</button></form>
-</body>
-</html>"""
-
-
-def convert_to_png(path: Path) -> bytes:
-    with Image.open(path) as image:
-        image = ImageOps.exif_transpose(image).convert("RGB")
-        buf = io.BytesIO()
-        image.save(buf, format="PNG")
-        return buf.getvalue()
-
-
-class ReviewState:
-    engine: object
-    pairs: list[SimilarPair]
-    attachment_map: dict[str, list[dict]]
-    name_to_path: dict[str, Path]
-    converted: dict[str, bytes]
-
-    def __init__(
-        self,
-        engine,
-        pairs: list[SimilarPair],
-        attachment_map: dict[str, list[dict]],
-        name_to_path: dict[str, Path],
-    ) -> None:
-        self.engine = engine
-        self.pairs = pairs
-        self.attachment_map = attachment_map
-        self.name_to_path = name_to_path
-        self.converted = {}
-
-
-def create_dedup_app(state: ReviewState) -> FastAPI:
-    app = FastAPI(title="Duplicate image review")
-
-    @app.get("/", response_class=HTMLResponse)
-    def index() -> str:
-        pending = [pair for pair in state.pairs if get_decision(pair_key(pair)) is None]
-        if pending:
-            return render_pair_page(pending[0], state.attachment_map)
-        return render_done_page(state.pairs)
-
-    @app.get("/img/{name}")
-    def serve_image(name: str) -> Response:
-        path = state.name_to_path.get(name)
-        if path is None or not path.is_file():
-            return Response("Not found", status_code=404, media_type="text/plain")
-        suffix = path.suffix.lower()
-        if suffix in {".png", ".jpg", ".jpeg"}:
-            return Response(
-                path.read_bytes(),
-                media_type=f"image/{'png' if suffix == '.png' else 'jpeg'}",
-            )
-        converted = state.converted.get(name)
-        if converted is None:
-            converted = convert_to_png(path)
-            state.converted[name] = converted
-        return Response(converted, media_type="image/png")
-
-    @app.post("/decision")
-    def decision(key: str = Form(""), decision: str = Form("")) -> RedirectResponse:
-        if decision.startswith("canonical:"):
-            set_decision(
-                key, {"type": "canonical", "canonical": decision.split(":", 1)[1]}
-            )
-        elif decision == "reject":
-            set_decision(key, {"type": "reject"})
-        return RedirectResponse("/", status_code=303)
-
-    @app.post("/reset")
-    def reset() -> RedirectResponse:
-        clear_decisions()
-        return RedirectResponse("/", status_code=303)
-
-    @app.post("/apply")
-    def apply() -> RedirectResponse:
-        apply_decisions(state.engine)
-        return RedirectResponse("/", status_code=303)
-
-    return app
-
-
-def review_image_duplicates(engine, args) -> None:
+def run_dedup_images(engine, args) -> None:
     if not args.skip_import:
-        print("Importing current TSV into database...")
         import_tsv(engine)
-    print("Scanning images for duplicates...")
-    exact, pairs = find_duplicate_groups(
-        ANNALES_IMG_DIR,
-        args.threshold,
-        args.ssim_threshold,
-        verbose=True,
-    )
-    if exact:
-        print("=== Exact duplicates (identical bytes) ===")
-        for names in exact.values():
-            print("  " + " == ".join(names))
-    pending = [pair for pair in pairs if get_decision(pair_key(pair)) is None]
-    print(f"{len(pairs)} similar pairs found, {len(pending)} pending review")
-    if not pairs:
-        return
-    attachment_map = build_attachment_map(engine)
-    name_to_path = {p.a.name: p.a.path for p in pairs}
-    name_to_path.update({p.b.name: p.b.path for p in pairs})
-    state = ReviewState(
-        engine=engine,
-        pairs=pairs,
-        attachment_map=attachment_map,
-        name_to_path=name_to_path,
-    )
-    app = create_dedup_app(state)
-    print(f"Dedup review app running at http://localhost:{args.port}")
-    import uvicorn
-
-    uvicorn.run(app, host="127.0.0.1", port=args.port)
+    review_image_duplicates(engine, args)
 
 
 def main() -> None:
@@ -814,7 +443,7 @@ def main() -> None:
         default=False,
         help="Do not re-import the TSV before scanning",
     )
-    dedup_parser.set_defaults(func=lambda args: review_image_duplicates(engine, args))
+    dedup_parser.set_defaults(func=lambda args: run_dedup_images(engine, args))
     args = parser.parse_args()
     args.func(args)
 

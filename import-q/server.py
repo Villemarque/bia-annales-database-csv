@@ -401,6 +401,7 @@ input,select,button{padding:.35rem .5rem;border:1px solid #bbb;border-radius:4px
 
 PAGE_JS = """\
 const QUALITY_STEP = 5;
+const LS_KEY = 'magick-tuner-dirs';
 
 function shortcutsEnabled() {
   const tag = document.activeElement ? document.activeElement.tagName : '';
@@ -413,6 +414,20 @@ function form() {
 
 function qualityField() {
   return document.getElementById('quality');
+}
+
+function loadSavedDirs() {
+  try {
+    return JSON.parse(localStorage.getItem(LS_KEY) || '{}');
+  } catch (err) {
+    return {};
+  }
+}
+
+function saveDirs(dir, out) {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ dir: dir, out: out }));
+  } catch (err) {}
 }
 
 function gotoQuality(delta) {
@@ -443,12 +458,34 @@ async function browse(id, title) {
     const data = await res.json();
     if (data.path) {
       document.getElementById(id).value = data.path;
+      saveDirs(form().elements['dir'].value, form().elements['out'].value);
       form().submit();
     }
   } catch (err) {
     alert('Directory picker failed: ' + err.message);
   }
 }
+
+function restoreDirs() {
+  const dirInput = document.getElementById('input-dir');
+  const outInput = document.getElementById('output-dir');
+  const saved = loadSavedDirs();
+  if ((!dirInput.value || !outInput.value) && (saved.dir || saved.out)) {
+    let changed = false;
+    if (!dirInput.value && saved.dir) { dirInput.value = saved.dir; changed = true; }
+    if (!outInput.value && saved.out) { outInput.value = saved.out; changed = true; }
+    saveDirs(dirInput.value, outInput.value);
+    if (changed) form().submit();
+  } else if (dirInput.value || outInput.value) {
+    saveDirs(dirInput.value, outInput.value);
+  }
+}
+
+form().addEventListener('submit', () => {
+  saveDirs(form().elements['dir'].value, form().elements['out'].value);
+});
+
+restoreDirs();
 
 document.addEventListener('keydown', (e) => {
   if (!shortcutsEnabled()) return;
