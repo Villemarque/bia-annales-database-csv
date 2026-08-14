@@ -437,10 +437,14 @@ function gotoQuality(delta) {
 }
 
 function gotoImage(offset) {
-  const link = offset < 0
-    ? document.getElementById('nav-prev')
-    : document.getElementById('nav-next');
-  if (link) location.href = link.getAttribute('href');
+  const thumbs = document.querySelectorAll('.grid a.thumb');
+  if (!thumbs.length) return;
+  let current = 0;
+  for (let i = 0; i < thumbs.length; i++) {
+    if (thumbs[i].classList.contains('active')) { current = i; break; }
+  }
+  const target = (current + offset + thumbs.length) % thumbs.length;
+  location.href = thumbs[target].getAttribute('href');
 }
 
 function showOriginal(show) {
@@ -570,8 +574,6 @@ def render_content(
 
     index = max(0, min(index, len(images) - 1))
     current = images[index]
-    prev_index = (index - 1) % len(images)
-    next_index = (index + 1) % len(images)
 
     links = []
     for i, img in enumerate(images):
@@ -583,21 +585,10 @@ def render_content(
 
     dim = image_size(current["path"])
     dim_html = f" ({dim[0]} &times; {dim[1]} px)" if dim else ""
-    count = (
-        f"<p>Image {index + 1} of {len(images)} &mdash; "
-        f"<strong>{html.escape(current['name'])}</strong>{dim_html}</p>"
-    )
-
-    nav = (
-        f"<div class='actions'>"
-        f"<a id='nav-prev' href='{page_url(dir, out, suffix, sf, quality, prev_index)}'>&larr; Prev</a>"
-        f"<a id='nav-next' href='{page_url(dir, out, suffix, sf, quality, next_index)}'>Next &rarr;</a>"
-        f"</div>"
-    )
 
     orig_url = "/api/original?" + urlencode({"path": current["path"]})
     figure_orig = (
-        f"<figure><figcaption>Original</figcaption>"
+        f"<figure><figcaption>Original &mdash; <strong>{html.escape(current['name'])}</strong>{dim_html}</figcaption>"
         f"<img src='{orig_url}' alt='{html.escape(current['name'])}'></figure>"
     )
 
@@ -635,7 +626,7 @@ def render_content(
       <button type='submit'>Batch compress all</button>
     </form>"""
 
-    return f"{count}{nav}{grid}{pair}{stats_html}{batch_form}"
+    return f"{grid}{pair}{stats_html}{batch_form}"
 
 
 def render_page(
@@ -651,8 +642,6 @@ def render_page(
 <style>{PAGE_CSS}</style>
 </head>
 <body>
-<h1>&#128444; PNG to JPEG Magick Tuner</h1>
-<p class='stats'>Keyboard: Space = view original &middot; &uarr;/&darr; = quality &plusmn;5 &middot; &larr;/&rarr; = prev/next</p>
 {toolbar}
 {content}
 <script>{PAGE_JS}</script>
