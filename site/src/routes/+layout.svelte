@@ -101,6 +101,12 @@
 		overflow-x: hidden;
 	}
 
+	@media (max-width: 620px) {
+		:root {
+			--header-height: 60px; /* matches Header.svelte mobile padding + title */
+		}
+	}
+
 	.app {
 		display: grid;
 		grid-template-areas:

@@ -45,14 +45,34 @@
 		margin-bottom: 4px;
 	}
 
-	@media (max-width: 600px) {
+	@media (max-width: 620px) {
+		.header-card {
+			padding: 18px;
+		}
+
 		.title {
-			font-size: 22px;
-			gap: 8px;
+			font-size: 18px;
+			gap: 6px;
 		}
 
 		.bia-logo {
-			height: 36px;
+			height: 28px;
+			margin-bottom: 2px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.header-card {
+			padding: 14px;
+		}
+
+		.title {
+			font-size: 15px;
+			gap: 5px;
+		}
+
+		.bia-logo {
+			height: 22px;
 		}
 	}
 </style>

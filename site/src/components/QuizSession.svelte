@@ -638,4 +638,44 @@
 			padding: 10px 14px;
 		}
 	}
+
+	@media (max-width: 768px) {
+		.question-card h2 {
+			font-size: 19px;
+		}
+
+		.option {
+			font-size: 15px;
+		}
+
+		.option-letter {
+			font-size: 18px;
+		}
+
+		.question-img {
+			max-height: 32vh;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.question-card h2 {
+			font-size: 16px;
+		}
+
+		.option {
+			font-size: 14px;
+		}
+
+		.option-letter {
+			font-size: 16px;
+		}
+
+		.quiz-meta {
+			font-size: 13px;
+		}
+
+		.question-img {
+			max-height: 28vh;
+		}
+	}
 </style>
