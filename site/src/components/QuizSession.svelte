@@ -227,6 +227,7 @@
 		margin: 0 0 30px;
 		font-size: 22px;
 		line-height: 1.4;
+		min-height: calc(3 * 1.4em);
 	}
 
 	.annexes {
