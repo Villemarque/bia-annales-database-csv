@@ -128,6 +128,7 @@
 	.menu-wrapper {
 		grid-area: menu;
 		position: sticky;
+		top: calc(var(--header-height) + var(--gap-main));
 		z-index: 100;
 		display: flex;
 		flex-direction: column;
