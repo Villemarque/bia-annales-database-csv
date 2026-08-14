@@ -250,7 +250,7 @@ iL0rHz8E	2017	0	5	5	« marais barométrique » désigne :		une zone où la press
 0dzMM4yG	2017	0	8	8	Si un observateur se place face au vent dans l'hémisphère nord, la dépression et l'anticyclone se situent de la manière suivante :		anticyclone sur sa droite, dépression sur sa gauche	anticyclone devant lui, dépression derrière lui	anticyclone sur sa gauche, dépression sur sa droite	anticyclone derrière lui, dépression devant lui	2			
 mdaMyWoX	2017	0	9	9	Le phénomène rentrant le plus souvent en jeu dans la formation des nuages est :		le refroidissement d'une masse d'air humide	l'augmentation de la pression atmosphérique	le réchauffement d'une masse d'air saturée	l'assèchement d'une masse d'air humide	0			
 KdogzrXR	2017	0	10	10	Le préfixe des nuages dont la base est la plus élevée est :		alto	strato	cirro	cumulo	2			
-x5eYtBsM	2017	0	11	11	Le nuage figurant sur la photo ci-dessous est un :		cumulonimbus	cumulus	stratus	altocumulus	1		2017-001	
+x5eYtBsM	2017	0	11	11	Le nuage figurant sur la photo ci-dessous est un :		cumulonimbus	cumulus	stratus	altocumulus	1		2020-002	
 FiVt4U1o	2017	0	12	12	Le phénomène météorologique observé sur la photo ci-dessous est :		du brouillard	un orage	un front chaud	la convection	0		2017-002	
 oVcUCrz8	2017	0	13	13	La grêle est un type de précipitation qui se forme dans :		les stratus	les nimbostratus	les cumulonimbus	les stratocumulus	2			
 R4TK9rHD	2017	0	14	14	Les courants de vent puissants que l'on rencontre à très haute altitude sont nommés :		jet-stream	jet-lag	tornade	rafale	0			
@@ -514,7 +514,7 @@ La température et le point de rosée fournis par l’ATIS permettent au pilote 
 macvIHN8	2019	1	0	20	La résistance de l’air sur un corps :		dépend de la surface du corps	s’exprime en kilogrammes	ne dépend pas de la surface du corps	est proportionnelle au carré de la surface du corps	0			
 cPqviPAf	2019	1	1	21	En montée rectiligne uniforme, la portance est :		inférieure au poids	égale à la traînée	supérieure au poids	égale au poids	0			
 nSNAtdTz	2019	1	2	22	Le décrochage se produit toujours :		à la même incidence	à la même inclinaison	à la même vitesse	en cas de panne moteur	0			
-CaJfNQHm	2019	1	3	23	Sur le profil d’aile ci-dessous, l’intrados est représenté par la lettre :		A	B	C	D	3		2019-008	
+CaJfNQHm	2019	1	3	23	Sur le profil d’aile ci-dessous, l’intrados est représenté par la lettre :		A	B	C	D	3		2016-002	
 nveAZAXm	2019	1	4	24	Pour orienter l’avion autour de l’axe de tangage, il faut un déplacement :		de la gouverne de profondeur, commandée par le palonnier	de la gouverne de profondeur, commandée par le manche	des ailerons, commandés par le manche	des ailerons, commandés par le palonnier	1			
 0aayG8Qe	2019	1	5	25	La distance de roulage nécessaire au décollage diminue lorsque :		l’altitude augmente	la température augmente	la composante de vent arrière augmente	la température diminue	3			
 G24vuAbd	2019	1	6	26	La corde d’un profil de l’aile est le segment qui joint :	La corde d'un profil est le segment qui joint :	l’emplanture à l’extrémité de l’aile	les deux extrémités de l’aile	le bord d’attaque au bord de fuite	la partie la plus large entre l’intrados et l’extrados	2	3		FALSE
@@ -522,13 +522,13 @@ G24vuAbd	2019	1	6	26	La corde d’un profil de l’aile est le segment qui joint
 RIhptPfD	2019	1	8	28	En soufflerie, si on multiplie par 3 la vitesse du vent relatif, la valeur de la portance est :		multipliée par 3	multipliée par 9	multipliée par 6	multipliée par 12	1			
 RQ5R8LED	2019	1	9	29	Lorsqu’un aéronef est centré avant :		sa stabilité augmente	sa maniabilité augmente	sa maniabilité et sa stabilité ne sont pas modifiées	sa stabilité diminue	0	4		TRUE
 grhLtr3Q	2019	1	10	30	En phase de décollage, le pilote sort les volets hypersustentateurs, l’effet sera :		d’augmenter la distance de décollage	d’augmenter la portance	d’augmenter la vitesse	de diminuer la portance	1	4		TRUE
-YT4MXLgB	2019	1	11	31	La bonne association légende-croquis est :		profil en lisse	profil avec volet braqué	profil avec bec sorti	profil avec Fowler sorti	0		2019-008	
+YT4MXLgB	2019	1	11	31	La bonne association légende-croquis est :		profil en lisse	profil avec volet braqué	profil avec bec sorti	profil avec Fowler sorti	0		2016-002	
 YmjDftRE	2019	1	12	32	Un avion vole initialement à vitesse et altitude constantes. Sans agir sur le manche, le pilote augmente la puissance à l’aide de la manette des gaz. Cette action entraîne :		uniquement une augmentation de vitesse	une augmentation d’altitude	une diminution d’altitude	une augmentation de vitesse ou bien d’altitude, cela dépend du vent	1	4		TRUE
 FKvFs7zD	2019	1	13	33	La finesse maximale permet de :		rester en l’air le plus longtemps possible	voler le plus vite possible	parcourir la plus grande distance possible	décoller le plus court possible	2	3		TRUE
 VJnwnH2H	2019	1	14	34	Le facteur ayant une influence sur la position du centre de gravité d’un aéronef est :		la vitesse	l’inclinaison	la trajectoire	le niveau de carburant dans les réservoirs	3	4		TRUE
 AaKninF8	2019	1	15	35	Lors d’un virage à 60° d’inclinaison, à altitude constante, le poids apparent est :		égal au poids réel	égal à 2 fois le poids réel	égal à 1,15 fois le poids réel	inférieur au poids réel	1	4		TRUE
 Tp1UQW4g	2019	1	16	36	La traînée induite est une conséquence de :		l’interaction du fuselage et de l’aile	la rotation de l’hélice	la différente de pression entre l’intrados et l’extrados	l’usage d’un train fixe	2			
-SPQyoIIu	2019	1	17	37	Sur la polaire ci-dessous, le point correspondant à la portance maximale est le point :	Sur la polaire, le point correspondant à la portance maximale est le point :	A	B	C	D	2	3	2019-010	TRUE
+SPQyoIIu	2019	1	17	37	Sur la polaire ci-dessous, le point correspondant à la portance maximale est le point :	Sur la polaire, le point correspondant à la portance maximale est le point :	A	B	C	D	2	3	2016-003	TRUE
 lR1cHjjT	2019	1	18	38	Pour un satellite, l’orbite géostationnaire permet :		de scanner le plus de surface possible du globe	de rester au-dessus d’un point donné de la surface du globe	d’effectuer plusieurs révolutions de la Terre en 24 heures	d’entrer dans l’atmosphère	1	5		TRUE
 5qrMqL3W	2019	1	19	39	L’assistance gravitationnelle :		permet le retour du lanceur sur Terre	est une ligne téléphonique entre l’ISS et la Terre en cas de besoin d’assistance	est utilisée comme « moteur » afin d’accélérer les sondes lors de leurs voyages interstellaires	est un propulseur	2	5		TRUE
 V5hrrH1F	2019	2	0	40	Un satellite qui tourne autour de la Terre exactement en 24 heures, placé à une altitude de 36000 km et qui reste toujours au-dessus du même lieu s’appelle :		un satellite espion	un satellite GPS	un satellite quantique	un satellite géostationnaire	3	0		TRUE
@@ -611,30 +611,30 @@ MVNuGz0K	2019	5	16	116	Pour désigner le vent de travers, il faut employer le te
 GldEzPoR	2019	5	17	117	En anglais, le terme elevator désigne :		"une ""pompe"" dans le jargon des vélivoles"	la gouverne d'inclinaison	la gouverne de profondeur	la gouverne de direction	2			TRUE
 8sjx4e7i	2019	5	18	118	"Si un contrôleur aérien vous dit ""please squawk one zero two four"", vous devez :"		vous reportez à l'altitude de 1024 ft	caler l'altimètre sur la pression de 1024 hPa	afficher 1024 au transpondeur	voler au-dessus de 1024 m	2			TRUE
 8almJZm7	2019	5	19	119	"Pour des parachutistes, le terme anglais ""drop zone"" signifie :"		la zone d'atterrissage des parachutistes	l’endroit où il ne faut pas se poser	l’atelier de pliage des parachutages	la zone de poser de l'avion largueur	0			
-629Z3mRL	2020	0	0	0	Le phénomène observé est :		la gelée blanche	la rosée	le brouillard	la bruine	1		2020-000	
-PaBxieGI	2020	0	1	1	Il est possible de conclure que, au cours de cette nuit, au voisinage du sol :		le taux d'humidité relative a atteint 100%	la température est passée en dessous de 0°C	la pression a baissé en dessous de 1013 hPa	le taux d’humidité relative a atteint 75%	0		2020-000	
-aKVbO0sq	2020	0	2	2	Cette nuit, de la vapeur d'eau a subi un changement d'état qui se nomme :		cristallisation	évaporation	condensation	sublimation	2		2020-000	
+629Z3mRL	2020	0	0	0	Le phénomène observé est :		la gelée blanche	la rosée	le brouillard	la bruine	1		2019-000	
+PaBxieGI	2020	0	1	1	Il est possible de conclure que, au cours de cette nuit, au voisinage du sol :		le taux d'humidité relative a atteint 100%	la température est passée en dessous de 0°C	la pression a baissé en dessous de 1013 hPa	le taux d’humidité relative a atteint 75%	0		2019-000	
+aKVbO0sq	2020	0	2	2	Cette nuit, de la vapeur d'eau a subi un changement d'état qui se nomme :		cristallisation	évaporation	condensation	sublimation	2		2019-000	
 v3hAckL2	2020	0	3	3	Les instruments de mesure du vent en surface sont placés sur un pylône à 10 m :		pour échapper aux dégradations animales	pour éviter les effets de la couche de frottements de surface	pour être représentatifs à l’échelle planétaire	pour donner une information à un moment clef de l’atterrissage	1			
 i0AN2xOu	2020	0	4	4	Sur une carte de pression, une ligne qui joint les points d’égale pression est nommée :		une isotherme	une isocline	une isophyse	une isobare	3			
 mYKG7rVE	2020	0	5	5	L’expression « marais barométrique » désigne :		une zone où la pression varie peu	une zone ou un axe de basses pressions	une zone ou un axe de hautes pressions	une zone où le gradient de pression est très élevé	0			
-LT60xJ3Z	2020	0	6	6	Sur le schéma d’une perturbation présenté ci-dessous, le numéro qui correspond au secteur chaud est :	Sur le schéma de la perturbation ci-contre, le numéro qui correspond au secteur chaud est :	1	2	3	4	2	7	2020-001	TRUE
+LT60xJ3Z	2020	0	6	6	Sur le schéma d’une perturbation présenté ci-dessous, le numéro qui correspond au secteur chaud est :	Sur le schéma de la perturbation ci-contre, le numéro qui correspond au secteur chaud est :	1	2	3	4	2	7	2017-000	TRUE
 MejaM8de	2020	0	7	7	Au niveau d’un front chaud :		l’air chaud repousse l’air froid devant lui et passe au-dessus	l’air froid repousse l’air chaud devant lui et passe au-dessus	l’air froid repousse l’air chaud devant lui et passe au-dessous	l’air chaud repousse l’air froid devant lui et passe au-dessous	0	7		TRUE
 p7LfldvV	2020	0	8	8	Si un observateur se place face au vent dans l’hémisphère nord, la dépression et l’anticyclone se situent de la manière suivante :		anticyclone sur sa droite, dépression sur sa gauche	anticyclone face à lui, dépression derrière lui	anticyclone sur sa gauche, dépression sur sa droite	anticyclone derrière lui, dépression face à lui	2	9		TRUE
 9a5ZObUY	2020	0	9	9	Le phénomène rentrant le plus souvent en jeu dans la formation des nuages est :		le refroidissement d’une masse d’air humide par soulèvement	l’augmentation de la pression atmosphérique	le réchauffement d’une masse d’air saturée	l’assèchement d’une masse d’air humide	0	8		TRUE
 9ov0xdI4	2020	0	10	10	Le préfixe des nuages dont la base est la plus élevée est :		alto	strato	cirro	cumulo	2			
 yZAqVOha	2020	0	11	11	Le nuage figurant sur la photo ci-dessous est un :		cumulonimbus	cumulus	stratus	altocumulus	1		2020-002	
-hz8BHGMV	2020	0	12	12	Le phénomène météorologique observé sur la photo ci-dessous est :		du brouillard	un orage	un front chaud	la convection	0		2020-003	
+hz8BHGMV	2020	0	12	12	Le phénomène météorologique observé sur la photo ci-dessous est :		du brouillard	un orage	un front chaud	la convection	0		2017-002	
 4GdtiLGM	2020	0	13	13	La grêle est un type de précipitation qui se forme dans :		les stratus	les altostratus	les cumulonimbus	les stratocumulus	2	10		TRUE
 PlVl55qF	2020	0	14	14	Les courants de vent puissants que l’on rencontre à très haute altitude sont nommés :		jet-stream	jet-lag	tornado	rafale	0			
 knZ3uxQY	2020	0	15	15	La brise de pente (montante) se forme en région :		côtière et de jour	côtière et de nuit	montagneuse et de nuit	montagneuse et de jour	3			
-ZlvFu9pL	2020	0	16	16	Sur la carte ci-dessous, la circulation du vent dénommé Mistral correspond à la flèche :	Sur la carte, la circulation du vent dénommé Mistral correspond à la flèche :	1	2	3	4	2	9	2020-004	TRUE
+ZlvFu9pL	2020	0	16	16	Sur la carte ci-dessous, la circulation du vent dénommé Mistral correspond à la flèche :	Sur la carte, la circulation du vent dénommé Mistral correspond à la flèche :	1	2	3	4	2	9	2016-001	TRUE
 3bjXZNXn	2020	0	17	17	En plaine, dans les basses couches de l’atmosphère, des turbulences peuvent être générées par :		le rayonnement	les trous d'air	la convection	le brouillard	2			
 g95pQ0Jc	2020	0	18	18	Le principal danger induit par le brouillard sur le vol est :		la formation de givrage possible en toutes saisons	la turbulence associée	la diminution de la visibilité	le risque de foudroiement	2			
 jIonhRvz	2020	0	19	19	Parmi les éléments suivants, une conséquence possible du givrage est :		gain d’altitude	altération des profils aérodynamiques	amélioration des performances de l’aéronef	diminution de la traînée	1			
 gLCgBpuU	2020	1	0	20	La résistance de l’air sur un corps :		dépend de la surface du corps	s’exprime en kilogrammes	ne dépend pas de la surface du corps	est proportionnelle au carré de la surface du corps	0	3		TRUE
 qVP80lRm	2020	1	1	21	En montée rectiligne uniforme, la portance est :		inférieure au poids	égale à la traînée	supérieure au poids	égale au poids	0	4		TRUE
 GkDrckjI	2020	1	2	22	Le décrochage se produit toujours :		à la même incidence	à la même inclinaison	à la même vitesse	en cas de panne moteur	0	3		TRUE
-O7JkEZBH	2020	1	3	23	Sur le profil d’aile ci-dessous, l’intrados est représenté par la lettre :		A	B	C	D	3		2020-005	
+O7JkEZBH	2020	1	3	23	Sur le profil d’aile ci-dessous, l’intrados est représenté par la lettre :		A	B	C	D	3		2016-002	
 KS0kqGTY	2020	1	4	24	Pour orienter l’avion autour de l’axe de tangage, il faut un déplacement :		de la gouverne de profondeur, commandée par le palonnier	de la gouverne de profondeur, commandée par le manche	des ailerons, commandés par le manche	des ailerons, commandés par le palonnier	1	4		TRUE
 SuTdOgav	2020	1	5	25	En montée rectiligne à vitesse constante :		le facteur de charge est supérieur à 1	le facteur de charge est égal à 1	la portance est supérieure au poids	la portance est inférieure au poids	3	4		TRUE
 mlDyrSxS	2020	1	6	26	En montée, le pilote d’avion affiche la pleine puissance, pour augmenter la vitesse indiquée, le pilote :		diminue l’assiette en poussant sur le manche	diminue l’assiette en tirant sur le manche	augmente l’assiette en poussant sur le manche	augmente l’assiette en tirant sur le manche	0	4		TRUE
@@ -742,7 +742,7 @@ ETnxyAZc	2021	0	7	7	Concernant la pression atmosphérique :		elle est à l’ori
 PFqvcR2o	2021	0	8	8	Un altimètre :		affiche la vitesse d’un aéronef	affiche la vitesse ascensionnelle d’un aéronef	est un baromètre qui transforme la pression en altitude	indique la hauteur par rapport à Paris	2	6		TRUE
 2PxLusTc	2021	0	9	9	Pour un anticyclone dans l’hémisphère Sud, les vents s’organisent autour de lui de telle sorte :		qu’ils tournent en sens inverse des aiguilles d’une montre	qu’ils soufflent de façon concentrique vers le centre de l’anticyclone	qu’ils tournent dans le sens des aiguilles d’une montre	qu’ils se dirigent vers le pôle Sud	0	6		TRUE
 GQdu0YUy	2021	0	10	10	Une traine :		est la partie sous le vent d’un cumulonimbus	correspond à une précipitation qui n’atteint pas le sol	est le nom donné aux perturbations qui avancent lentement	est une zone de bonne visibilité entrecoupée d’averses à l’arrière d’un front froid	3	7		TRUE
-YToaGCQb	2021	0	11	11	Le nuage figurant sur la photo ci-dessous est un :		cumulonimbus	cumulus	stratus	altocumulus	1		2017-001	
+YToaGCQb	2021	0	11	11	Le nuage figurant sur la photo ci-dessous est un :		cumulonimbus	cumulus	stratus	altocumulus	1		2020-002	
 lYKTKCtY	2021	0	12	12	Lorsque des cumulus sont annoncés, cela indique au pilote que :		des orages sont systématiquement à prévoir	des précipitations continues sont probables	la masse d’air est instable	la surface frontale est proche	2			
 mCQXWwcV	2021	0	13	13	Des nuages lenticulaires dans le ciel sont le signe :		d’une forte instabilité	de brouillard la nuit suivante	d’une masse d’air assez sèche	d’un vent fort perpendiculaire à un relief	3	8		TRUE
 gq7OooTJ	2021	0	14	14	Parmi ces listes de nuages, quelle est celle qui ne contient que des nuages instables :		cumulus, cirrostratus, stratocumulus	altostratus, cirrostratus, cumulonimbus	stratus, altocumulus, cirrus	altocumulus, cumulonimbus, cirrocumulus	3	8		TRUE
@@ -773,8 +773,8 @@ dDiLoiPi	2021	1	15	37	Une montgolfière se maintient à altitude constante. On p
 Uk51z3jd	2021	1	17	39	On multiplie par 3 la vitesse de l’écoulement et on divise par 9 la surface d’une aile. La portance est :		multipliée par 9	multipliée par 3	inchangée	multipliée par 81	2	3		TRUE
 wEgB4DdN	2021	1	18	40	En air calme, quelle est la distance horizontale qu’il est possible de parcourir avec une finesse de 30 si la hauteur est de 3 km :		90 m	90 000 m	900 m	90 000 km	1	4		TRUE
 GaZlJnK1	2021	1	19	41	Certains avions sont équipés d’aérofreins qui ont pour but de modifier les coefficients Cx (trainée) et Cz (portance). Préciser leurs effets :		augmenter le Cx et le Cz	diminuer le Cx et le Cz	augmenter le Cx et diminuer le Cz	diminuer le Cx et augmenter le Cz	2	3		TRUE
-DphQwbQA	2021	1	20	42	Sur le profil d’aile ci-dessous, l’intrados est représenté par la lettre :		A	B	C	D	3	3	2021-003	FALSE
-S9dVkcuQ	2021	1	21	43	La photo ci-dessous indique :		un virage à droite qui nécessite une action sur le palonnier droit	un virage à droite qui nécessite une action sur le palonnier gauche	un virage à droite symétrique, qui ne nécessite pas d’action sur le palonnier	un virage à gauche symétrique, qui ne nécessite pas d’action sur le palonnier	0	4	2021-004	TRUE
+DphQwbQA	2021	1	20	42	Sur le profil d’aile ci-dessous, l’intrados est représenté par la lettre :		A	B	C	D	3	3	2016-002	FALSE
+S9dVkcuQ	2021	1	21	43	La photo ci-dessous indique :		un virage à droite qui nécessite une action sur le palonnier droit	un virage à droite qui nécessite une action sur le palonnier gauche	un virage à droite symétrique, qui ne nécessite pas d’action sur le palonnier	un virage à gauche symétrique, qui ne nécessite pas d’action sur le palonnier	0	4	2020-006	TRUE
 DEh0hR9Z	2021	2	0	44	Quel est le nom de cet avion ?		Alpha jet	Mirage IV	Ouragan	Fouga Magister	3	0	2021-005	TRUE
 UiM1ZcoY	2021	2	1	45	Cet avion est un :		aérodyne	aérostat	moto-planeur	ULM	0	0	2021-005	TRUE
 Q4AuGRjr	2021	2	2	46	Sur cet avion, l’empennage est dit :		canard	papillon	en L	cruciforme	1	0	2021-005	TRUE
@@ -1006,7 +1006,7 @@ UNtPdc5r	2023	0	7	7	Quelle est la température dans l'atmosphère standard à 10
 EFCsp42W	2023	0	8	8	Le Mistral souffle :		de l’est vers l’ouest	de l’ouest vers l’est	du sud vers le nord	du nord vers le sud	3	9		TRUE
 b47U4plH	2023	0	9	9	On parle de brouillard lorsque la visibilité horizontale est inférieure à :		1 km	3 km	5 km	10 km	0	8		TRUE
 EwhWzFDV	2023	0	10	10	Quelle est la composition moyenne de l’atmosphère en volume :		78 % d’oxygène, 21 % d’oxyde de carbone et 1 % d’autres éléments	78 % d’oxyde de carbone, 21 % d’oxygène et 1 % d’autres éléments	78 % d’oxygène, 21 % d’azote et 1 % d’autres éléments	78 % d’azote, 21 % d’oxygène et 1 % d’autres éléments	3	6		TRUE
-w8ixZmRn	2023	0	11	11	Le nuage figurant sur la photo ci-dessous est un :		cumulonimbus	cumulus	stratus	altocumulus	1	8	2023-001	TRUE
+w8ixZmRn	2023	0	11	11	Le nuage figurant sur la photo ci-dessous est un :		cumulonimbus	cumulus	stratus	altocumulus	1	8	2020-002	TRUE
 TzjApgMh	2023	0	12	12	Le phénomène météorologique observé sur la photo ci-dessous est :		du brouillard	un orage	un front chaud	la convection	0		2023-002	
 w8Ctlsup	2023	0	13	13	Parmi les différentes couches de l'atmosphère, les phénomènes météorologiques (nuages, précicipations) ont lieu dans :		la troposphère	la stratosphère	la mésosphère	la thermosphère	0	6		TRUE
 lV0E4XlA	2023	0	14	14	Les courants de vent puissants que l’on rencontre à très haute altitude sont nommés :		jet-stream	jet-lag	tornade	rafale	0	6		TRUE
@@ -1133,7 +1133,7 @@ s9ukzYbC	2024	0	14	14	Les courants de vent puissants que l'on rencontre à très
 VqZvdUpk	2024	0	15	15	Dans un message aéronautique, le groupe de température indique +12 °C sous abri, et +4 °C de point de rosée. On peut dire que :		la masse d'air est à 100 % d'humidité	la température maximale sera de +12 °C et la minimale de +4 °C	la masse d'air serait saturée pour une température sous-abri de +4 °C	la masse d'air serait saturée pour une température sous-abri de +8 °C	2			
 aUJzvAuU	2024	0	16	16	Une traîne :		est la partie sous le vent d'un cumulonimbus	correspond à une précipitation qui n’atteint pas le sol	est le nom donné aux perturbations qui avancent lentement	est une zone de bonne visibilité entrecoupée d'averses à l'arrière d’un front froid	3			
 Jp7AWlK4	2024	0	17	17	Le sens de rotation des vents dans l'hémisphère nord est :		horaire dans un anticyclone	anti-horaire dans un anticyclone	identique à celui de l'hémisphère sud	horaire dans une dépression	0	9		TRUE
-PtCiYr74	2024	0	18	18	Le phénomène météorologique observé sur la photo ci-dessous est :		du brouillard	un orage	un front chaud	la convection	0	10	2020-003	TRUE
+PtCiYr74	2024	0	18	18	Le phénomène météorologique observé sur la photo ci-dessous est :		du brouillard	un orage	un front chaud	la convection	0	10	2017-002	TRUE
 IHWdVtxJ	2024	0	19	19	Lorsque des cumulus sont annoncés, cela indique au pilote que :		des orages sont systématiquement à prévoir	des précipitations continues sont probables	la masse d'air est instable	la surface frontale est proche	2	8		TRUE
 TEMnA5iz	2024	1	0	20	La vitesse de décrochage d'un avion augmente quand :		la quantité de carburant dans les réservoirs diminue	le facteur de charge diminue	la masse de l'avion diminue	le facteur de charge augmente	3	4		TRUE
 1p5vPeL6	2024	1	1	21	Le facteur de charge est défini comme le rapport :		poids / traînée	portance / traînée	traînée / poids	portance / poids	3	4		TRUE
@@ -1283,13 +1283,13 @@ ztVHgPel	2025	2	4	44	Pour indiquer l'altitude, l'altimètre utilise :		la diffé
 qZD6tGvo	2025	2	5	45	Les cadres :		ont dans le fuselage le même rôle que les nervures dans les ailes	sont situés en bout d'aile pour éviter les tourbillons marginaux	sont les pièces maîtresses du fuselage qui supportent les efforts de flexion	sont toujours montés par paire pour augmenter leur solidité.	0			
 aEpmtXWU	2025	2	6	46	En aéromodélisme, un avion d'apprentissage « deux axes » est pilotable sur les axes de :		roulis et lacet	roulis uniquement	tangage et roulis	tangage et lacet	3			
 5gW1T1sW	2025	2	7	47	Durant un cycle de fonctionnement d'un moteur à pistons (4 temps), le seul temps où le piston monte du point mort bas au point mort haut avec les soupapes fermées est le temps :		d'admission	de compression	de combustion-détente	d'échappement	1			
-4EgxIIo0	2025	2	8	48	L'avion représenté sur la photographie ci-après possède un train :		classique	tricycle	caréné	rentrant	1		2025-002	
-aRH3XQfD	2025	2	9	49	En considérant la figure ci-dessous, les combinaisons correctes sont :		A2, B4, C3, D1	A2, B4, C1, D3	A4, B5, C2, D1	A4, B2, C3, D5	0	0	2025-003	TRUE
-KBkjDVL2	2025	2	10	50	Sur le plan ci-dessous, la combinaison correcte est :		1 : aileron, 2: saumon, 3 : volet, 4 : gouverne de profondeur	1 : volet, 2 : saumon, 3 : aileron, 4 : gouverne de profondeur	1 : aileron, 2 : saumon, 3: volet, 4: gouverne de direction	1 : aileron, 2: tab, 3: volet, 4: gouverne de direction	0		2025-004	
+4EgxIIo0	2025	2	8	48	L'avion représenté sur la photographie ci-après possède un train :		classique	tricycle	caréné	rentrant	1		2020-010	
+aRH3XQfD	2025	2	9	49	En considérant la figure ci-dessous, les combinaisons correctes sont :		A2, B4, C3, D1	A2, B4, C1, D3	A4, B5, C2, D1	A4, B2, C3, D5	0	0	2016-004	TRUE
+KBkjDVL2	2025	2	10	50	Sur le plan ci-dessous, la combinaison correcte est :		1 : aileron, 2: saumon, 3 : volet, 4 : gouverne de profondeur	1 : volet, 2 : saumon, 3 : aileron, 4 : gouverne de profondeur	1 : aileron, 2 : saumon, 3: volet, 4: gouverne de direction	1 : aileron, 2: tab, 3: volet, 4: gouverne de direction	0		2017-008	
 A0QTb8tR	2025	2	11	51	Sur un avion certifié, un moteur à pistons contenant 4 cylindres est pourvu au total de :		2 bougies d'allumage	4 bougies d'allumage	8 bougies d'allumage	0 bougie d'allumage	2	2		FALSE
 adl3Ysbw	2025	2	12	52	Cette machine est équipée :		d'un train classique et d'ailes hautes	d'un train tricycle et d'ailes hautes	d'un train classique et d'ailes basses	d'un train tricycle et d'ailes basses	3	0	2025-005	TRUE
 tgUhNLd1	2025	2	13	53	Quelle est la mauvaise classification ?		Aérodynes non motorisés: deltaplanes, planeurs	Aérostat : deltaplane, ballons, dirigeables	Engins aérospatiaux: lanceurs, fusées	Engins spatiaux: satellites, sondes	1	0		TRUE
-nFVWVuqf	2025	2	14	54	L'élément fléché correspond à :		l'emplanture	un aileron basse vitesse	un volet	un winglet	3	0	2025-006	TRUE
+nFVWVuqf	2025	2	14	54	L'élément fléché correspond à :		l'emplanture	un aileron basse vitesse	un volet	un winglet	3	0	2018-007	TRUE
 AXLo9uf4	2025	2	15	55	Un empennage dit « canard » :		est situé à l'avant de l'avion	remplace les ailerons	est synonyme d'un empennage en V	est situé à l'arrière de l'avion	0	0		TRUE
 7mvfRXM8	2025	2	16	56	Les acteurs du transport aérien (motoristes, compagnies aériennes, pétroliers) se sont engagés dans le développement d'un nouveau carburant pour remplacer à terme le kérosène (JET A1), compatible et mixable avec le kérosène. De quel carburant s'agit-il ?		EFIS : Ecological Fuel International Standard	JET A2 : 2ème génération du JET	AKI : Alternative Kerosene Initiative	SAF : Sustainable Aviation Fuel	3			
 Sd89GUTw	2025	2	17	57	Pour effectuer une rotation autour de l'axe de roulis, le pilote doit :		modifier la profondeur à l'aide du compensateur	déplacer le manche en avant ou en arrière	déplacer le manche à gauche ou à droite	actionner le palonnier	2			
@@ -1325,7 +1325,7 @@ o4qel8kw	2025	4	6	86	En quelle année a été créée la première patrouille de
 GuDqZEaC	2025	4	7	87	Wernher Von Braun est le père du programme spatial américain ayant amené un homme sur la Lune, il est également à l'origine de :		l'avion Messerschmitt 262	l'arme de représailles V2	l'avion fusée Me163	le lanceur Soyouz	1			TRUE
 slSqCiGK	2025	4	8	88	En 2009, Airbus inaugure le premier vol commercial du plus grand avion civil au monde. Cet avion s'appelle :		A400M	A380	Triple 7	BELUGA	1			TRUE
 aytpjT02	2025	4	9	89	Dans quelle ville se trouve la base aérienne de la patrouille de France ?		Salon-de-Provence	Istres	Étampes	Le Bourget.	0			TRUE
-bBzj9VQ1	2025	4	10	90	L'avion ci-dessous est de conception des années :		1950	1980	1970	2000	0		2025-007	
+bBzj9VQ1	2025	4	10	90	L'avion ci-dessous est de conception des années :		1950	1980	1970	2000	0		2021-010	
 Igsax9fI	2025	4	11	91	Au cours de la Première Guerre mondiale, la vitesse moyenne des avions de chasse sera multipliée par :	Au cours de la 1ère Guerre Mondiale, la vitesse moyenne des avions de chasse sera multipliée par :	2	4	6	8	0			TRUE
 qXkLWOeb	2025	4	12	92	Le premier vol de l'Airbus A380 a eu lieu en :		2005	2000	2010	1995	0			
 nMD2lLju	2025	4	13	93	Un peu avant la Première Guerre mondiale, l'ingénieur Raoul Badin se rend célèbre par une innovation concernant :		un instrument de bord destiné à mesurer la vitesse de l'aéronef par rapport à l'air dans lequel il évolue	le tir à travers l'hélice sans heurter les pales	la disposition en étoile des cylindres d'un moteur	le siège éjectable	0			TRUE
@@ -1355,7 +1355,7 @@ jepvjN0B	2025	5	15	115	Sur quel axe la gouverne de profondeur fait-elle bouger l
 Rftf6Oa0	2025	5	17	117	Le train d'atterrissage principal se nomme en anglais :		gear box	main landing gear	principal landing	tail landing gear	1			TRUE
 ihyCuLbb	2025	5	18	118	"En anglais le terme ""runway"" désigne :"		un anneau de vitesse	un passage rapide	une piste	taxiway	2			TRUE
 IfQk5gEG	2025	5	19	119	Le terme anglais qui désigne la manche à air est :		wind pipe	windsock	wind handle	air sock	1			TRUE
-G5jKy69r	2026	0	0	0	Le nuage figurant sur la photographie ci-contre est un :		cirrus	nimbostratus	stratus	cumulus	3		2017-001	
+G5jKy69r	2026	0	0	0	Le nuage figurant sur la photographie ci-contre est un :		cirrus	nimbostratus	stratus	cumulus	3		2020-002	
 fTGb9Tkk	2026	0	1	1	Au niveau d'un front chaud :		l'air froid repousse l'air chaud devant lui et passe au-dessus	l'air froid repousse l'air chaud devant lui et passe en-dessous	l'air chaud repousse l'air froid devant lui et passe en-dessous	l'air chaud repousse l'air froid devant lui et passe au-dessus	3			
 gvigAai4	2026	0	2	2	La grêle est généralement associée à :		un nimbostratus	un altocumulus lenticulaire	un cumulonimbus	un cirrocumulus	2			
 fzFjH5c2	2026	0	3	3	La couche atmosphérique la plus basse est :		la thermosphère	la troposphère	la stratosphère	la planisphère	1			
@@ -1392,7 +1392,7 @@ FvaolN0c	2026	1	13	33	Le facteur de charge est défini comme le rapport :		poids
 VD5I9i0E	2026	1	14	34	Le déplacement horizontal d'une montgolfière en vol se fait :		au gré des vents	grâce à la différence de température entre l'intérieur et l'extérieur de l'enveloppe	grâce à la poussée d'Archimède	en agissant sur la soupape qui bouche le sommet de l'enveloppe	0			
 e4nSgdiP	2026	1	15	35	Le poids d'un satellite tournant autour d'un astre est :		compensé par sa force de portance	compensé par sa force centrifuge	compensé uniquement par ses moteurs-fusées	nul car il est en apesanteur	1			
 uBfR1SFM	2026	1	16	36	Parmi les éléments suivants, celui qui a une influence majeure sur la position du centre de gravité est :		la trajectoire (palier, montée, descente)	la vitesse	le niveau de carburant dans les réservoirs et la répartition des passagers	l'inclinaison	2			
-wCWmskkD	2026	1	17	37	Sur la polaire ci-dessous ont été définis plusieurs points. Quel est le point correspondant à la finesse maximale ?		A	B	C	D	1		2019-010	
+wCWmskkD	2026	1	17	37	Sur la polaire ci-dessous ont été définis plusieurs points. Quel est le point correspondant à la finesse maximale ?		A	B	C	D	1		2016-003	
 QrcCzoP2	2026	1	18	38	Certains avions sont équipés d'aérofreins qui ont pour conséquences de modifier les coefficients Cx (traînée) et Cz (portance). Préciser leurs effets :		augmenter le Cx et le Cz	diminuer le Cx et le Cz	augmenter le Cx et diminuer le Cz	diminuer le Cx et augmenter le Cz	2			
 Eh9djoqH	2026	1	19	39	Pour réduire la traînée induite d'une aile, on peut :		augmenter l'allongement de l'aile	diminuer l'allongement de l'aile	augmenter la corde et diminuer l'envergure	supprimer les winglets	0			
 p5RkGaAj	2026	2	0	40	Tout appareil capable de s'élever et de circuler dans l'espace aérien :		est un aéronef	est un aérostat	possède obligatoirement un moteur	est piloté depuis l'intérieur de son cockpit	0			

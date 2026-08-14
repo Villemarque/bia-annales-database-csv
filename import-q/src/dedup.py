@@ -284,6 +284,7 @@ header{display:flex;justify-content:space-between;align-items:center;border-bott
 .field label{font-size:.75rem;color:#6b7280}
 .field input{width:8rem;padding:.35rem .5rem;border:1px solid #bbb;border-radius:4px;font-size:.85rem}
 .summary{color:#6b7280;font-size:.9rem;margin:0 0 1rem}
+.applied{color:#166534;font-weight:600;font-size:.9rem;margin:-.5rem 0 1rem}
 .group{border:1px solid #d1d5db;border-radius:8px;margin-bottom:1rem;padding:.75rem}
 .group-header{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem}
 .imgs{display:flex;gap:.75rem;overflow-x:auto;align-items:flex-start}
@@ -373,12 +374,13 @@ def render_groups_page(state: "ReviewState") -> str:
   </div>
 </form>
 <p class="summary">{len(state.groups)} groups &mdash; {decided} decided, {len(state.groups) - decided} pending (threshold: hamming &le; {state.threshold}, ssim &ge; {state.ssim_threshold}).</p>
+{f'<p class="applied">{html.escape(state.last_apply)}</p>' if state.last_apply else ""}
 <form method="post" action="/decision">
   {"".join(rows)}
-  <div class="actions"><button type="submit">Save all decisions</button></div>
-</form>
-<form method="post" action="/apply">
-  <div class="actions"><button type="submit">Apply decisions to database + TSV</button></div>
+  <div class="actions">
+    <button type="submit" name="save" value="1">Save all decisions</button>
+    <button type="submit" name="apply" value="1">Apply decisions to database + TSV</button>
+  </div>
 </form>
 </body>
 </html>"""
@@ -401,6 +403,7 @@ class ReviewState:
     ssim_threshold: float
     groups: list[DuplicateGroup]
     last_scan: tuple[int, float] | None
+    last_apply: str | None
 
     def __init__(
         self,
@@ -417,6 +420,7 @@ class ReviewState:
         self.ssim_threshold = ssim_threshold
         self.groups = []
         self.last_scan = None
+        self.last_apply = None
 
     def rescan(
         self, threshold: int, ssim_threshold: float, verbose: bool = False
@@ -443,8 +447,13 @@ class ReviewState:
             name: name_to_path[name] for group in self.groups for name in group.names
         }
         self.last_scan = (threshold, ssim_threshold)
+        self.last_apply = None
         pending = sum(1 for g in self.groups if get_decision(g.key) is None)
         print(f"{len(self.groups)} duplicate groups found, {pending} pending review")
+
+
+def back_url(state: "ReviewState") -> str:
+    return f"/?threshold={state.threshold}&ssim={state.ssim_threshold}"
 
 
 def create_dedup_app(state: ReviewState) -> FastAPI:
@@ -489,19 +498,29 @@ def create_dedup_app(state: ReviewState) -> FastAPI:
                 )
             elif val == "reject":
                 set_decision(key, {"type": "reject"})
-        return RedirectResponse("/", status_code=303)
+        if form.get("apply"):
+            _apply(state)
+        return RedirectResponse(back_url(state), status_code=303)
 
     @app.post("/reset")
     def reset() -> RedirectResponse:
         clear_decisions()
-        return RedirectResponse("/", status_code=303)
+        return RedirectResponse(back_url(state), status_code=303)
 
     @app.post("/apply")
     def apply() -> RedirectResponse:
-        apply_decisions(state.engine)
-        return RedirectResponse("/", status_code=303)
+        _apply(state)
+        return RedirectResponse(back_url(state), status_code=303)
 
     return app
+
+
+def _apply(state: "ReviewState") -> None:
+    applied, db_rows, tsv_changed = apply_decisions(state.engine)
+    state.last_apply = (
+        f"Applied {applied} decision(s): {db_rows} DB row(s) and "
+        f"{tsv_changed} TSV row(s) updated."
+    )
 
 
 def review_image_duplicates(engine, args) -> None:
