@@ -24,7 +24,7 @@ ANNALES_IMG_DIR = SCRIPT_DIR.parent.parent / "annales-pdf" / "sujets" / "bia-img
 IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".tif", ".tiff", ".bmp", ".gif"}
 
 DEFAULT_THRESHOLD = 10
-DEFAULT_SSIM_THRESHOLD = 0.9
+DEFAULT_SSIM_THRESHOLD = 0.65
 SSIM_SIZE = 128
 
 

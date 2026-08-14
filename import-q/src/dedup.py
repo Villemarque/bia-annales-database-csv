@@ -40,7 +40,7 @@ CSV_DELIMITER = "\t"
 DEDUP_PREFIX = "image-dedup:"
 DEDUP_PORT = 8001
 DEDUP_THRESHOLD = 10
-DEDUP_SSIM_THRESHOLD = 0.9
+DEDUP_SSIM_THRESHOLD = 0.65
 
 Decision = dict[str, object]
 
