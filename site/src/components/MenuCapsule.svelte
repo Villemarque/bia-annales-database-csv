@@ -78,16 +78,20 @@
 		gap: 8px;
 	}
 
+	.menu-capsule li {
+		padding: 0 8px;
+	}
+
 	.menu-item {
 		display: flex;
 		align-items: center;
 		justify-content: flex-start;
+		width: 100%;
 		height: 52px;
 		gap: 12px;
 		cursor: pointer;
 		white-space: nowrap;
 		border-radius: 22px;
-		margin: 0 8px;
 		padding: 0;
 		text-decoration: none;
 		transition: background 0.2s ease;
