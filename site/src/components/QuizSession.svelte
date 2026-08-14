@@ -184,12 +184,18 @@
 </div>
 
 <style>
+	:global(body) {
+		overflow: hidden;
+	}
+
 	.layout-grid {
 		display: grid;
 		grid-template-columns: 1fr 300px;
 		gap: 40px;
 		max-width: 1200px;
 		margin: 0 auto;
+		height: calc(100vh - var(--header-height) - var(--gap-main));
+		min-height: 0;
 	}
 
 	/* Quiz Content Column */
@@ -197,6 +203,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 28px;
+		min-height: 0;
+		overflow-y: auto;
 	}
 
 	.question-header {
@@ -330,25 +338,31 @@
 		backdrop-filter: blur(28px) saturate(160%);
 		border: 1px solid var(--glass-border);
 		box-shadow: var(--glass-shadow);
-		height: fit-content;
 		display: flex;
 		flex-direction: column;
 		gap: 20px;
+		min-height: 0;
 	}
 
 	.responses-sidebar h3 {
 		margin: 0;
 		font-size: 18px;
+		flex-shrink: 0;
 	}
 
 	.response-grid {
 		display: grid;
 		grid-template-columns: repeat(5, 1fr);
 		gap: 10px;
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		overflow-x: hidden;
 	}
 
 	.response-btn {
-		width: 40px;
+		width: 100%;
+		min-width: 0;
 		height: 40px;
 		border-radius: 12px; /* --radius-m */
 		background: rgba(255, 255, 255, 0.6);
@@ -414,6 +428,7 @@
 		margin-top: 10px;
 		padding-top: 20px;
 		border-top: 1px solid var(--glass-border);
+		flex-shrink: 0;
 	}
 
 	.toggle-container {
