@@ -6,6 +6,7 @@
 	import type { Session, Attempt, Question } from '$lib/types';
 	import { attempts } from '$lib/stores/attempt';
 	import { formatTime } from '$lib/utils';
+	import { imageUrl } from '$lib/images';
 	import ScoreRing from '../../../components/ScoreRing.svelte';
 
 	let { params }: { params: { session_id: string } } = $props();
@@ -87,6 +88,15 @@
 							<span class="question-duration">{formatTime(attempt.duration)}</span>
 						{/if}
 						<h3>{question.content}</h3>
+						{#if question.attachment_link}
+							<div class="annexes">
+								<img
+									src={imageUrl(question.attachment_link)}
+									alt="Annexe {question.attachment_link}"
+									class="question-img"
+									loading="lazy" />
+							</div>
+						{/if}
 						<div class="options-container">
 							{#if attempt}
 								{#if attempt.correct}
@@ -313,6 +323,20 @@
 		line-height: 1.5;
 		font-weight: 600;
 		padding-right: 80px;
+	}
+
+	.annexes {
+		margin: 0 0 24px;
+		text-align: center;
+	}
+
+	.question-img {
+		max-width: 100%;
+		max-height: 40vh;
+		height: auto;
+		border-radius: 12px;
+		border: 1px solid var(--glass-border);
+		background: #fff;
 	}
 
 	.question-duration {
