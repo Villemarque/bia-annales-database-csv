@@ -356,7 +356,7 @@
 	}
 
 	.details-content {
-		border-left: 6px solid var(--row-color, var(--card-blue));
+		border-left: 6px solid var(--row-color, var(--card-blue-solid));
 		padding: 10px 20px 30px 20px;
 	}
 

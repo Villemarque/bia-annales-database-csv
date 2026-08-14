@@ -96,7 +96,7 @@
 	}
 
 	const questionBtnClass = (wip: QuestionWip) => {
-		if (wip.correctChoice === undefined) return '';
+		if (wip.correctChoice === undefined) return wip.selectedChoice ? 'filled' : '';
 		return wip.correctChoice === wip.selectedChoice ? 'correct' : 'incorrect';
 	};
 
@@ -366,13 +366,20 @@
 	.response-btn:hover {
 		background: var(--card-blue);
 		color: white;
-		border: 1px solid var(--card-blue);
+		border: 1px solid var(--card-blue-solid);
 	}
 
-	.response-btn.current {
+	.response-btn.filled {
 		background: var(--card-blue);
 		color: white;
-		border: 1px solid var(--card-blue);
+		border: 1px solid var(--card-blue-solid);
+	}
+
+	.response-btn.current,
+	.response-btn.current.filled {
+		background: white;
+		color: var(--card-blue-solid);
+		border: 1px solid var(--card-blue-solid);
 	}
 
 	.response-btn.correct {
@@ -447,13 +454,13 @@
 
 	.sidebar-btn.finish {
 		background: var(--card-blue);
-		border: 1px solid var(--card-blue);
+		border: 1px solid var(--card-blue-solid);
 		color: white;
 	}
 
 	.sidebar-btn.finish:hover {
 		background: var(--card-indigo);
-		border-color: var(--card-indigo);
+		border-color: var(--card-indigo-solid);
 	}
 
 	.summary-card {
@@ -482,7 +489,7 @@
 		width: 160px;
 		height: 160px;
 		border-radius: 50%;
-		border: 8px solid var(--card-blue);
+		border: 8px solid var(--card-blue-solid);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -554,70 +561,6 @@
 	.primary-btn:hover {
 		transform: translateY(-2px);
 		box-shadow: 0 4px 12px rgba(47, 128, 237, 0.3);
-	}
-
-	.responses-sidebar h3 {
-		margin: 0 0 20px;
-		font-size: 18px;
-	}
-
-	.response-grid {
-		display: grid;
-		grid-template-columns: repeat(5, 1fr);
-		gap: 10px;
-	}
-
-	.response-btn {
-		width: 40px;
-		height: 40px;
-		border-radius: 12px; /* --radius-m */
-		background: rgba(255, 255, 255, 0.6);
-		border: 1px solid var(--glass-border);
-		box-sizing: border-box;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		font-weight: 600;
-		cursor: pointer;
-		transition: all 0.2s ease;
-		font-size: 14px;
-		color: var(--text-dark);
-	}
-
-	.response-btn:hover {
-		background: var(--card-blue);
-		color: white;
-		border: none;
-	}
-
-	.response-btn.current {
-		background: var(--card-blue);
-		color: white;
-		border: none;
-	}
-
-	.response-btn.correct {
-		background: #28a745;
-		color: white;
-		border: none;
-	}
-
-	.response-btn.incorrect {
-		background: #dc3545;
-		color: white;
-		border: none;
-	}
-
-	.response-btn.current.incorrect {
-		border: 2px solid #dc3545;
-		background: white;
-		color: #dc3545;
-	}
-
-	.response-btn.current.correct {
-		border: 2px solid #28a745;
-		background: white;
-		color: #28a745;
 	}
 
 	@media (max-width: 900px) {

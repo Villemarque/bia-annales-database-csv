@@ -28,15 +28,17 @@
 	const href = (path: ResolvedPathname): { tpe: 'href'; href: ResolvedPathname } => ({ tpe: 'href', href: path });
 	const onToggleF = (fn: () => void): { tpe: 'toggle'; onToggle: () => void } => ({ tpe: 'toggle', onToggle: fn });
 
-	const menuItems = $derived.by(() => [
-		{ icon: HomeIcon, label: 'Accueil', action: href('/') },
-		{ icon: BookIcon, label: 'Matières', action: href('/subjects' as any) },
-		sessionState.current ? { icon: PlayIcon, label: 'Reprendre', action: href('/quiz') } : undefined,
-		{ icon: CalendarIcon, label: 'Annales', action: href('/annales') },
-		{ icon: ScrollIcon, label: 'Sessions', action: href('/sessions') },
-		{ icon: SearchIcon, label: 'Questions', action: href('/questions') },
-		{ icon: SettingsIcon, label: 'Paramètres', action: href('/settings') }
-	].filter(isDefined));
+	const menuItems = $derived.by(() =>
+		[
+			{ icon: HomeIcon, label: 'Accueil', action: href('/') },
+			{ icon: BookIcon, label: 'Matières', action: href('/subjects' as any) },
+			sessionState.current ? { icon: PlayIcon, label: 'Reprendre', action: href('/quiz') } : undefined,
+			{ icon: CalendarIcon, label: 'Annales', action: href('/annales') },
+			{ icon: ScrollIcon, label: 'Sessions', action: href('/sessions') },
+			{ icon: SearchIcon, label: 'Questions', action: href('/questions') },
+			{ icon: SettingsIcon, label: 'Paramètres', action: href('/settings') }
+		].filter(isDefined)
+	);
 
 	const ham_item = [{ icon: HamburgerIcon, label: 'Menu', action: onToggleF(toggleSidebar) }];
 </script>
@@ -76,7 +78,9 @@
 		--glass-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 		--bg-grey: #f2f4f7;
 		--card-blue: linear-gradient(135deg, #2f80ed, #56ccf2);
+		--card-blue-solid: #2f80ed;
 		--card-indigo: linear-gradient(135deg, #5f2cff, #9b6bff);
+		--card-indigo-solid: #5f2cff;
 		--card-green: linear-gradient(135deg, #1fa971, #6ee7b7);
 		--card-orange: linear-gradient(135deg, #f2994a, #f2c94c);
 		--card-red: linear-gradient(135deg, #eb5757, #f29999);
