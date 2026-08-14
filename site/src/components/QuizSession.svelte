@@ -582,6 +582,60 @@
 	@media (max-width: 900px) {
 		.layout-grid {
 			grid-template-columns: 1fr;
+			grid-template-rows: 1fr auto;
+			gap: 12px;
+		}
+
+		.quiz-content {
+			gap: 16px;
+		}
+
+		.responses-sidebar {
+			flex-direction: column;
+			gap: 8px;
+			padding: 10px 12px;
+			overflow: hidden;
+		}
+
+		.responses-sidebar h3 {
+			display: none;
+		}
+
+		.response-grid {
+			display: flex;
+			flex-direction: row;
+			flex: 0 0 auto;
+			width: 100%;
+			min-height: 0;
+			overflow-x: auto;
+			overflow-y: hidden;
+			gap: 6px;
+		}
+
+		.response-btn {
+			width: 36px;
+			min-width: 36px;
+			flex: 0 0 36px;
+			height: 36px;
+		}
+
+		.toggle-container {
+			padding: 6px 4px;
+			margin-bottom: 0;
+			font-size: 13px;
+		}
+
+		.sidebar-actions {
+			flex-direction: row;
+			gap: 8px;
+			margin-top: 0;
+			padding-top: 8px;
+		}
+
+		.sidebar-btn {
+			width: auto;
+			flex: 1;
+			padding: 10px 14px;
 		}
 	}
 </style>
