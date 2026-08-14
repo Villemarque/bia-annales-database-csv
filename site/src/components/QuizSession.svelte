@@ -8,6 +8,7 @@
 	import { formatTime } from '$lib/utils';
 	import { questions } from '$lib/stores/questions';
 	import { preferences } from '$lib/stores/preferences.svelte';
+	import { imageUrl } from '$lib/images';
 	import Toggle from '../components/Toggle.svelte';
 
 	let {
@@ -127,6 +128,15 @@
 
 		<div class="question-card">
 			<h2>{currentQuestionDisplay.content}</h2>
+			{#if currentQuestionDisplay.attachment_link}
+				<div class="annexes">
+					<img
+						src={imageUrl(currentQuestionDisplay.attachment_link)}
+						alt="Annexe {currentQuestionDisplay.attachment_link}"
+						class="question-img"
+						loading="lazy" />
+				</div>
+			{/if}
 			<div class="options-grid" class:locked={currentQuestionWip.correctChoice !== undefined}>
 				{#each currentQuestionDisplay.choices as option, i (i)}
 					<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -217,6 +227,20 @@
 		margin: 0 0 30px;
 		font-size: 22px;
 		line-height: 1.4;
+	}
+
+	.annexes {
+		margin: 0 0 24px;
+		text-align: center;
+	}
+
+	.question-img {
+		max-width: 100%;
+		max-height: 40vh;
+		height: auto;
+		border-radius: 12px;
+		border: 1px solid var(--glass-border);
+		background: #fff;
 	}
 
 	.options-grid {

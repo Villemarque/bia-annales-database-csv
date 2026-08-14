@@ -154,7 +154,7 @@ export const loadQuestions = (csv: string): void => {
 			};
 			acc[qid] = question;
 		} catch (e) {
-			log.error(`Error parsing question on line of CSV ${i + 2}: ${e}`);
+			log.error(`Error parsing question on line of CSV ${i + 2}: ${e}, id: ${qid}`);
 		}
 	}
 	questionsWritable.set(acc);
