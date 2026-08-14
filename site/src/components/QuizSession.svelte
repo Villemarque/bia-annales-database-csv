@@ -9,6 +9,7 @@
 	import { questions } from '$lib/stores/questions';
 	import { preferences } from '$lib/stores/preferences.svelte';
 	import { imageUrl } from '$lib/images';
+	import { reportQuestion } from '$lib/report';
 	import Toggle from '../components/Toggle.svelte';
 
 	let {
@@ -38,6 +39,12 @@
 	});
 
 	let currentQuestionDisplay = $derived($questions[currentQuestionWip.qid]);
+
+	let progressPercent = $derived(
+		session.questions.length > 0
+			? (session.questions.filter((q) => q.selectedChoice !== undefined).length / session.questions.length) * 100
+			: 0
+	);
 
 	function handleSelect(choiceNo: number) {
 		const isStudy = session.kind.is === 'study';
@@ -70,6 +77,12 @@
 
 	function goToQuestion(index: number) {
 		currentIndex = index;
+	}
+
+	async function reportCurrentQuestion() {
+		const sentence = window.prompt('Signaler la question (message) :');
+		if (sentence === null || sentence.trim() === '') return;
+		await reportQuestion(sentence.trim(), currentQuestionWip.qid);
 	}
 
 	function finishSession() {
@@ -120,10 +133,22 @@
 	<!-- Left Column: Quiz Content -->
 	<div class="quiz-content">
 		<div class="question-header">
+			<div class="progress">
+				<div class="progress-fill" style="width: {progressPercent}%"></div>
+			</div>
 			<div class="quiz-meta">
 				<span>{formatTime(timeShown)}</span>
 				<span>Q {currentIndex + 1} / {session.questions.length || 120}</span>
 			</div>
+			<button
+				class="report-btn"
+				onclick={reportCurrentQuestion}
+				title="Signaler la question"
+				aria-label="Signaler la question">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+					<path d="M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6z" />
+				</svg>
+			</button>
 		</div>
 
 		<div class="question-card">
@@ -211,6 +236,46 @@
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
+		gap: 16px;
+	}
+
+	.progress {
+		flex: 1;
+		height: 6px;
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.08);
+		overflow: hidden;
+		flex-shrink: 0;
+	}
+
+	.progress-fill {
+		height: 100%;
+		background: var(--card-blue);
+		border-radius: 999px;
+		transition: width 0.25s ease;
+	}
+
+	.report-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		padding: 0;
+		border: 1px solid var(--glass-border);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.6);
+		color: var(--text-muted);
+		cursor: pointer;
+		flex-shrink: 0;
+		transition:
+			background 0.2s ease,
+			color 0.2s ease;
+	}
+
+	.report-btn:hover {
+		background: var(--card-blue);
+		color: white;
 	}
 
 	.quiz-meta {

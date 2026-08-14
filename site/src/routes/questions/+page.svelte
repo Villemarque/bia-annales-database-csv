@@ -3,6 +3,7 @@
 	import { Subjects, ChaptersById } from '$lib/types';
 	import type { Question, Subject, ChapterId, Qid } from '$lib/types';
 	import { imageUrl } from '$lib/images';
+	import { page } from '$app/state';
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
 	import { SvelteSet } from 'svelte/reactivity';
@@ -83,6 +84,11 @@
 	}
 
 	onMount(() => {
+		const qid = page.url.searchParams.get('qid');
+		if (qid) {
+			searchQuery = qid;
+			expandedQids.add(qid as Qid);
+		}
 		window.addEventListener('scroll', handleScroll);
 		return () => {
 			window.removeEventListener('scroll', handleScroll);
