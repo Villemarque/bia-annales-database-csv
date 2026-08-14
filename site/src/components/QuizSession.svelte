@@ -96,7 +96,7 @@
 	}
 
 	const questionBtnClass = (wip: QuestionWip) => {
-		if (wip.correctChoice === undefined) return wip.selectedChoice ? 'filled' : '';
+		if (wip.correctChoice === undefined) return wip.selectedChoice !== undefined ? 'filled' : '';
 		return wip.correctChoice === wip.selectedChoice ? 'correct' : 'incorrect';
 	};
 
