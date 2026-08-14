@@ -15,11 +15,11 @@ import Levenshtein
 
 from copy import deepcopy
 from argparse import RawTextHelpFormatter
-from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Tuple, Sequence, Iterable, ClassVar
-from urllib.parse import parse_qs, urlparse, unquote
+from typing import Tuple, Sequence, Iterable
 
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from sqlmodel import Session, select, col
 from sqlalchemy import and_
 
@@ -683,91 +683,54 @@ class ReviewState:
         self.converted = {}
 
 
-class DedupReviewHandler(BaseHTTPRequestHandler):
-    state: ClassVar[ReviewState]
+def create_dedup_app(state: ReviewState) -> FastAPI:
+    app = FastAPI(title="Duplicate image review")
 
-    def _send(
-        self,
-        body: bytes,
-        status: int = 200,
-        content_type: str = "text/html; charset=utf-8",
-    ) -> None:
-        self.send_response(status)
-        self.send_header("Content-Type", content_type)
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+    @app.get("/", response_class=HTMLResponse)
+    def index() -> str:
+        pending = [pair for pair in state.pairs if get_decision(pair_key(pair)) is None]
+        if pending:
+            return render_pair_page(pending[0], state.attachment_map)
+        return render_done_page(state.pairs)
 
-    def _redirect(self, location: str) -> None:
-        self.send_response(303)
-        self.send_header("Location", location)
-        self.send_header("Content-Length", "0")
-        self.end_headers()
-
-    def do_GET(self):
-        path = urlparse(self.path).path
-        if path == "/":
-            pending = [
-                pair
-                for pair in self.state.pairs
-                if get_decision(pair_key(pair)) is None
-            ]
-            if pending:
-                page = render_pair_page(pending[0], self.state.attachment_map)
-            else:
-                page = render_done_page(self.state.pairs)
-            self._send(page.encode("utf-8"))
-            return
-        if path.startswith("/img/"):
-            name = unquote(path[len("/img/") :])
-            self._serve_image(name)
-            return
-        self._send(b"Not found", 404, "text/plain")
-
-    def do_POST(self):
-        path = urlparse(self.path).path
-        if path == "/decision":
-            length = int(self.headers.get("Content-Length", 0))
-            params = parse_qs(self.rfile.read(length).decode("utf-8"))
-            key = params.get("key", [""])[0]
-            decision = params.get("decision", [""])[0]
-            if decision.startswith("canonical:"):
-                set_decision(
-                    key, {"type": "canonical", "canonical": decision.split(":", 1)[1]}
-                )
-            elif decision == "reject":
-                set_decision(key, {"type": "reject"})
-            self._redirect("/")
-            return
-        if path == "/reset":
-            clear_decisions()
-            self._redirect("/")
-            return
-        if path == "/apply":
-            apply_decisions(self.state.engine)
-            self._redirect("/")
-            return
-        self._send(b"Not found", 404, "text/plain")
-
-    def _serve_image(self, name: str) -> None:
-        path = self.state.name_to_path.get(name)
+    @app.get("/img/{name}")
+    def serve_image(name: str) -> Response:
+        path = state.name_to_path.get(name)
         if path is None or not path.is_file():
-            self._send(b"Not found", 404, "text/plain")
-            return
+            return Response("Not found", status_code=404, media_type="text/plain")
         suffix = path.suffix.lower()
         if suffix in {".png", ".jpg", ".jpeg"}:
-            self._send(
-                path.read_bytes(), 200, f"image/{'png' if suffix == '.png' else 'jpeg'}"
+            return Response(
+                path.read_bytes(),
+                media_type=f"image/{'png' if suffix == '.png' else 'jpeg'}",
             )
-            return
-        converted = self.state.converted.get(name)
+        converted = state.converted.get(name)
         if converted is None:
             converted = convert_to_png(path)
-            self.state.converted[name] = converted
-        self._send(converted, 200, "image/png")
+            state.converted[name] = converted
+        return Response(converted, media_type="image/png")
 
-    def log_message(self, format, *args):
-        pass
+    @app.post("/decision")
+    def decision(key: str = Form(""), decision: str = Form("")) -> RedirectResponse:
+        if decision.startswith("canonical:"):
+            set_decision(
+                key, {"type": "canonical", "canonical": decision.split(":", 1)[1]}
+            )
+        elif decision == "reject":
+            set_decision(key, {"type": "reject"})
+        return RedirectResponse("/", status_code=303)
+
+    @app.post("/reset")
+    def reset() -> RedirectResponse:
+        clear_decisions()
+        return RedirectResponse("/", status_code=303)
+
+    @app.post("/apply")
+    def apply() -> RedirectResponse:
+        apply_decisions(state.engine)
+        return RedirectResponse("/", status_code=303)
+
+    return app
 
 
 def review_image_duplicates(engine, args) -> None:
@@ -792,19 +755,17 @@ def review_image_duplicates(engine, args) -> None:
     attachment_map = build_attachment_map(engine)
     name_to_path = {p.a.name: p.a.path for p in pairs}
     name_to_path.update({p.b.name: p.b.path for p in pairs})
-    DedupReviewHandler.state = ReviewState(
+    state = ReviewState(
         engine=engine,
         pairs=pairs,
         attachment_map=attachment_map,
         name_to_path=name_to_path,
     )
-    httpd = ThreadingHTTPServer(("", args.port), DedupReviewHandler)
+    app = create_dedup_app(state)
     print(f"Dedup review app running at http://localhost:{args.port}")
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print("\nStopping server...")
-        httpd.server_close()
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=args.port)
 
 
 def main() -> None:
