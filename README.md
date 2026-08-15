@@ -51,6 +51,8 @@ Hlo2EYVT 2017-3-13 et 2024-3-13 Un avion à ailes en flèche est représenté pa
 T8XH6hdj subject in exam not matching chapters split for lessons (exam meca fluid, seen as aeronef)
 68lntUsI subject in exam not matching chapters split for lessons (exam meca fluid, seen as aeronef)
 
+HJRXfbCh should be hélices
+
 
 ## TODO
 
