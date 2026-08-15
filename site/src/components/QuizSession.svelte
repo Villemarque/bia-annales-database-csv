@@ -209,18 +209,12 @@
 </div>
 
 <style>
-	:global(body) {
-		overflow: hidden;
-	}
-
 	.layout-grid {
 		display: grid;
 		grid-template-columns: 1fr 300px;
 		gap: 40px;
 		max-width: 1200px;
 		margin: 0 auto;
-		height: calc(100vh - var(--header-height) - var(--gap-main));
-		min-height: 0;
 	}
 
 	/* Quiz Content Column */
@@ -228,8 +222,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 28px;
-		min-height: 0;
-		overflow-y: auto;
 	}
 
 	.question-header {
@@ -407,6 +399,10 @@
 		flex-direction: column;
 		gap: 20px;
 		min-height: 0;
+		position: sticky;
+		top: var(--gap-main);
+		align-self: start;
+		max-height: calc(100vh - var(--header-height) - var(--gap-main));
 	}
 
 	.responses-sidebar h3 {
@@ -647,7 +643,6 @@
 	@media (max-width: 900px) {
 		.layout-grid {
 			grid-template-columns: 1fr;
-			grid-template-rows: 1fr auto;
 			gap: 12px;
 		}
 
@@ -660,6 +655,10 @@
 			gap: 8px;
 			padding: 10px 12px;
 			overflow: hidden;
+			position: sticky;
+			top: auto;
+			bottom: 0;
+			max-height: none;
 		}
 
 		.responses-sidebar h3 {
