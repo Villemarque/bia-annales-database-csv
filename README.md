@@ -61,6 +61,8 @@ IWCryiZo
 
 V8zH3IjN tag instru
 
+aOsQ5NT2 tag hélice
+
 ## TODO
 
 move icons/ to assets/
