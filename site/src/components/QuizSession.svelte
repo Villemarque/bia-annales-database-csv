@@ -80,7 +80,7 @@
 	}
 
 	async function reportCurrentQuestion() {
-		const sentence = window.prompt('Signaler la question (message) :');
+		const sentence = window.prompt('Un doute, une erreur, une question mal catégoriée ? Merci de nous prévenir, même si vous n\'êtes pas sûr !');
 		if (sentence === null || sentence.trim() === '') return;
 		await reportQuestion(sentence.trim(), currentQuestionWip.qid);
 	}
@@ -146,7 +146,12 @@
 				title="Signaler la question"
 				aria-label="Signaler la question">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-					<path d="M14.4 6 14 4H5v17h2v-7h5.6l.4 2h7V6z" />
+					<g data-name="alert-circle">
+						<rect width="24" height="24" opacity="0" />
+						<path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z" />
+						<circle cx="12" cy="16" r="1" />
+						<path d="M12 7a1 1 0 0 0-1 1v5a1 1 0 0 0 2 0V8a1 1 0 0 0-1-1z" />
+					</g>
 				</svg>
 			</button>
 		</div>
