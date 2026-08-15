@@ -53,6 +53,10 @@ T8XH6hdj subject in exam not matching chapters split for lessons (exam meca flui
 
 HJRXfbCh should be hélices
 
+toutes les questions aéro qui parlent d'intrado/extrados
+
+nveAZAXm should be aéronefs
+
 
 ## TODO
 
