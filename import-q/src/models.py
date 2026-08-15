@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 
+import sqlalchemy
 import sqlmodel
 
 from datetime import datetime, date, timezone
@@ -128,6 +129,9 @@ class PdfQuestion(SQLModel, table=True):
     attachment: bool = Field(default=False)
     answer: Optional[int] = Field(min_length=1, max_length=1)  # 0, 1, 2, 3
     has_issue: bool = Field(default=False)
+    chapter: Optional[int] = Field(
+        default=None
+    )  # site chapter id (see import-pdf CHAPTERS)
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -135,9 +139,22 @@ class PdfQuestion(SQLModel, table=True):
         return cleaned_str(self.content)
 
 
+def _ensure_column(engine, table: str, column: str, ddl_type: str) -> None:
+    inspector = sqlalchemy.inspect(engine)
+    if table not in inspector.get_table_names():
+        return
+    if column in {c["name"] for c in inspector.get_columns(table)}:
+        return
+    with engine.begin() as conn:
+        conn.execute(
+            sqlalchemy.text(f"ALTER TABLE {table} ADD COLUMN {column} {ddl_type}")
+        )
+
+
 def create_engine():
     engine = sqlmodel.create_engine(f"sqlite:///{SCRIPT_DIR.parent}/questions.db")
     SQLModel.metadata.create_all(engine)
+    _ensure_column(engine, "pdfquestion", "chapter", "INTEGER")
     if engine.url.database:
         log.info(f"Connected to database at {engine.url.database}")
     return engine

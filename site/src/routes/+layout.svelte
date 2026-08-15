@@ -16,7 +16,7 @@
 	import PlaneIcon from '$lib/icons/Plane.svelte';
 	import PlayIcon from '$lib/icons/play.svg';
 	import CalendarIcon from '$lib/icons/Calendar.svelte';
-	import ScrollIcon from '$lib/icons/Scroll.svelte';
+	import PieChartIcon from '$lib/icons/PieChart.svelte';
 	import SearchIcon from '$lib/icons/Search.svelte';
 	import SettingsIcon from '$lib/icons/Settings.svelte';
 
@@ -34,7 +34,7 @@
 			{ icon: BookIcon, label: 'Matières', action: href('/subjects' as any) },
 			sessionState.current ? { icon: PlayIcon, label: 'Reprendre', action: href('/quiz') } : undefined,
 			{ icon: CalendarIcon, label: 'Annales', action: href('/annales') },
-			{ icon: ScrollIcon, label: 'Sessions', action: href('/sessions') },
+			{ icon: PieChartIcon, label: 'Sessions', action: href('/sessions') },
 			{ icon: SearchIcon, label: 'Questions', action: href('/questions') },
 			{ icon: SettingsIcon, label: 'Paramètres', action: href('/settings') }
 		].filter(isDefined)

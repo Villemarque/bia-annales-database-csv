@@ -68,6 +68,24 @@ YEARS: list[Year] = [
 ANNALES_PDF_DIR = SCRIPT_DIR.parent.parent / "annales-pdf"
 print("ANNALES_PDF_DIR", ANNALES_PDF_DIR)
 
+CHAPTER_NAMES = {
+    0: "Les aéronefs",
+    1: "Instrumentation",
+    2: "Moteurs",
+    3: "sustentation de l'aile",
+    4: "Le vol stabilisé",
+    5: "L'aérostation et le vol spatial",
+    6: "L'atmosphère",
+    7: "Les masses d'air et les fronts",
+    8: "Les nuages",
+    9: "Les vents",
+    10: "Les phénomènes dangereux",
+    11: "L'information météo",
+    12: "Réglementation",
+    13: "SV & FH",
+    14: "Navigation",
+}
+
 prefix_explication = """# Si numéro de chapitre non présent, préfixer par :
     # 1 pour les question de Météo ex: "1.1", "1.2", ...
     # 2 pour les question d'aérodynamique ex: "2.1", "2.2", ...
@@ -76,7 +94,14 @@ prefix_explication = """# Si numéro de chapitre non présent, préfixer par :
     # 5 pour les question d'histoire ex: "5.1", "5.2", ...
     # F pour les questions de l'épreuve facultative d'anglais ex: "F.1", "F.2", ..."""
 
+_chapter_options = "\n".join(
+    f"    {cid} = {name}" for cid, name in sorted(CHAPTER_NAMES.items())
+)
+
 Q_PROMPT = f"""Extrait sous format JSON chaque question contenu dans ce document PDF.
+
+Chapitres (id = nom) :
+{_chapter_options}
 
 Exemple de format de sortie JSON :
 [
@@ -84,6 +109,7 @@ Exemple de format de sortie JSON :
     year: 2017,
     question_number: "1.1",
     {prefix_explication}
+    chapter: 6, # id du chapitre de la question, voir liste ci-dessus
     content: "Les deux principaux composants de l’air sec sont :",
     attachment: false, # if there is an image or diagram associated with the question
     choice_a: "l’azote et l’oxygène.",
@@ -96,10 +122,13 @@ Exemple de format de sortie JSON :
 
 A_PROMPT_CSV = f"""Extrait sous format CSV chaque réponse contenue dans ce document PDF.
 
+Chapitres (id = nom) :
+{_chapter_options}
+
 Exemple de format de sortie CSV:
-question_id,answer,issue
-2015-1.1,a,,
-1015-1.2,b,true,
+question_id,answer,issue,chapter
+2015-1.1,a,,6
+2015-1.2,b,true,6
 ...
 
 Avec "question_id" le format "année-numéro_de_question" (ex: "2015-1.1").
@@ -144,7 +173,7 @@ Commence ta réponse par le JSON et ne fournis que le JSON, sans texte additionn
 
 # here the questions in JSON are cached
 # ignore by default the prompt, to delete it, increase version number
-@CACHE.memoize(name="parse_pdf_raw_v4", ignore=(1,))
+@CACHE.memoize(name="parse_pdf_raw_v5", ignore=(1,))
 def parse_pdf_raw(filepath: Path, prompt: str) -> str:
     client = genai.Client(api_key=GEMINI_API_KEY)
     response = client.models.generate_content(
@@ -238,7 +267,7 @@ def parse_json_llm(txt: str):
     return decoder(raw_output)
 
 
-def parse_answers_json(y: Year) -> dict[str, tuple[str, bool]]:
+def parse_answers_json(y: Year) -> dict[str, tuple[str, bool, int | None]]:
     filepath = ANNALES_PDF_DIR / f"corrections/{y}-correction-bia+anglais.pdf"
     raw_output = parse_pdf_pro_raw_json(filepath, A_PROMPT_JSON)
     parsed_output = parse_json_llm(raw_output)
@@ -248,11 +277,22 @@ def parse_answers_json(y: Year) -> dict[str, tuple[str, bool]]:
         question_id = row["question_id"]
         answer = row["answer"].strip().lower()
         issue = row["issue"]
-        res[question_id] = (answer, issue)
+        res[question_id] = (answer, issue, None)
     return res
 
 
-def parse_answers_csv(y: Year) -> dict[str, tuple[str, bool]]:
+def _chapter_from_csv(raw: str) -> int | None:
+    raw = raw.strip()
+    if not raw:
+        return None
+    try:
+        cid = int(raw)
+    except ValueError:
+        return None
+    return cid if cid in CHAPTER_NAMES else None
+
+
+def parse_answers_csv(y: Year) -> dict[str, tuple[str, bool, int | None]]:
     filepath = ANNALES_PDF_DIR / f"corrections/{y}-correction-bia+anglais.pdf"
     raw_output = parse_pdf_pro_raw(filepath, A_PROMPT_CSV)
     # print(raw_output[:])
@@ -263,11 +303,13 @@ def parse_answers_csv(y: Year) -> dict[str, tuple[str, bool]]:
         question_id = row["question_id"]
         answer = row["answer"].strip().lower()
         issue = row["issue"].strip().lower() == "true"
-        res[question_id] = (answer, issue)
+        res[question_id] = (answer, issue, _chapter_from_csv(row.get("chapter", "")))
     return res
 
 
-def parse_answers_ai(questions: list[PdfQuestion]) -> dict[str, tuple[str, bool]]:
+def parse_answers_ai(
+    questions: list[PdfQuestion],
+) -> dict[str, tuple[str, bool, int | None]]:
     raw_output = parse_exam_answers_ai(render_exam(questions), A_PROMPT_AI)
     parsed_output = parse_json_llm(raw_output)
     res = {}
@@ -275,7 +317,7 @@ def parse_answers_ai(questions: list[PdfQuestion]) -> dict[str, tuple[str, bool]
         question_id = row["question_id"]
         answer = row["answer"].strip().lower()
         issue = row["issue"]
-        res[question_id] = (answer, issue)
+        res[question_id] = (answer, issue, None)
     return res
 
 
@@ -294,20 +336,22 @@ def parse_questions(y: Year) -> List[PdfQuestion]:
         q["question_number"] = re.sub(r"\.0", ".", q["question_number"])
         question_id = f"{q['year']}-{q['question_number']}"
         print("\rquestion_id", question_id, end="")
-        res.append(
-            PdfQuestion(
-                question_id=question_id,
-                year=q["year"],
-                question_number=q["question_number"].strip(),
-                content=q["content"].strip(),
-                choice_a=q["choice_a"].strip(),
-                choice_b=q["choice_b"].strip(),
-                choice_c=q["choice_c"].strip(),
-                choice_d=q["choice_d"].strip(),
-                attachment=q["attachment"],
-                answer=None,  # to be filled later
-            )
+        pq = PdfQuestion(
+            question_id=question_id,
+            year=q["year"],
+            question_number=q["question_number"].strip(),
+            content=q["content"].strip(),
+            choice_a=q["choice_a"].strip(),
+            choice_b=q["choice_b"].strip(),
+            choice_c=q["choice_c"].strip(),
+            choice_d=q["choice_d"].strip(),
+            attachment=q["attachment"],
+            answer=None,  # to be filled later
         )
+        pq.chapter = q.get("chapter") if q.get("chapter") in CHAPTER_NAMES else None
+        if pq.chapter is None:
+            pq.chapter = prompt_user_chapter(pq, None)
+        res.append(pq)
     return res
 
 
@@ -355,6 +399,28 @@ def prompt_user_answer(
         print("Invalid input, try again.")
 
 
+@memoize_stable("ask_chapter_v1")
+def prompt_user_chapter(q: PdfQuestion, suggested: int | None) -> int | None:
+    print(f"\n--- Chapter for {q.question_id} ---")
+    print(f"Content: {q.content}")
+    for cid in sorted(CHAPTER_NAMES):
+        print(f"  {cid:2d}) {CHAPTER_NAMES[cid]}")
+    print("  n) No chapter (histoire/anglais)")
+    while True:
+        choice = input("Chapter id [0-14, n = none]: ".strip()).strip().lower()
+        if choice == "":
+            return suggested
+        if choice in ("n", "-"):
+            return None
+        try:
+            cid = int(choice)
+        except ValueError:
+            cid = -1
+        if cid in CHAPTER_NAMES:
+            return cid
+        print("Invalid input, try again.")
+
+
 def process_questions_answer(add_db: bool, answer_json: bool):
     engine = create_engine()
     for y in YEARS:
@@ -377,12 +443,15 @@ def process_questions_answer(add_db: bool, answer_json: bool):
                 #   continue
                 answer = answers.get(q.question_id, None)
                 ai = ai_answers.get(q.question_id, None)
+                # chapter from the CSV answer pass (if provided and not already set)
+                if answer is not None and answer[2] is not None and q.chapter is None:
+                    q.chapter = answer[2]
                 if (
                     answer is not None
                     and ai is not None
                     and answer[0].lower() != ai[0].lower()
                 ):
-                    answer = (prompt_user_answer(q, answer, ai), answer[1])
+                    answer = (prompt_user_answer(q, answer[:2], ai[:2]), answer[1])
                 elif answer is None and ai is not None:
                     answer = ai
                 assert answer is not None, (

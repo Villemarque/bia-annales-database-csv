@@ -1,6 +1,9 @@
 import adapter from '@sveltejs/adapter-static';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
+// GitHub Pages serves the site under a sub-path; Cloudflare Pages and local dev serve at the root.
+const base = process.env.GITHUB_PAGES === 'true' ? '/bia-annales-database-csv' : '';
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://svelte.dev/docs/kit/integrations
@@ -11,7 +14,7 @@ const config = {
 		// https://svelte.dev/docs/kit/adapter-static#GitHub-Pages
 		adapter: adapter({ fallback: '404.html' }),
 		paths: {
-			base: '/bia-annales-database-csv'
+			base
 		}
 	}
 };
