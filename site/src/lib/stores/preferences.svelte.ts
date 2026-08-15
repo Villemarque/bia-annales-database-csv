@@ -8,7 +8,7 @@ export type Preferences = {
 const preferencesKey = 'userPreferences' as LocalStorageKey;
 
 const defaultPreferences: Preferences = {
-	autoAdvance: false
+	autoAdvance: true
 };
 
 export const preferences = new PersistedState<Preferences>(preferencesKey, defaultPreferences);

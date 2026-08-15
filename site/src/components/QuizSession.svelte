@@ -80,7 +80,9 @@
 	}
 
 	async function reportCurrentQuestion() {
-		const sentence = window.prompt('Un doute, une erreur, une question mal catégoriée ? Merci de nous prévenir, même si vous n\'êtes pas sûr !');
+		const sentence = window.prompt(
+			"Un doute, une erreur, une question mal catégoriée ? Merci de nous prévenir, même si vous n'êtes pas sûr !"
+		);
 		if (sentence === null || sentence.trim() === '') return;
 		await reportQuestion(sentence.trim(), currentQuestionWip.qid);
 	}
@@ -201,12 +203,10 @@
 		</div>
 
 		<div class="sidebar-actions">
-			{#if session.kind.is === 'study'}
-				<div class="toggle-container">
-					<label for="auto-advance-toggle">Question suivante auto</label>
-					<Toggle bind:checked={preferences.current.autoAdvance} />
-				</div>
-			{/if}
+			<div class="toggle-container">
+				<label for="auto-advance-toggle">Question suivante auto</label>
+				<Toggle bind:checked={preferences.current.autoAdvance} />
+			</div>
 			<button class="sidebar-btn cancel" onclick={cancelSession}>Annuler</button>
 			<button class="sidebar-btn finish" onclick={finishSession}>Terminer</button>
 		</div>
@@ -407,7 +407,7 @@
 		position: sticky;
 		top: var(--gap-main);
 		align-self: start;
-		max-height: calc(100vh - var(--header-height) - var(--gap-main));
+		max-height: calc(90vh - var(--header-height) - var(--gap-main));
 	}
 
 	.responses-sidebar h3 {
@@ -491,8 +491,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
-		margin-top: 10px;
-		padding-top: 20px;
 		border-top: 1px solid var(--glass-border);
 		flex-shrink: 0;
 	}
