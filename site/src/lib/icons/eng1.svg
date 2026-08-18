@@ -6,7 +6,7 @@
    version="1.1"
    id="svg69"
    sodipodi:docname="eng1.svg"
-   inkscape:version="1.4.3 (0d15f75, 2025-12-25)"
+   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -21,12 +21,12 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      inkscape:zoom="0.77673827"
-     inkscape:cx="380.43703"
-     inkscape:cy="430.64699"
+     inkscape:cx="381.08075"
+     inkscape:cy="430.00328"
      inkscape:window-width="1440"
-     inkscape:window-height="900"
+     inkscape:window-height="777"
      inkscape:window-x="0"
-     inkscape:window-y="0"
+     inkscape:window-y="25"
      inkscape:window-maximized="0"
      inkscape:current-layer="svg69" />
   <defs
@@ -666,120 +666,6 @@
   <!-- LAYER 7: Frequency / Waveform Display      -->
   <!-- ========================================== -->
   <!-- Small floating UI pill showing audio waveform (glassmorphic HUD element) -->
-  <g
-     transform="translate(400, 240)"
-     filter="url(#shadow-mid)"
-     id="g68">
-    <!-- Glass pill background -->
-    <rect
-       x="-100"
-       y="-22"
-       width="200"
-       height="44"
-       rx="22"
-       fill="url(#glass-panel)"
-       stroke="#ffffff"
-       stroke-width="1.5"
-       stroke-opacity="0.3"
-       id="rect54" />
-    <!-- Audio waveform bars (centered) -->
-    <g
-       fill="#ffffff"
-       opacity="0.7"
-       id="g67">
-      <rect
-         x="-75"
-         y="-4"
-         width="4"
-         height="8"
-         rx="2"
-         id="rect55" />
-      <rect
-         x="-63"
-         y="-8"
-         width="4"
-         height="16"
-         rx="2"
-         id="rect56" />
-      <rect
-         x="-51"
-         y="-12"
-         width="4"
-         height="24"
-         rx="2"
-         id="rect57" />
-      <rect
-         x="-39"
-         y="-6"
-         width="4"
-         height="12"
-         rx="2"
-         id="rect58" />
-      <rect
-         x="-27"
-         y="-14"
-         width="4"
-         height="28"
-         rx="2"
-         id="rect59" />
-      <rect
-         x="-15"
-         y="-10"
-         width="4"
-         height="20"
-         rx="2"
-         id="rect60" />
-      <rect
-         x="-3"
-         y="-16"
-         width="4"
-         height="32"
-         rx="2"
-         id="rect61" />
-      <rect
-         x="9"
-         y="-12"
-         width="4"
-         height="24"
-         rx="2"
-         id="rect62" />
-      <rect
-         x="21"
-         y="-8"
-         width="4"
-         height="16"
-         rx="2"
-         id="rect63" />
-      <rect
-         x="33"
-         y="-14"
-         width="4"
-         height="28"
-         rx="2"
-         id="rect64" />
-      <rect
-         x="45"
-         y="-10"
-         width="4"
-         height="20"
-         rx="2"
-         id="rect65" />
-      <rect
-         x="57"
-         y="-6"
-         width="4"
-         height="12"
-         rx="2"
-         id="rect66" />
-      <rect
-         x="69"
-         y="-4"
-         width="4"
-         height="8"
-         rx="2"
-         id="rect67" />
-    </g>
-  </g>
   <!-- Small frequency label pill -->
   <!-- ========================================== -->
 </svg>
