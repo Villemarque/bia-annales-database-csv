@@ -41,6 +41,10 @@
 	);
 
 	const ham_item = [{ icon: HamburgerIcon, label: 'Menu', action: onToggleF(toggleSidebar) }];
+
+	const closeSidebarOnMobile = () => {
+		if (window.innerWidth <= 900) sidebarExpanded = false;
+	};
 </script>
 
 <svelte:head>
@@ -52,7 +56,7 @@
 		<MenuCapsule expanded={sidebarExpanded} items={ham_item} />
 	</div>
 	<div class="menu-wrapper">
-		<MenuCapsule expanded={sidebarExpanded} items={menuItems} />
+		<MenuCapsule expanded={sidebarExpanded} items={menuItems} onNavigate={closeSidebarOnMobile} />
 	</div>
 
 	<div class="header-wrapper">

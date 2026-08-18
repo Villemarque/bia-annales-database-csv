@@ -4,7 +4,8 @@
 	import type { Component } from 'svelte';
 	let {
 		expanded = false,
-		items = []
+		items = [],
+		onNavigate = () => {}
 	}: {
 		expanded?: boolean;
 		items?: Array<{
@@ -12,6 +13,7 @@
 			label: string;
 			action: { tpe: 'href'; href: ResolvedPathname } | { tpe: 'toggle'; onToggle: () => void };
 		}>;
+		onNavigate?: () => void;
 	} = $props();
 </script>
 
@@ -36,7 +38,7 @@
 		{#each items as item}
 			<li>
 				{#if item.action.tpe == 'href'}
-					<a href={resolve(item.action.href as any)} class="menu-item" class:expanded>
+					<a href={resolve(item.action.href as any)} class="menu-item" class:expanded onclick={onNavigate}>
 						{@render menu_item(item.icon, item.label)}
 					</a>
 				{:else if item.action.tpe == 'toggle'}
