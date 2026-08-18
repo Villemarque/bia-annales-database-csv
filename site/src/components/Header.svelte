@@ -7,6 +7,7 @@
 		<div class="title">
 			<img src={biaLogo} alt="BIA" class="bia-logo" />
 			Aérien Ambassadeurs Avenir
+			<span class="beta-tag">BETA</span>
 		</div>
 	</div>
 </div>
@@ -43,6 +44,19 @@
 		height: 32px;
 		width: auto;
 		margin-bottom: 4px;
+	}
+
+	.beta-tag {
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		padding: 2px 8px;
+		border-radius: 999px;
+		background: var(--card-blue);
+		color: white;
+		text-transform: uppercase;
+		align-self: flex-start;
+		margin-top: 4px;
 	}
 
 	@media (max-width: 620px) {
