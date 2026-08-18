@@ -200,7 +200,6 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 20px;
 	}
 
 	.menu {
@@ -214,6 +213,8 @@
 		display: flex;
 		flex-direction: column;
 		max-height: 90vh;
+		min-width: 0;
+		box-sizing: border-box;
 	}
 
 	@keyframes popIn {
@@ -264,6 +265,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 32px;
+		min-width: 0;
 	}
 
 	.section-header {
@@ -429,5 +431,54 @@
 		opacity: 0.5;
 		cursor: not-allowed;
 		transform: none;
+	}
+
+	@media (max-width: 480px) {
+		.content {
+			padding: 20px;
+			gap: 24px;
+		}
+
+		.header {
+			padding: 18px 20px;
+		}
+
+		.header h2 {
+			font-size: 17px;
+		}
+
+		.section h3 {
+			font-size: 14px;
+		}
+
+		.label-text {
+			font-size: 13px;
+		}
+
+		.text-btn {
+			font-size: 12px;
+		}
+
+		.count-value {
+			font-size: 15px;
+		}
+
+		.chapter-item {
+			padding: 10px 12px;
+		}
+
+		.footer {
+			padding: 16px 20px;
+		}
+
+		.start-btn {
+			padding: 10px 24px;
+			font-size: 14px;
+		}
+
+		.cancel-btn {
+			padding: 10px 16px;
+			font-size: 14px;
+		}
 	}
 </style>
