@@ -76,7 +76,9 @@
 	}
 
 	function goToQuestion(index: number) {
-		currentIndex = index;
+		const count = session.questions.length;
+		if (count === 0) return;
+		currentIndex = ((index % count) + count) % count;
 	}
 
 	async function reportCurrentQuestion() {
@@ -141,6 +143,26 @@
 			<div class="quiz-meta">
 				<span>{formatTime(timeShown)}</span>
 				<span>Q {currentIndex + 1} / {session.questions.length || 120}</span>
+			</div>
+			<div class="nav-btns">
+				<button
+					class="nav-btn"
+					onclick={() => goToQuestion(currentIndex - 1)}
+					title="Question précédente"
+					aria-label="Question précédente">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+						<path d="M15.41 7.41 14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+					</svg>
+				</button>
+				<button
+					class="nav-btn"
+					onclick={() => goToQuestion(currentIndex + 1)}
+					title="Question suivante"
+					aria-label="Question suivante">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+						<path d="M10 6 8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z" />
+					</svg>
+				</button>
 			</div>
 			<button
 				class="report-btn"
@@ -250,6 +272,35 @@
 		background: var(--card-blue);
 		border-radius: 999px;
 		transition: width 0.25s ease;
+	}
+
+	.nav-btns {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		flex-shrink: 0;
+	}
+
+	.nav-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 30px;
+		height: 30px;
+		padding: 0;
+		border: 1px solid var(--glass-border);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.6);
+		color: var(--text-muted);
+		cursor: pointer;
+		transition:
+			background 0.2s ease,
+			color 0.2s ease;
+	}
+
+	.nav-btn:hover {
+		background: var(--card-blue);
+		color: white;
 	}
 
 	.report-btn {
