@@ -14,6 +14,7 @@
 	import { questionsBySubject } from '$lib/stores/questions';
 	import { makeNewSession } from '$lib/stores/session.svelte';
 	import { type ChaptersState, getPotentialQuestions } from '$lib/state';
+	import { onMount } from 'svelte';
 	import Toggle from './Toggle.svelte';
 
 	let {
@@ -89,9 +90,15 @@
 		}
 	}
 
+	onMount(() => {
+		document.body.style.overflow = 'hidden';
+		return () => {
+			document.body.style.overflow = '';
+		};
+	});
+
 	function startQuiz() {
 		const qids = structuredClone(potentialQuestions);
-
 		// Shuffle questions
 		for (let i = qids.length - 1; i > 0; i--) {
 			const j = Math.floor(Math.random() * (i + 1));
@@ -431,54 +438,5 @@
 		opacity: 0.5;
 		cursor: not-allowed;
 		transform: none;
-	}
-
-	@media (max-width: 480px) {
-		.content {
-			padding: 20px;
-			gap: 24px;
-		}
-
-		.header {
-			padding: 18px 20px;
-		}
-
-		.header h2 {
-			font-size: 17px;
-		}
-
-		.section h3 {
-			font-size: 14px;
-		}
-
-		.label-text {
-			font-size: 13px;
-		}
-
-		.text-btn {
-			font-size: 12px;
-		}
-
-		.count-value {
-			font-size: 15px;
-		}
-
-		.chapter-item {
-			padding: 10px 12px;
-		}
-
-		.footer {
-			padding: 16px 20px;
-		}
-
-		.start-btn {
-			padding: 10px 24px;
-			font-size: 14px;
-		}
-
-		.cancel-btn {
-			padding: 10px 16px;
-			font-size: 14px;
-		}
 	}
 </style>
