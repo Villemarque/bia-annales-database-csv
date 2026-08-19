@@ -73,6 +73,7 @@
 			if (next) {
 				log.log('next', next);
 				currentIndex = session.questions.findIndex((wip) => wip.qid == next.qid);
+				scrollCurrentIntoView();
 			}
 		}
 	}
@@ -81,20 +82,19 @@
 		const count = session.questions.length;
 		if (count === 0) return;
 		currentIndex = ((index % count) + count) % count;
+		scrollCurrentIntoView();
 	}
 
 	// Keep the response button of the current question in sight in the sidebar,
 	// especially when the sidebar scrolls horizontally on mobile.
-	$effect(() => {
-		currentIndex;
-		tick().then(() => {
-			responseGrid?.querySelector<HTMLElement>('.response-btn.current')?.scrollIntoView({
-				behavior: 'smooth',
-				block: 'nearest',
-				inline: 'nearest'
-			});
+	async function scrollCurrentIntoView() {
+		await tick();
+		responseGrid?.querySelector<HTMLElement>('.response-btn.current')?.scrollIntoView({
+			behavior: 'smooth',
+			block: 'nearest',
+			inline: 'nearest'
 		});
-	});
+	}
 
 	async function reportCurrentQuestion() {
 		const sentence = window.prompt(
@@ -133,6 +133,7 @@
 	};
 
 	onMount(() => {
+		scrollCurrentIntoView();
 		const timer = setInterval(() => {
 			// time spent looking at an answer is not taken into account
 			if (currentQuestionWip.correctChoice === undefined) {
