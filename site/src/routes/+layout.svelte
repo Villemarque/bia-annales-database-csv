@@ -5,7 +5,7 @@
 	import { isDefined } from '$lib/utils';
 	import './layout.css'; // for reusable CSS components
 
-	import favicon from '$lib/assets/favicon.svg';
+	import favicon from '$lib/assets/favicon.ico';
 	import HamburgerIcon from '../components/HamburgerIcon.svelte';
 	import MenuCapsule from '../components/MenuCapsule.svelte';
 	import Header from '../components/Header.svelte';
