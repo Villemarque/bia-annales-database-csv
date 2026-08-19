@@ -1,6 +1,6 @@
 <script lang="ts">
 	// should this be a component or page?
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { log } from '$lib/log';
 	import { go } from '$lib/go';
 	import type { OngoingSession, Qid, QuestionWip, Second } from '$lib/types';
@@ -27,6 +27,8 @@
 	} = $props();
 
 	let currentIndex = $state(0);
+
+	let responseGrid: HTMLDivElement;
 
 	const letters = ['A', 'B', 'C', 'D'];
 
@@ -80,6 +82,19 @@
 		if (count === 0) return;
 		currentIndex = ((index % count) + count) % count;
 	}
+
+	// Keep the response button of the current question in sight in the sidebar,
+	// especially when the sidebar scrolls horizontally on mobile.
+	$effect(() => {
+		currentIndex;
+		tick().then(() => {
+			responseGrid?.querySelector<HTMLElement>('.response-btn.current')?.scrollIntoView({
+				behavior: 'smooth',
+				block: 'nearest',
+				inline: 'nearest'
+			});
+		});
+	});
 
 	async function reportCurrentQuestion() {
 		const sentence = window.prompt(
@@ -212,7 +227,7 @@
 	<!-- Right Column: Sidebar -->
 	<aside class="responses-sidebar">
 		<h3>Réponses</h3>
-		<div class="response-grid">
+		<div class="response-grid" bind:this={responseGrid}>
 			{#each session.questions as q, i (i)}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
