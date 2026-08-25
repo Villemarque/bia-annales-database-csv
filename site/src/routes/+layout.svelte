@@ -34,7 +34,7 @@
 			{ icon: BookIcon, label: 'Matières', action: href('/subjects' as any) },
 			sessionState.current ? { icon: PlayIcon, label: 'Reprendre', action: href('/quiz') } : undefined,
 			{ icon: ExamIcon, label: 'Annales', action: href('/annales') },
-			{ icon: PieChartIcon, label: 'Sessions', action: href('/sessions') },
+			{ icon: PieChartIcon, label: 'Historique', action: href('/sessions') },
 			{ icon: SearchIcon, label: 'Questions', action: href('/questions') },
 			{ icon: SettingsIcon, label: 'Paramètres', action: href('/settings') }
 		].filter(isDefined)

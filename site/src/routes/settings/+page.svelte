@@ -17,7 +17,7 @@
 	}
 
 	async function resetAllData() {
-		if (confirm('ATTENTION: Cela va effacer TOUTES vos données (sessions, tentatives, réglages). Continuer ?')) {
+		if (confirm('ATTENTION: Cela va effacer TOUTES vos données (historique, réglages). Continuer ?')) {
 			const db = await getDb;
 			await db.clearDb();
 			window.location.reload();
