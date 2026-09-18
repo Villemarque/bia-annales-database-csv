@@ -6,7 +6,7 @@
 	<div class="header-content">
 		<div class="title">
 			<img src={biaLogo} alt="BIA" class="bia-logo" />
-			Aérien Ambassadeurs Avenir
+			<span class="title-text">Aérien Ambassadeurs Avenir</span>
 			<span class="beta-tag">BETA</span>
 		</div>
 	</div>
@@ -38,6 +38,13 @@
 		display: flex;
 		align-items: center;
 		gap: 12px;
+	}
+
+	.title-text {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		min-width: 0;
 	}
 
 	.bia-logo {
