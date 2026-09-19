@@ -22,6 +22,11 @@
 			rel="noopener noreferrer">© Solal LORCY,</a>
 		<a class="footer-link" href="https://opensource.org/licenses/AGPL" target="_blank" rel="noopener noreferrer">
 			Licence : AGPL</a>
+		<a
+			class="footer-link"
+			href={`https://github.com/Villemarque/bia-annales-database-csv/commit/${__COMMIT__}`}
+			target="_blank"
+			rel="noopener noreferrer">{__COMMIT__}{__COMMIT_MODIFIED__ ? '-modified' : ''}</a>
 	</div>
 </footer>
 
