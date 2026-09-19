@@ -6,15 +6,17 @@ import type { Qid } from '$lib/types';
 const ZULIP_WEBHOOK_URL =
 	'https://asso-triple-a.zulipchat.com/api/v1/external/slack_incoming?api_key=nthAjz2PSD59iLsFUZeECA8r3HcRBoxI&stream=624989&topic=report-questions';
 
-export const questionUrl = (qid: Qid): string => `${base}/questions?qid=${encodeURIComponent(qid)}`;
+export const questionUrl = (qid: Qid): string =>
+	`https://annales-bia.asso-triple-a.org${base}/questions?qid=${encodeURIComponent(qid)}`;
 
 export async function reportQuestion(sentence: string, qid: Qid): Promise<boolean> {
 	const url = questionUrl(qid);
 	// Slack-style link so Zulip renders it as a pretty clickable link, first in the message
 	const pretty = `<${url}|Question ${qid}>`;
+	const mention = '@**solal**';
 	// Advanced Block Kit formatting (section block, mrkdwn), with `text` as fallback for
 	// clients that ignore `blocks` (Zulip's slack_incoming supports both).
-	const text = `${pretty}\n${sentence}`;
+	const text = `${mention} ${pretty}\n${sentence}`;
 	const payload = {
 		text,
 		blocks: [
@@ -22,7 +24,7 @@ export async function reportQuestion(sentence: string, qid: Qid): Promise<boolea
 				type: 'section',
 				text: {
 					type: 'mrkdwn',
-					text: `${pretty}\n\n${sentence}`
+					text: `${mention} ${pretty}\n\n${sentence}`
 				}
 			}
 		]
