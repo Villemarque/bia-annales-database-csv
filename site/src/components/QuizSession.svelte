@@ -26,7 +26,10 @@
 		onSessionFinish: () => void;
 	} = $props();
 
-	let currentIndex = $state(0);
+	// When resuming a session, start at the first unanswered question
+	// (fall back to the first question if everything has been answered).
+	const firstUnansweredIndex = session.questions.findIndex((wip) => wip.selectedChoice === undefined);
+	let currentIndex = $state(firstUnansweredIndex === -1 ? 0 : firstUnansweredIndex);
 
 	let responseGrid: HTMLDivElement;
 
